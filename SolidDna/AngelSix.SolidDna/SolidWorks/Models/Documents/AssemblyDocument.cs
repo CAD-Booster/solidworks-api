@@ -45,6 +45,7 @@ namespace AngelSix.SolidDna
         /// Gets the <see cref="ModelFeature"/> of the item in the feature tree based on its name
         /// </summary>
         /// <param name="featureName">Name of the feature</param>
+        /// <param name="action">The action to perform on this feature</param>
         /// <returns>The <see cref="ModelFeature"/> for the named feature</returns>
         public void GetFeatureByName(string featureName, Action<ModelFeature> action)
         {
@@ -52,10 +53,10 @@ namespace AngelSix.SolidDna
             SolidDnaErrors.Wrap(() =>
             {
                 // Create feature
-                using (var model = new ModelFeature((Feature)mBaseObject.FeatureByName(featureName)))
+                using (var modelFeature = new ModelFeature((Feature)mBaseObject.FeatureByName(featureName)))
                 {
                     // Run action
-                    action(model);
+                    action(modelFeature);
                 }
             },
                 SolidDnaErrorTypeCode.SolidWorksModel,

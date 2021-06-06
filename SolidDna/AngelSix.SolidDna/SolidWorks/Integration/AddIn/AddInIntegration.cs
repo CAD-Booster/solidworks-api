@@ -54,7 +54,7 @@ namespace AngelSix.SolidDna
 
         /// <summary>
         /// Called once SolidWorks has loaded our add-in and is ready.
-        /// Now is a good time to create taskpanes, menu bars or anything else.
+        /// Now is a good time to create task panes, menu bars or anything else.
         ///  
         /// NOTE: This call will be made twice, one in the default domain and one in the AppDomain as the SolidDna plug-ins
         /// </summary>
@@ -62,7 +62,7 @@ namespace AngelSix.SolidDna
 
         /// <summary>
         /// Called once SolidWorks has unloaded our add-in.
-        /// Now is a good time to clean up taskpanes, menu bars or anything else.
+        /// Now is a good time to clean up task panes, menu bars or anything else.
         /// 
         /// NOTE: This call will be made twice, one in the default domain and one in the AppDomain as the SolidDna plug-ins
         /// </summary>
@@ -95,7 +95,7 @@ namespace AngelSix.SolidDna
 
         /// <summary>
         /// Run immediately when <see cref="ConnectToSW(object, int)"/> is called
-        /// to do any pre-setup such as <see cref="PlugInIntegration.UseDetachedAppDomain"/>
+        /// to do any pre-setup such as <see cref="AppDomainBoundary.UseDetachedAppDomain"/>
         /// </summary>
         public abstract void PreConnectToSolidWorks();
 

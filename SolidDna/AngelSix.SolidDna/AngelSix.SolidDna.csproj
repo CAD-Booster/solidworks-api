@@ -4,14 +4,18 @@
     <TargetFramework>net472</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Version>1.0.1.13</Version>
-    <Authors>Luke Malpass</Authors>
-    <Company>AngelSix Ltd</Company>
+    <Authors>Luke Malpass, Peter Brinkhuis</Authors>
+    <Company>CAD Booster B.V.</Company>
     <Description>The new SolidDNA SDK, making the SolidWorks API easier, well behaved and modern</Description>
-    <Copyright>Copyright © 2016-2020</Copyright>
-    <PackageProjectUrl>https://github.com/angelsix/solidworks-api</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/angelsix/solidworks-api</RepositoryUrl>
-    <PackageTags>soliddna solidworks angelsix luke malpass api</PackageTags>
+    <Copyright>Copyright © 2016-2021</Copyright>
+    <PackageProjectUrl>https://github.com/CAD-Booster/solidworks-api</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/CAD-Booster/solidworks-api</RepositoryUrl>
+    <PackageTags>soliddna solidworks cadbooster angelsix api</PackageTags>
     <AssemblyVersion>1.0.1.13</AssemblyVersion>
+    <Product>CADBooster.SolidDna</Product>
+    <PackageId>CADBooster.SolidDna</PackageId>
+    <AssemblyName>AngelSix.SolidDna</AssemblyName>
+    <RootNamespace>AngelSix.SolidDna</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

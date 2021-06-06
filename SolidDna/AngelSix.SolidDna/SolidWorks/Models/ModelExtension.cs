@@ -70,7 +70,8 @@ namespace AngelSix.SolidDna
                 }
 
                 double[] massProps = null;
-                var status = -1;
+                const int statusDefault = -1;
+                var status = statusDefault;
 
                 //
                 // SolidWorks 2016 is the start of support for MassProperties2
@@ -84,8 +85,8 @@ namespace AngelSix.SolidDna
                     // NOTE: 2 is best accuracy
                     massProps = (double[])BaseObject.GetMassProperties2(2, out status, false);
 
-                // Make sure it succeeded
-                if (status == (int)swMassPropertiesStatus_e.swMassPropertiesStatus_UnknownError)
+                // Make sure it succeeded. SOLIDWORKS does not always update the status when it returns null
+                if (status == (int)swMassPropertiesStatus_e.swMassPropertiesStatus_UnknownError || status == statusDefault)
                 {
                     return doNotThrowOnError
                         ? new MassProperties()

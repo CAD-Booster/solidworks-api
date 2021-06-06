@@ -305,7 +305,7 @@ namespace AngelSix.SolidDna
         /// The COM registration call to add our registry entries to the SolidWorks add-in registry
         /// </summary>
         /// <param name="t"></param>
-        [ComRegisterFunction()]
+        [ComRegisterFunction]
         protected static void ComRegister(Type t)
         {
             // Create new instance of ComRegister add-in to setup DI
@@ -365,7 +365,7 @@ namespace AngelSix.SolidDna
         /// The COM unregister call to remove our custom entries we added in the COM register function
         /// </summary>
         /// <param name="t"></param>
-        [ComUnregisterFunction()]
+        [ComUnregisterFunction]
         protected static void ComUnregister(Type t)
         {
             // Get registry key path

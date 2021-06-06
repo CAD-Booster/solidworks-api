@@ -1006,7 +1006,7 @@ namespace AngelSix.SolidDna
         /// </summary>
         /// <param name="startComponent">The components to start at</param>
         /// <param name="componentDepth">The current depth of the sub-components based on the original calling components</param>
-        private IEnumerable<(Component, int)> RecurseComponents(Component startComponent = null, int componentDepth = 0)
+        private static IEnumerable<(Component, int)> RecurseComponents(Component startComponent = null, int componentDepth = 0)
         {
             // While that component is not null...
             if (startComponent != null)

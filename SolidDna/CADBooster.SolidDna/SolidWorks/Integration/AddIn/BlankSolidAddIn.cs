@@ -3,14 +3,14 @@
     /// <summary>
     /// Creates a blank AddIn integration class
     /// </summary>
-    public class BlankAddInIntegration : AddInIntegration
+    public class BlankSolidAddIn : SolidAddIn
     {
         #region Constructor
 
         /// <summary>
         /// Default constructor
         /// </summary>
-        public BlankAddInIntegration() : base()
+        public BlankSolidAddIn() : base()
         {
 
         }

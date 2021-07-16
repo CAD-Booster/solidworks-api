@@ -19,9 +19,9 @@ namespace CADBooster.SolidDna
         public static ILocalizationManager Localization => Get<ILocalizationManager>();
 
         /// <summary>
-        /// The instance of the <see cref="AddInIntegration"/> class that is used for this add-in
+        /// The instance of the <see cref="SolidAddIn"/> class that is used for this add-in
         /// </summary>
-        public static AddInIntegration AddIn => Get<AddInIntegration>();
+        public static SolidAddIn SolidAddIn => Get<SolidAddIn>();
 
         #endregion
 

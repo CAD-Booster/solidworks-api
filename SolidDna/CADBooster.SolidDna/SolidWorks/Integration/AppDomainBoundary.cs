@@ -19,12 +19,17 @@ namespace CADBooster.SolidDna
         /// <summary>
         /// A list of assemblies to use when resolving any missing references
         /// </summary>
-        protected static List<AssemblyName> mReferencedAssemblies = new List<AssemblyName>();
+        protected List<AssemblyName> mReferencedAssemblies = new List<AssemblyName>();
 
         #endregion
 
         #region Public Properties
 
+        /// <summary>
+        /// The add-in that owns this appDomainBoundary.
+        /// </summary>
+        public SolidAddIn ParentAddIn { get; set; }
+        
         /// <summary>
         /// Gets the list of all known reference assemblies in this solution
         /// </summary>
@@ -39,14 +44,14 @@ namespace CADBooster.SolidDna
         /// </summary>
         /// <param name="assemblyFilePath">The path to the assembly</param>
         /// <param name="configureDllPath">Path to the dll that contains the custom configure services method</param>
-        public static void Setup(string assemblyFilePath, string configureDllPath)
+        public void Setup(string assemblyFilePath, string configureDllPath)
         {
             // Help resolve any assembly references
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
 
             // Add references from this assembly (CADBooster.SolidDna) including itself
             // to be resolved by the assembly resolver
-            AddReferenceAssemblies<AddInIntegration>(includeSelf: true);
+            AddReferenceAssemblies<SolidAddIn>(includeSelf: true);
 
             // Always setup IoC on the normal app domain
             // This is so both sides of the application code can
@@ -79,7 +84,7 @@ namespace CADBooster.SolidDna
             if (File.Exists(pathToConfigureDll))
             {
                 // AddIn class type
-                var addinType = typeof(AddInIntegration);
+                var addinType = typeof(SolidAddIn);
 
                 // Load all methods...
                 var match = Assembly.LoadFile(pathToConfigureDll).GetTypes()
@@ -89,7 +94,7 @@ namespace CADBooster.SolidDna
                         // Store class
                         methodClass: t,
                         // Select the ConfigureServices method
-                        method: t.GetMethod(nameof(AddInIntegration.ConfigureServices)))
+                        method: t.GetMethod(nameof(SolidAddIn.ConfigureServices)))
                       )
                       // Only use first method for now
                       .FirstOrDefault();
@@ -122,7 +127,7 @@ namespace CADBooster.SolidDna
         /// </summary>
         /// <typeparam name="ReferenceType">The type contained in the assembly where the references are</typeparam>
         /// <param name="includeSelf">True to include the calling assembly</param>
-        public static void AddReferenceAssemblies<ReferenceType>(bool includeSelf = false)
+        public void AddReferenceAssemblies<ReferenceType>(bool includeSelf = false)
         {
             // Find all reference assemblies from the type
             var referencedAssemblies = typeof(ReferenceType).Assembly.GetReferencedAssemblies();
@@ -145,7 +150,7 @@ namespace CADBooster.SolidDna
         /// <param name="sender"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+        private Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
         {
             // Try and find a reference assembly that matches...
             var resolvedAssembly = mReferencedAssemblies.FirstOrDefault(f => string.Equals(f.FullName, args.Name, StringComparison.InvariantCultureIgnoreCase));

@@ -9,16 +9,16 @@ namespace CADBooster.SolidDna
     /// A basic implementation of the AddIn Integration class used when registering the dll for COM.
     /// Mainly used for setting up DI so when loading the PlugIn's they have the expected services
     /// </summary>
-    public class ComRegisterAddInIntegration : AddInIntegration
+    public class ComRegisterSolidAddIn : SolidAddIn
     {
-        public ComRegisterAddInIntegration()
+        public ComRegisterSolidAddIn()
         {
             try
             {
                 // As for COM Registration this won't get ConnectedToSW called
                 // and thereby no call to setup IoC, we do this manually here
                 // Setup application (allowing for AppDomain boundary setup)
-                AppDomainBoundary.Setup(this.AssemblyFilePath(), typeof(ComRegisterAddInIntegration).Assembly.AssemblyFilePath());
+                AppDomainBoundary.Setup(this.AssemblyFilePath(), typeof(ComRegisterSolidAddIn).Assembly.AssemblyFilePath());
             }
             catch (Exception ex)
             {

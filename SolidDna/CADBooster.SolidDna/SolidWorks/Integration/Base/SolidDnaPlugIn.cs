@@ -7,7 +7,7 @@ namespace CADBooster.SolidDna
     /// The compiled dll of SolidDna must be in the same location as 
     /// the plug-in dll to be discovered
     /// </summary>
-    public abstract class SolidPlugIn : MarshalByRefObject
+    public abstract class SolidPlugIn
     {
         #region Public Properties
 

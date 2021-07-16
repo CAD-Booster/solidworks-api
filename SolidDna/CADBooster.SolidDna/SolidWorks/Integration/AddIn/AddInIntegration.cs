@@ -163,9 +163,9 @@ namespace CADBooster.SolidDna
                 PreConnectToSolidWorks();
 
                 // Setup application (allowing for AppDomain boundary setup)
-                AppDomainBoundary.Setup(this.AssemblyPath(), this.AssemblyFilePath(),
+                AppDomainBoundary.Setup(this.AssemblyFilePath(),
                     // The type of this abstract class will be the class implementing it
-                    GetType().Assembly.Location, "");
+                    GetType().Assembly.Location);
 
                 // Log it
                 Logger?.LogTraceSource($"Fired PreConnectToSolidWorks...");

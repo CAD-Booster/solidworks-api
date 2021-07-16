@@ -37,11 +37,9 @@ namespace CADBooster.SolidDna
         /// <summary>
         /// Sets up the application
         /// </summary>
-        /// <param name="assemblyPath">Working directory path for the application for the app domain (usually the working directory of add-in dll)</param>
         /// <param name="assemblyFilePath">The path to the assembly</param>
         /// <param name="configureDllPath">Path to the dll that contains the custom configure services method</param>
-        /// <param name="configureName">The name of the <see cref="ConfigureServiceAttribute"/> method to use</param>
-        public static void Setup(string assemblyPath, string assemblyFilePath, string configureDllPath, string configureName)
+        public static void Setup(string assemblyFilePath, string configureDllPath)
         {
             // Help resolve any assembly references
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
@@ -54,7 +52,7 @@ namespace CADBooster.SolidDna
             // This is so both sides of the application code can
             // so access the dependencies (like loggers)
             // even though they may be different instances
-            SetupIoC(assemblyFilePath, configureDllPath, configureName);
+            SetupIoC(assemblyFilePath, configureDllPath);
         }
 
         #region IoC
@@ -64,8 +62,7 @@ namespace CADBooster.SolidDna
         /// </summary>
         /// <param name="assemblyFilePath">The path to the assembly</param>
         /// <param name="pathToConfigureDll">Absolute path to dll where the IConfigureServices implementation lies</param>
-        /// <param name="configureName">The name of the <see cref="ConfigureServiceAttribute"/> method to use</param>
-        public static void SetupIoC(string assemblyFilePath, string pathToConfigureDll = null, string configureName = null)
+        public static void SetupIoC(string assemblyFilePath, string pathToConfigureDll = null)
         {
             // Create default construction
             Framework.Construct(new DefaultFrameworkConstruction(configure =>

@@ -30,34 +30,12 @@ namespace CADBooster.SolidDna
         /// </summary>
         public AssemblyName[] ReferencedAssemblies => mReferencedAssemblies.ToArray();
 
-        /// <summary>
-        /// The AppDomain used to load and unload plug-ins
-        /// </summary>
-        public static AppDomain AppDomain { get; private set; }
-
-        /// <summary>
-        /// If true, will load your Add-in dll in its own application domain so you can 
-        /// unload and rebuild your add-in without having to close SolidWorks
-        /// NOTE: This does seem to expose some bugs and issues in SolidWorks API
-        ///       in terms of resolving references to specific dll's, so if you experience
-        ///       issues try turning this off
-        /// NOTE: Also no IoC is available in this detached domain at the moment
-        ///       due to AddinIntegration non-static instance intializing the IoC.
-        ///       That means no Logger for example, so safe log with Logger?.
-        /// </summary>
-        public static bool UseDetachedAppDomain { get; set; }
-
-        /// <summary>
-        /// The cross-domain marshal to use for the cross-Application domain calls
-        /// </summary>
-        public static AppDomainBoundaryMarshal Marshal { get; private set; }
-
         #endregion
 
         #region App Domain Setup
 
         /// <summary>
-        /// Sets up the application, allowing for cross-app domain setup if required
+        /// Sets up the application
         /// </summary>
         /// <param name="assemblyPath">Working directory path for the application for the app domain (usually the working directory of add-in dll)</param>
         /// <param name="assemblyFilePath">The path to the assembly</param>
@@ -71,27 +49,6 @@ namespace CADBooster.SolidDna
             // Add references from this assembly (CADBooster.SolidDna) including itself
             // to be resolved by the assembly resolver
             AddReferenceAssemblies<AddInIntegration>(includeSelf: true);
-
-            // If we want a separate app domain...
-            if (UseDetachedAppDomain)
-            {
-                // Create random number at end to allow for multiple add-ins
-                var random = new Random();
-                var randomName = new string(Enumerable.Repeat("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 10)
-                          .Select(s => s[random.Next(s.Length)]).ToArray());
-
-                AppDomain = AppDomain.CreateDomain($"SolidDnaAppDomain-{randomName}", null, new AppDomainSetup
-                {
-                    // Use given folder for resolving references
-                    ApplicationBase = assemblyPath,
-                });
-
-                // Run code on new app-domain to configure
-                Marshal = (AppDomainBoundaryMarshal)AppDomain.CreateInstanceAndUnwrap(typeof(AppDomainBoundaryMarshal).Assembly.FullName, typeof(AppDomainBoundaryMarshal).FullName);
-
-                // Setup IoC
-                Marshal.SetupIoC(assemblyFilePath, configureDllPath, configureName);
-            }
 
             // Always setup IoC on the normal app domain
             // This is so both sides of the application code can
@@ -156,104 +113,6 @@ namespace CADBooster.SolidDna
         }
 
         #endregion
-
-
-        /// <summary>
-        /// Unloads the created app domain
-        /// </summary>
-        public static void Unload()
-        {
-            // Now tear down app domain
-            Logger?.LogDebugSource($"Unloading cross-domain...");
-
-            if (AppDomain != null)
-                // NOTE: If you get 'Error while unloading appdomain. (Exception from HRESULT: 0x80131015)'
-                //       here, make sure you have no threads hanging that wait forever, and make sure
-                //       you called AppContext.SetSwitch("Switch.System.Windows.Input.Stylus.DisableStylusAndTouchSupport", true);
-                //       if loading a WPF control (done for you in TaskpaneIntegration.AddToTaskpaneAsync
-                AppDomain.Unload(AppDomain);
-        }
-
-        #endregion
-
-        #region Plugin Integration
-
-        /// <summary>
-        /// Must be called to setup the PlugInIntegration
-        /// </summary>
-        /// <param name="addinPath">The path to the add-in that is calling this setup (typically acquired using GetType().Assembly.Location)</param>
-        /// <param name="cookie">The cookie Id of the SolidWorks instance</param>
-        /// <param name="version">The version of the currently connected SolidWorks instance</param>
-        public static void PluginIntegrationSetup(string addinPath, string version, int cookie)
-        {
-            // Call method from other app domain
-            Marshal.PluginIntegrationSetup(addinPath, version, cookie);
-        }
-
-        /// <summary>
-        /// Tears down the app-domain that the plug-ins run inside of
-        /// </summary>
-        public static void PluginIntegrationTeardown()
-        {
-            // Call method from other app domain
-            Marshal.PluginIntegrationTeardown();
-        }
-
-        /// <summary>
-        /// Adds a plug-in based on its <see cref="SolidPlugIn"/> implementation
-        /// </summary>
-        /// <typeparam name="T">The class that implements the <see cref="SolidPlugIn"/></typeparam>
-        public static void AddPlugIn<T>()
-        {
-            Marshal.AddPlugIn<T>();
-        }
-
-        /// <summary>
-        /// Adds a plug-in based on its <see cref="SolidPlugIn"/> implementation
-        /// </summary>
-        /// <param name="fullPath">The absolute path to the plug-in dll</param>
-        public static void AddPlugIn(string fullPath)
-        {
-            Marshal.AddPlugIn(fullPath);
-        }
-
-        /// <summary>
-        /// Called by the SolidWorks domain (AddInIntegration) when a callback is fired
-        /// </summary>
-        /// <param name="name">The parameter passed into the generic callback</param>
-        public static void OnCallback(string name)
-        {
-            Marshal.OnCallback(name);
-        }
-
-        /// <summary>
-        /// Runs any initialization code required on plug-ins
-        /// </summary>
-        /// <param name="addinPath">The path to the add-in that is calling this setup (typically acquired using GetType().Assembly.Location)</param>
-        public static void ConfigurePlugIns(string addinPath)
-        {
-            Marshal.ConfigurePlugIns(addinPath);
-        }
-
-        #endregion
-
-        #region Connect / Disconnect To SolidWorks
-
-        /// <summary>
-        /// Called when the add-in has connected to SolidWorks
-        /// </summary>
-        public static void ConnectedToSolidWorks()
-        {
-            Marshal.ConnectedToSolidWorks();
-        }
-
-        /// <summary>
-        /// Called when the add-in has disconnected from SolidWorks
-        /// </summary>
-        public static void DisconnectedFromSolidWorks()
-        {
-            Marshal.DisconnectedFromSolidWorks();
-        }
 
         #endregion
 

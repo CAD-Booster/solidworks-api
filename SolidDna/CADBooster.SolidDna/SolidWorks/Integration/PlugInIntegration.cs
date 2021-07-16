@@ -58,42 +58,21 @@ namespace CADBooster.SolidDna
         /// <param name="version">The version of the currently connected SolidWorks instance</param>
         public static void Setup(string addinPath, string version, int cookie)
         {
-            // If use detached app domain...
-            if (AppDomainBoundary.UseDetachedAppDomain)
-                // Get boundary to re-call us from other app domain
-                AppDomainBoundary.PluginIntegrationSetup(addinPath, version, cookie);
-            else
-            {
-                // Log it
-                Logger?.LogDebugSource($"PlugIn Setup...");
+            // Log it
+            Logger?.LogDebugSource($"PlugIn Setup...");
 
-                // Get the version number (such as 25 for 2016)
-                var postFix = "";
-                if (version != null && version.Contains("."))
-                    postFix = "." + version.Substring(0, version.IndexOf('.'));
+            // Get the version number (such as 25 for 2016)
+            var postFix = "";
+            if (version != null && version.Contains("."))
+                postFix = "." + version.Substring(0, version.IndexOf('.'));
 
-                // Store a reference to the current SolidWorks instance
-                // Initialize SolidWorks (SolidDNA class)
-                AddInIntegration.SolidWorks = new SolidWorksApplication((SldWorks)Activator.CreateInstance(Type.GetTypeFromProgID("SldWorks.Application" + postFix)), cookie);
+            // Store a reference to the current SolidWorks instance
+            // Initialize SolidWorks (SolidDNA class)
+            AddInIntegration.SolidWorks = new SolidWorksApplication(
+                (SldWorks)Activator.CreateInstance(Type.GetTypeFromProgID("SldWorks.Application" + postFix)), cookie);
 
-                // Log it
-                Logger?.LogDebugSource($"SolidWorks Instance Created? {AddInIntegration.SolidWorks != null}");
-            }
-        }
-
-        /// <summary>
-        /// Cleans up the plug-in app domain so that the plug-in dll files can be edited after unloading
-        /// </summary>
-        public static void Teardown()
-        {
-            // If use detached app domain...
-            if (AppDomainBoundary.UseDetachedAppDomain)
-                // Get boundary to re-call us from other app domain
-                AppDomainBoundary.PluginIntegrationTeardown();
-            else
-            {
-                // Nothing to do right now
-            }
+            // Log it
+            Logger?.LogDebugSource($"SolidWorks Instance Created? {AddInIntegration.SolidWorks != null}");
         }
 
         #endregion
@@ -105,23 +84,16 @@ namespace CADBooster.SolidDna
         /// </summary>
         public static void ConnectedToSolidWorks()
         {
-            // If use detached app domain...
-            if (AppDomainBoundary.UseDetachedAppDomain)
-                // Get boundary to re-call us from other app domain
-                AppDomainBoundary.ConnectedToSolidWorks();
-            else
+            AddInIntegration.OnConnectedToSolidWorks();
+
+            // Inform plug-ins
+            PlugIns.ForEach(plugin =>
             {
-                AddInIntegration.OnConnectedToSolidWorks();
+                // Log it
+                Logger?.LogDebugSource($"Firing ConnectedToSolidWorks event for plugin `{plugin.AddInTitle}`...");
 
-                // Inform plug-ins
-                PlugIns.ForEach(plugin =>
-                {
-                    // Log it
-                    Logger?.LogDebugSource($"Firing ConnectedToSolidWorks event for plugin `{plugin.AddInTitle}`...");
-
-                    plugin.ConnectedToSolidWorks();
-                });
-            }
+                plugin.ConnectedToSolidWorks();
+            });
         }
 
         /// <summary>
@@ -129,23 +101,16 @@ namespace CADBooster.SolidDna
         /// </summary>
         public static void DisconnectedFromSolidWorks()
         {
-            // If use detached app domain...
-            if (AppDomainBoundary.UseDetachedAppDomain)
-                // Get boundary to re-call us from other app domain
-                AppDomainBoundary.DisconnectedFromSolidWorks();
-            else
+            AddInIntegration.OnDisconnectedFromSolidWorks();
+
+            // Inform plug-ins
+            PlugIns.ForEach(plugin =>
             {
-                AddInIntegration.OnDisconnectedFromSolidWorks();
+                // Log it
+                Logger?.LogDebugSource($"Firing DisconnectedFromSolidWorks event for plugin `{plugin.AddInTitle}`...");
 
-                // Inform plug-ins
-                PlugIns.ForEach(plugin =>
-                {
-                    // Log it
-                    Logger?.LogDebugSource($"Firing DisconnectedFromSolidWorks event for plugin `{plugin.AddInTitle}`...");
-
-                    plugin.DisconnectedFromSolidWorks();
-                });
-            }
+                plugin.DisconnectedFromSolidWorks();
+            });
         }
 
         #endregion
@@ -158,27 +123,20 @@ namespace CADBooster.SolidDna
         /// <typeparam name="T">The class that implements the <see cref="SolidPlugIn"/></typeparam>
         public static void AddPlugIn<T>()
         {
-            // If use detached app domain...
-            if (AppDomainBoundary.UseDetachedAppDomain)
-                // Get boundary to re-call us from other app domain
-                AppDomainBoundary.AddPlugIn<T>();
-            else
+            // Get the full path to the assembly
+            var fullPath = typeof(T).Assembly.CodeBase.Replace(@"file:\", "").Replace(@"file:///", "");
+
+            // Create list if one doesn't exist
+            if (!PlugInDetails.ContainsKey(fullPath))
+                PlugInDetails[fullPath] = new List<PlugInDetails>();
+
+            // Add it
+            PlugInDetails[fullPath].Add(new PlugInDetails
             {
-                // Get the full path to the assembly
-                var fullPath = typeof(T).Assembly.CodeBase.Replace(@"file:\", "").Replace(@"file:///", "");
-
-                // Create list if one doesn't exist
-                if (!PlugInDetails.ContainsKey(fullPath))
-                    PlugInDetails[fullPath] = new List<PlugInDetails>();
-
-                // Add it
-                PlugInDetails[fullPath].Add(new PlugInDetails
-                {
-                    FullPath = fullPath,
-                    AssemblyFullName = AssemblyName.GetAssemblyName(fullPath).FullName,
-                    TypeFullName = typeof(T).FullName,
-                });
-            }
+                FullPath = fullPath,
+                AssemblyFullName = AssemblyName.GetAssemblyName(fullPath).FullName,
+                TypeFullName = typeof(T).FullName,
+            });
         }
 
         /// <summary>
@@ -187,27 +145,20 @@ namespace CADBooster.SolidDna
         /// <param name="fullPath">The absolute path to the plug-in dll</param>
         public static void AddPlugIn(string fullPath)
         {
-            // If use detached app domain...
-            if (AppDomainBoundary.UseDetachedAppDomain)
-                // Get boundary to re-call us from other app domain
-                AppDomainBoundary.AddPlugIn(fullPath);
-            else
-            {
-                // Don't auto discover plug-ins if we added manually
-                AutoDiscoverPlugins = false;
+            // Don't auto discover plug-ins if we added manually
+            AutoDiscoverPlugins = false;
 
-                // Create list if one doesn't exist
-                if (!PlugInDetails.ContainsKey(fullPath))
-                    PlugInDetails[fullPath] = new List<PlugInDetails>();
+            // Create list if one doesn't exist
+            if (!PlugInDetails.ContainsKey(fullPath))
+                PlugInDetails[fullPath] = new List<PlugInDetails>();
 
-                List<PlugInDetails> plugins;
+            List<PlugInDetails> plugins;
 
-                plugins = GetPlugInDetails(fullPath);
+            plugins = GetPlugInDetails(fullPath);
 
-                // Add any found plug-ins
-                if (plugins?.Count > 0)
-                    PlugInDetails[fullPath].AddRange(plugins);
-            }
+            // Add any found plug-ins
+            if (plugins?.Count > 0)
+                PlugInDetails[fullPath].AddRange(plugins);
         }
 
         #endregion
@@ -220,24 +171,17 @@ namespace CADBooster.SolidDna
         /// <param name="name">The parameter passed into the generic callback</param>
         public static void OnCallback(string name)
         {
-            // If use detached app domain...
-            if (AppDomainBoundary.UseDetachedAppDomain)
-                // Get boundary to re-call us from other app domain
-                AppDomainBoundary.OnCallback(name);
-            else
+            try
             {
-                try
-                {
-                    // Inform listeners
-                    CallbackFired(name);
-                }
-                catch (Exception ex)
-                {
-                    Debugger.Break();
+                // Inform listeners
+                CallbackFired(name);
+            }
+            catch (Exception ex)
+            {
+                Debugger.Break();
 
-                    // Log it
-                    Logger?.LogCriticalSource($"OnCallback failed. {ex.GetErrorMessage()}");
-                }
+                // Log it
+                Logger?.LogCriticalSource($"OnCallback failed. {ex.GetErrorMessage()}");
             }
         }
 
@@ -260,13 +204,6 @@ namespace CADBooster.SolidDna
             {
                 // Log it
                 Logger?.LogDebugSource($"Loading all PlugIns...");
-
-                if (AppDomainBoundary.UseDetachedAppDomain)
-                {
-                    // Invalid combination... cannot load all from cross domain
-                    // (we don't create the PlugInDetails class for each item
-                    Debugger.Break();
-                }
 
                 // Clear old list
                 PlugInDetails = new Dictionary<string, List<PlugInDetails>>();
@@ -295,38 +232,15 @@ namespace CADBooster.SolidDna
                     {
                         try
                         {
-                            // If we are called in the main domain, cross-load
-                            if (AppDomainBoundary.UseDetachedAppDomain)
+                            // Try and find the SolidPlugIn implementation...
+                            GetPlugIns(path.FullPath, (plugin) =>
                             {
                                 // Log it
-                                Logger?.LogDebugSource($"Cross-domain loading PlugIn {path.AssemblyFullName}...");
+                                Logger?.LogDebugSource($"Found plugin {plugin.AddInTitle} in {path}");
 
-                                // Create instance of the plug-in via cross-domain and cast back
-                                var plugin = (dynamic)AppDomainBoundary.AppDomain.CreateInstanceAndUnwrap(
-                                                        path.AssemblyFullName,
-                                                        path.TypeFullName);
-
-                                // If we got it...
-                                if (plugin != null)
-                                    // Add it to the list
-                                    assemblies.Add(plugin);
-                                // Otherwise...
-                                else
-                                    // Log error
-                                    Logger?.LogErrorSource($"Failed to create instance of PlugIn {path.AssemblyFullName}");
-                            }
-                            else
-                            {
-                                // Try and find the SolidPlugIn implementation...
-                                GetPlugIns(path.FullPath, (plugin) =>
-                                {
-                                    // Log it
-                                    Logger?.LogDebugSource($"Found plugin {plugin.AddInTitle} in {path}");
-
-                                    // Add it to the list
-                                    assemblies.Add(plugin);
-                                });
-                            }
+                                // Add it to the list
+                                assemblies.Add(plugin);
+                            });
                         }
                         catch (Exception ex)
                         {
@@ -409,67 +323,58 @@ namespace CADBooster.SolidDna
         /// <param name="addinPath">The path to the add-in that is calling this setup (typically acquired using GetType().Assembly.Location)</param>
         public static void ConfigurePlugIns(string addinPath)
         {
-            // If use detached app domain...
-            if (AppDomainBoundary.UseDetachedAppDomain)
+            // This is usually run for the ComRegister function
+
+            // *********************************************************************************
+            //
+            // WARNING: 
+            // 
+            //   If SolidWorks is loading our add-ins and we have multiple that use SolidDna
+            //   it loads and makes use of the existing CADBooster.SolidDna.dll file from
+            //   the first add-in loaded and shares it for all future add-ins
+            //
+            //   This results in any static instances being shared and only one version 
+            //   of SolidDna being usable on an individual SolidWorks instance 
+            //
+            //   I am not sure of the reason for this but I feel it is a bug in SolidWorks
+            //   as changing the GUID of the CADBooster.SolidDna.dll assembly and its 
+            //   Assembly and File versions doesn't change what gets loaded by SolidWorks
+            //
+            //   Perhaps when we make this a NuGet package the way it references may
+            //   make it work. Until then the only thing to keep in mind is any
+            //   static values inside the CADBooster.SolidDna class could be shared between
+            //   add-ins so things like PlugIns list will come in here initially at this 
+            //   point with the last PlugIns list from the previous add-in. This is not an
+            //   issue here as we override it straight away before making use of it,
+            //   but it is something to bare in mind until we find a better solution
+            //          
+            //
+            // *********************************************************************************
+
+            // Load all plug-in's at this stage for faster lookup
+            PlugIns = SolidDnaPlugIns(addinPath);
+
+            // Log it
+            Logger?.LogDebugSource($"{PlugIns.Count} plug-ins found");
+
+            // Find first plug-in in the list and use that as the title and description (for COM register)
+            var firstPlugInWithTitle = PlugIns.FirstOrDefault(f => !string.IsNullOrEmpty(f.AddInTitle));
+
+            // If we have a title...
+            if (firstPlugInWithTitle != null)
             {
-                // Get boundary to re-call us from other app domain
-                AppDomainBoundary.ConfigurePlugIns(addinPath);
-            }
-            else
-            {
-                // This is usually run for the ComRegister function
-
-                // *********************************************************************************
-                //
-                // WARNING: 
-                // 
-                //   If SolidWorks is loading our add-ins and we have multiple that use SolidDna
-                //   it loads and makes use of the existing CADBooster.SolidDna.dll file from
-                //   the first add-in loaded and shares it for all future add-ins
-                //
-                //   This results in any static instances being shared and only one version 
-                //   of SolidDna being usable on an individual SolidWorks instance 
-                //
-                //   I am not sure of the reason for this but I feel it is a bug in SolidWorks
-                //   as changing the GUID of the CADBooster.SolidDna.dll assembly and its 
-                //   Assembly and File versions doesn't change what gets loaded by SolidWorks
-                //
-                //   Perhaps when we make this a NuGet package the way it references may
-                //   make it work. Until then the only thing to keep in mind is any
-                //   static values inside the CADBooster.SolidDna class could be shared between
-                //   add-ins so things like PlugIns list will come in here initially at this 
-                //   point with the last PlugIns list from the previous add-in. This is not an
-                //   issue here as we override it straight away before making use of it,
-                //   but it is something to bare in mind until we find a better solution
-                //          
-                //
-                // *********************************************************************************
-
-                // Load all plug-in's at this stage for faster lookup
-                PlugIns = SolidDnaPlugIns(addinPath);
-
                 // Log it
-                Logger?.LogDebugSource($"{PlugIns.Count} plug-ins found");
+                Logger?.LogDebugSource($"Setting Add-In Title:       {firstPlugInWithTitle.AddInTitle}");
+                Logger?.LogDebugSource($"Setting Add-In Description: {firstPlugInWithTitle.AddInDescription}");
 
-                // Find first plug-in in the list and use that as the title and description (for COM register)
-                var firstPlugInWithTitle = PlugIns.FirstOrDefault(f => !string.IsNullOrEmpty(f.AddInTitle));
-
-                // If we have a title...
-                if (firstPlugInWithTitle != null)
-                {
-                    // Log it
-                    Logger?.LogDebugSource($"Setting Add-In Title:       {firstPlugInWithTitle.AddInTitle}");
-                    Logger?.LogDebugSource($"Setting Add-In Description: {firstPlugInWithTitle.AddInDescription}");
-
-                    // Set title and description details
-                    AddInIntegration.SolidWorksAddInTitle = firstPlugInWithTitle.AddInTitle;
-                    AddInIntegration.SolidWorksAddInDescription = firstPlugInWithTitle.AddInDescription;
-                }
-                // Otherwise
-                else
-                    // Log it
-                    Logger?.LogDebugSource($"No PlugIn's found with a title.");
+                // Set title and description details
+                AddInIntegration.SolidWorksAddInTitle = firstPlugInWithTitle.AddInTitle;
+                AddInIntegration.SolidWorksAddInDescription = firstPlugInWithTitle.AddInDescription;
             }
+            // Otherwise
+            else
+                // Log it
+                Logger?.LogDebugSource($"No PlugIn's found with a title.");
         }
 
         #endregion

@@ -56,9 +56,6 @@ namespace CADBooster.SolidDna
         /// </summary>
         public SolidPlugIn() : base()
         {
-            // Add any references from the parent plug-in project
-            AppDomainBoundary.AddReferenceAssemblies<T>();
-
             // Disable discovering plug-in and make it quicker by auto-adding it
             PlugInIntegration.AutoDiscoverPlugins = false;
 

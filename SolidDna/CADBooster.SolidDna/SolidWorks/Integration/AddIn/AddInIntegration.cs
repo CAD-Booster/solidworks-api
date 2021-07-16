@@ -59,12 +59,6 @@ namespace CADBooster.SolidDna
         /// </summary>
         public static SolidWorksApplication SolidWorks { get; set; }
 
-        /// <summary>
-        /// If true, loads the plug-ins in their own app-domain
-        /// NOTE: Must be set before connecting to SolidWorks
-        /// </summary>
-        public bool DetachedAppDomain { get; set; }
-
         #endregion
 
         #region Public Events
@@ -111,8 +105,7 @@ namespace CADBooster.SolidDna
         public abstract void ApplicationStartup();
 
         /// <summary>
-        /// Run immediately when <see cref="ConnectToSW(object, int)"/> is called
-        /// to do any pre-setup such as <see cref="AppDomainBoundary.UseDetachedAppDomain"/>
+        /// Run immediately when <see cref="ConnectToSW(object, int)"/> is called to do any pre-setup.
         /// </summary>
         public abstract void PreConnectToSolidWorks();
 
@@ -206,10 +199,8 @@ namespace CADBooster.SolidDna
                 // Log it
                 Logger?.LogDebugSource($"Firing PreLoadPlugIns...");
 
-                // If this is the first load, or we are not loading add-ins 
-                // into this domain they need loading every time as they were
-                // fully unloaded on disconnect
-                if (!mLoaded || AppDomainBoundary.UseDetachedAppDomain)
+                // If this is the first load
+                if (!mLoaded)
                 {
                     // Any pre-load steps
                     PreLoadPlugIns();
@@ -275,14 +266,8 @@ namespace CADBooster.SolidDna
             // Log it
             Logger?.LogDebugSource($"Tearing down...");
 
-            // Clean up plug-in app domain
-            PlugInIntegration.Teardown();
-
             // Cleanup ourselves
             TearDown();
-
-            // Unload our domain
-            AppDomainBoundary.Unload();
 
             // Return ok
             return true;

@@ -119,13 +119,6 @@ namespace CADBooster.SolidDna
             // Store cookie Id
             mSwCookie = cookie;
 
-            //
-            //   NOTE: As we are in our own AppDomain, the callback is registered in the main SolidWorks AppDomain
-            //         We then pass that into our domain
-            //
-            // Setup callback info
-            // var ok = BaseObject.SetAddinCallbackInfo2(0, this, cookie);
-
             // Hook into main events
             BaseObject.ActiveModelDocChangeNotify += ActiveModelChanged;
             BaseObject.FileOpenPreNotify += FileOpenPreNotify;

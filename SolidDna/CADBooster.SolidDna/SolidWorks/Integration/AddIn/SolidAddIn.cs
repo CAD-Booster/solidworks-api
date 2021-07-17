@@ -207,7 +207,7 @@ namespace CADBooster.SolidDna
                 Logger?.LogDebugSource($"PlugInIntegration Setup...");
 
                 // Setup plug-in application domain
-                PlugInIntegration.Setup(assemblyPath, ((SldWorks)thisSw).RevisionNumber(), cookie);
+                PlugInIntegration.Setup(((SldWorks)thisSw).RevisionNumber(), cookie);
 
                 // Log it
                 Logger?.LogDebugSource($"Firing PreLoadPlugIns...");

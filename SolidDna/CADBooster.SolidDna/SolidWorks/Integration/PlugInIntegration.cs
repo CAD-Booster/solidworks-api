@@ -53,15 +53,13 @@ namespace CADBooster.SolidDna
         /// <summary>
         /// Must be called to setup the PlugInIntegration
         /// </summary>
-        /// <param name="addinPath">The path to the add-in that is calling this setup (typically acquired using GetType().Assembly.Location)</param>
         /// <param name="cookie">The cookie Id of the SolidWorks instance</param>
         /// <param name="version">The version of the currently connected SolidWorks instance</param>
-        public void Setup(string addinPath, string version, int cookie)
+        public void Setup(string version, int cookie)
         {
             // Log it
             Logger?.LogDebugSource($"PlugIn Setup...");
 
-            
             // Store a reference to the current SolidWorks instance as a SolidDNA class.
             AddInIntegration.ConnectToActiveSolidWorks(version, cookie);
         }
@@ -128,26 +126,6 @@ namespace CADBooster.SolidDna
                 AssemblyFullName = AssemblyName.GetAssemblyName(fullPath).FullName,
                 TypeFullName = typeof(T).FullName,
             });
-        }
-
-        /// <summary>
-        /// Adds a plug-in based on its <see cref="SolidPlugIn"/> implementation
-        /// </summary>
-        /// <param name="fullPath">The absolute path to the plug-in dll</param>
-        public void AddPlugIn(string fullPath)
-        {
-            // Don't auto discover plug-ins if we added manually
-            AutoDiscoverPlugins = false;
-
-            // Create list if one doesn't exist
-            if (!PlugInDetails.ContainsKey(fullPath))
-                PlugInDetails[fullPath] = new List<PlugInDetails>();
-
-            var plugins = GetPlugInDetails(fullPath);
-
-            // Add any found plug-ins
-            if (plugins?.Count > 0)
-                PlugInDetails[fullPath].AddRange(plugins);
         }
 
         #endregion
@@ -288,26 +266,6 @@ namespace CADBooster.SolidDna
                     onFound(plugIn);
                 }
             });
-        }
-
-        /// <summary>
-        /// Loads the assembly, finds all <see cref="SolidPlugIn"/> implementations and 
-        /// creates a list of <see cref="PlugInDetails"/> for them
-        /// </summary>
-        /// <param name="fullPath">The assembly full path to load</param>
-        /// <returns></returns>
-        public List<PlugInDetails> GetPlugInDetails(string fullPath)
-        {
-            var list = new List<PlugInDetails>();
-
-            GetPlugIns(fullPath, (plugin) => list.Add(new PlugInDetails
-            {
-                AssemblyFullName = plugin.GetType().AssemblyBaseNormalized(),
-                FullPath = fullPath,
-                TypeFullName = plugin.GetType().FullName
-            }));
-
-            return list;
         }
 
         /// <summary>

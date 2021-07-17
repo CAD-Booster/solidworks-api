@@ -69,9 +69,6 @@
                 
                 // Once we have our parent add-in, we can call these methods.
 
-                // Add any references from the parent plug-in project
-                ParentAddIn.AppDomainBoundary.AddReferenceAssemblies<T>();
-
                 // Disable discovering plug-in and make it quicker by auto-adding it
                 ParentAddIn.PlugInIntegration.AutoDiscoverPlugins = false;
 

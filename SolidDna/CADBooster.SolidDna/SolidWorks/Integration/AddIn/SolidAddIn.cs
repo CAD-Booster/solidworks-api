@@ -1,5 +1,4 @@
 ﻿using Dna;
-using Microsoft.Extensions.DependencyInjection;
 using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swpublished;
 using System;
@@ -27,13 +26,6 @@ namespace CADBooster.SolidDna
         #endregion
 
         #region Public Properties
-
-        /// <summary>
-        /// Helper class used to bridge the gap between app domains.
-        /// Not sure if we still need this now that we removed the ability to run
-        /// each add-in in their own appdomain.
-        /// </summary>
-        public AppDomainBoundary AppDomainBoundary { get; private set; } = new AppDomainBoundary();
 
         /// <summary>
         /// Provides functions related to SolidDna plug-ins
@@ -101,7 +93,6 @@ namespace CADBooster.SolidDna
         /// </summary>
         public SolidAddIn()
         {
-            AppDomainBoundary.ParentAddIn = this;
             PlugInIntegration.ParentAddIn = this;
         }
 
@@ -130,23 +121,6 @@ namespace CADBooster.SolidDna
         /// <returns></returns>
         public abstract void PreLoadPlugIns();
 
-        /// <summary>
-        /// The method to implement and flag with <see cref="ConfigureServiceAttribute"/>
-        /// and a custom name if you want this method to be called during IoC build
-        /// </summary>
-        /// <param name="construction">The IoC framework construction</param>
-        [ConfigureService]
-        public virtual void ConfigureServices(FrameworkConstruction construction)
-        {
-            // Add reference to the add-in integration
-            // Which can then be fetched anywhere with
-            // IoC.AddIn
-            construction.Services.AddSingleton(this);
-
-            // Add localization manager
-            Framework.Construction.AddLocalizationManager();
-        }
-
         #endregion
 
         #region SolidWorks Add-in Callbacks
@@ -173,16 +147,14 @@ namespace CADBooster.SolidDna
         {
             try
             {
+                // Set up the basic services like localization. Skips when another add-in has already done this.
+                IoC.SetUpForFirstAddIn();
+
                 // Add this add-in to the list of currently active add-ins.
                 AddInIntegration.AddAddIn(this);
 
                 // Fire event
                 PreConnectToSolidWorks();
-
-                // Setup application (allowing for AppDomain boundary setup)
-                AppDomainBoundary.Setup(this.AssemblyFilePath(),
-                    // The type of this abstract class will be the class implementing it
-                    GetType().Assembly.Location);
 
                 // Log it
                 Logger?.LogTraceSource($"Fired PreConnectToSolidWorks...");
@@ -282,9 +254,6 @@ namespace CADBooster.SolidDna
 
             // Log it
             Logger?.LogDebugSource($"Tearing down...");
-
-            // Unload our domain
-            AppDomainBoundary = null;
 
             // Remove it from the list and tear down SOLIDWORKS when it was the last add-in.
             AddInIntegration.RemoveAddInAndTearDownSolidWorksWhenLast(this);

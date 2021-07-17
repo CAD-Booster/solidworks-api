@@ -1,7 +1,5 @@
 ﻿using Dna;
-using Microsoft.Extensions.Configuration;
 using System;
-using System.IO;
 using static Dna.FrameworkDI;
 
 namespace CADBooster.SolidDna
@@ -17,11 +15,6 @@ namespace CADBooster.SolidDna
         /// Access the <see cref="ILocalizationManager"/>
         /// </summary>
         public static ILocalizationManager Localization => Get<ILocalizationManager>();
-
-        /// <summary>
-        /// The instance of the <see cref="SolidAddIn"/> class that is used for this add-in
-        /// </summary>
-        public static SolidAddIn SolidAddIn => Get<SolidAddIn>();
 
         #endregion
 
@@ -56,24 +49,22 @@ namespace CADBooster.SolidDna
         /// </summary>
         /// <param name="addinPath">The full path to the add-in dll file</param>
         /// <param name="configureServices">Provides a callback to inject any services into the Dna.Framework DI system</param>
-        public static void Setup(string addinPath, Action<FrameworkConstruction> configureServices = null)
+        public static void SetUpForFirstAddIn()
         {
-            // Create default construction
-            Framework.Construct(new DefaultFrameworkConstruction(configure =>
-            {
-                // If the add-in path is not null
-                if (!string.IsNullOrEmpty(addinPath))
-                    // Add configuration file for the name of this file
-                    // For example if it is MyAddin.dll then the configuration file
-                    // will be in the same folder called MyAddin.appsettings.json"
-                    configure.AddJsonFile(Path.ChangeExtension(addinPath, "appsettings.json"), optional: true);
-            }));
+            // If another add-in is already loaded, IoC is already set up so we can skip it.
+            if (Framework.Construction != null) return;
 
-            // Invoke the callback for adding custom services
-            configureServices?.Invoke(Framework.Construction);
+            // Create default construction
+            Framework.Construct(new DefaultFrameworkConstruction());
+
+            // Add localization manager
+            Framework.Construction.AddLocalizationManager();
 
             // Build DI
             Framework.Construction.Build();
+
+            // Log details
+            Logger?.LogDebugSource($"DI Setup complete");
         }
 
         #endregion 

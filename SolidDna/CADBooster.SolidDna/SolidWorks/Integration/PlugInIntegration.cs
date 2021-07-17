@@ -26,7 +26,7 @@ namespace CADBooster.SolidDna
         /// A list of all plug-ins that have been added to be loaded. 
         /// The key is the absolute file path, and the Type is the <see cref="SolidPlugIn"/> implementation type
         /// </summary>
-        public Dictionary<string, List<PlugInDetails>> PlugInDetails { get; private set; } = new Dictionary<string, List<PlugInDetails>>();
+        public Dictionary<string, List<PlugInDetails>> PlugInDetails { get; } = new Dictionary<string, List<PlugInDetails>>();
 
         /// <summary>
         /// If true, searches in the directory of the application (where CADBooster.SolidDna.dll is) for any dll that
@@ -194,9 +194,6 @@ namespace CADBooster.SolidDna
             {
                 // Log it
                 Logger?.LogDebugSource($"Loading all PlugIns...");
-
-                // Clear old list
-                PlugInDetails = new Dictionary<string, List<PlugInDetails>>();
 
                 // Add new based on if found
                 foreach (var path in Directory.GetFiles(addinPath, "*.dll", SearchOption.TopDirectoryOnly))

@@ -1,5 +1,4 @@
 ﻿using Dna;
-using SolidWorks.Interop.sldworks;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -133,7 +132,7 @@ namespace CADBooster.SolidDna
         #region SolidWorks Callbacks
 
         /// <summary>
-        /// Called by the SolidWorks domain (AddInIntegration) when a callback is fired
+        /// Called by the SolidWorks domain (<see cref="SolidAddIn"/>) when a callback is fired
         /// </summary>
         /// <param name="name">The parameter passed into the generic callback</param>
         public void OnCallback(string name)
@@ -162,7 +161,7 @@ namespace CADBooster.SolidDna
         /// <param name="addinPath">The path to the add-in that is calling this setup (typically acquired using GetType().Assembly.Location)</param>
         /// <param name="solidAddIn"></param>
         /// <returns></returns>
-        public List<SolidPlugIn> SolidDnaPlugIns(string addinPath)
+        public List<SolidPlugIn> GetSolidPlugIns(string addinPath)
         {
             // Create new empty list
             var assemblies = new List<SolidPlugIn>();
@@ -288,23 +287,18 @@ namespace CADBooster.SolidDna
             //   This results in any static instances being shared and only one version 
             //   of SolidDna being usable on an individual SolidWorks instance 
             //
-            //   I am not sure of the reason for this but I feel it is a bug in SolidWorks
-            //   as changing the GUID of the CADBooster.SolidDna.dll assembly and its 
-            //   Assembly and File versions doesn't change what gets loaded by SolidWorks
+            //   This is default .NET behavior because .NET reuses DLLs with the same filename and
+            //   ignores the version. Only when the DLL is strong-signed will it take the
+            //   DLL version into account.
             //
-            //   Perhaps when we make this a NuGet package the way it references may
-            //   make it work. Until then the only thing to keep in mind is any
-            //   static values inside the CADBooster.SolidDna class could be shared between
-            //   add-ins so things like PlugIns list will come in here initially at this 
-            //   point with the last PlugIns list from the previous add-in. This is not an
-            //   issue here as we override it straight away before making use of it,
-            //   but it is something to bare in mind until we find a better solution
+            //   Keep in mind that any static values inside the CADBooster.SolidDna class
+            //   are be shared between add-ins.
             //          
             //
             // *********************************************************************************
 
-            // Load all plug-in's at this stage for faster lookup
-            solidAddIn.PlugIns = SolidDnaPlugIns(addinPath);
+            // Load all plug-ins at this stage for faster lookup
+            solidAddIn.PlugIns = GetSolidPlugIns(addinPath);
 
             // Log it
             Logger?.LogDebugSource($"{solidAddIn.PlugIns.Count} plug-ins found");

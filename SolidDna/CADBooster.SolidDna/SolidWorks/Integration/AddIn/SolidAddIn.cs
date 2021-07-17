@@ -26,21 +26,25 @@ namespace CADBooster.SolidDna
 
         #endregion
 
-        #region Public members
+        #region Public Properties
+
+        /// <summary>
+        /// Helper class used to bridge the gap between app domains.
+        /// Not sure if we still need this now that we removed the ability to run
+        /// each add-in in their own appdomain.
+        /// </summary>
+        public AppDomainBoundary AppDomainBoundary { get; private set; } = new AppDomainBoundary();
+
+        /// <summary>
+        /// Provides functions related to SolidDna plug-ins
+        /// </summary>
+        public PlugInIntegration PlugInIntegration { get; private set; } = new PlugInIntegration();
 
         /// <summary>
         /// A list of available plug-ins loaded once SolidWorks has connected
         /// </summary>
-        public List<SolidPlugIn> PlugIns = new List<SolidPlugIn>();
+        public List<SolidPlugIn> PlugIns { get; set; } = new List<SolidPlugIn>();
 
-        #endregion
-
-        #region Public Properties
-
-        public AppDomainBoundary AppDomainBoundary { get; private set; } = new AppDomainBoundary();
-        
-        public PlugInIntegration PlugInIntegration { get; private set; } = new PlugInIntegration();
-        
         /// <summary>
         /// The title displayed for this SolidWorks Add-in
         /// </summary>

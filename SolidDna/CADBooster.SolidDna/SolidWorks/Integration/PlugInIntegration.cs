@@ -1,5 +1,4 @@
 ﻿using Dna;
-using SolidWorks.Interop.sldworks;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -13,29 +12,29 @@ namespace CADBooster.SolidDna
     /// <summary>
     /// Provides functions related to SolidDna plug-ins
     /// </summary>
-    public static class PlugInIntegration
+    public class PlugInIntegration
     {
         #region Public Properties
 
         /// <summary>
-        /// A list of available plug-ins loaded once SolidWorks has connected
+        /// The add-in that owns this plugin integration.
         /// </summary>
-        public static List<SolidPlugIn> PlugIns = new List<SolidPlugIn>();
-
+        public SolidAddIn ParentAddIn { get; set; }
+        
         /// <summary>
         /// A list of all plug-ins that have been added to be loaded. 
         /// The key is the absolute file path, and the Type is the <see cref="SolidPlugIn"/> implementation type
         /// </summary>
-        public static Dictionary<string, List<PlugInDetails>> PlugInDetails { get; private set; } = new Dictionary<string, List<PlugInDetails>>();
+        public Dictionary<string, List<PlugInDetails>> PlugInDetails { get; } = new Dictionary<string, List<PlugInDetails>>();
 
         /// <summary>
         /// If true, searches in the directory of the application (where CADBooster.SolidDna.dll is) for any dll that
         /// contains any <see cref="SolidPlugIn"/> implementations and adds them to the <see cref="PlugInDetails"/>
         /// during the <see cref="ConfigurePlugIns(string)"/> stage.
-        /// If false, the user should during the <see cref="AddInIntegration.PreLoadPlugIns"/> method, add
+        /// If false, the user should during the <see cref="SolidAddIn.PreLoadPlugIns"/> method, add
         /// any specific implementations of the <see cref="SolidPlugIn"/> to <see cref="PlugInIntegration.PlugInDetails"/> list
         /// </summary>
-        public static bool AutoDiscoverPlugins { get; set; } = true;
+        public bool AutoDiscoverPlugins { get; set; } = true;
 
         #endregion
 
@@ -53,26 +52,15 @@ namespace CADBooster.SolidDna
         /// <summary>
         /// Must be called to setup the PlugInIntegration
         /// </summary>
-        /// <param name="addinPath">The path to the add-in that is calling this setup (typically acquired using GetType().Assembly.Location)</param>
         /// <param name="cookie">The cookie Id of the SolidWorks instance</param>
         /// <param name="version">The version of the currently connected SolidWorks instance</param>
-        public static void Setup(string addinPath, string version, int cookie)
+        public void Setup(string version, int cookie)
         {
             // Log it
             Logger?.LogDebugSource($"PlugIn Setup...");
 
-            // Get the version number (such as 25 for 2016)
-            var postFix = "";
-            if (version != null && version.Contains("."))
-                postFix = "." + version.Substring(0, version.IndexOf('.'));
-
-            // Store a reference to the current SolidWorks instance
-            // Initialize SolidWorks (SolidDNA class)
-            AddInIntegration.SolidWorks = new SolidWorksApplication(
-                (SldWorks)Activator.CreateInstance(Type.GetTypeFromProgID("SldWorks.Application" + postFix)), cookie);
-
-            // Log it
-            Logger?.LogDebugSource($"SolidWorks Instance Created? {AddInIntegration.SolidWorks != null}");
+            // Store a reference to the current SolidWorks instance as a SolidDNA class.
+            AddInIntegration.ConnectToActiveSolidWorks(version, cookie);
         }
 
         #endregion
@@ -82,12 +70,12 @@ namespace CADBooster.SolidDna
         /// <summary>
         /// Called when the add-in has connected to SolidWorks
         /// </summary>
-        public static void ConnectedToSolidWorks()
+        public void ConnectedToSolidWorks(SolidAddIn solidAddIn)
         {
-            AddInIntegration.OnConnectedToSolidWorks();
+            solidAddIn.OnConnectedToSolidWorks();
 
             // Inform plug-ins
-            PlugIns.ForEach(plugin =>
+            solidAddIn.PlugIns.ForEach(plugin =>
             {
                 // Log it
                 Logger?.LogDebugSource($"Firing ConnectedToSolidWorks event for plugin `{plugin.AddInTitle}`...");
@@ -99,12 +87,12 @@ namespace CADBooster.SolidDna
         /// <summary>
         /// Called when the add-in has disconnected from SolidWorks
         /// </summary>
-        public static void DisconnectedFromSolidWorks()
+        public void DisconnectedFromSolidWorks(SolidAddIn solidAddIn)
         {
-            AddInIntegration.OnDisconnectedFromSolidWorks();
+            solidAddIn.OnDisconnectedFromSolidWorks();
 
             // Inform plug-ins
-            PlugIns.ForEach(plugin =>
+            solidAddIn.PlugIns.ForEach(plugin =>
             {
                 // Log it
                 Logger?.LogDebugSource($"Firing DisconnectedFromSolidWorks event for plugin `{plugin.AddInTitle}`...");
@@ -121,7 +109,7 @@ namespace CADBooster.SolidDna
         /// Adds a plug-in based on its <see cref="SolidPlugIn"/> implementation
         /// </summary>
         /// <typeparam name="T">The class that implements the <see cref="SolidPlugIn"/></typeparam>
-        public static void AddPlugIn<T>()
+        public void AddPlugIn<T>()
         {
             // Get the full path to the assembly
             var fullPath = typeof(T).Assembly.CodeBase.Replace(@"file:\", "").Replace(@"file:///", "");
@@ -139,37 +127,15 @@ namespace CADBooster.SolidDna
             });
         }
 
-        /// <summary>
-        /// Adds a plug-in based on its <see cref="SolidPlugIn"/> implementation
-        /// </summary>
-        /// <param name="fullPath">The absolute path to the plug-in dll</param>
-        public static void AddPlugIn(string fullPath)
-        {
-            // Don't auto discover plug-ins if we added manually
-            AutoDiscoverPlugins = false;
-
-            // Create list if one doesn't exist
-            if (!PlugInDetails.ContainsKey(fullPath))
-                PlugInDetails[fullPath] = new List<PlugInDetails>();
-
-            List<PlugInDetails> plugins;
-
-            plugins = GetPlugInDetails(fullPath);
-
-            // Add any found plug-ins
-            if (plugins?.Count > 0)
-                PlugInDetails[fullPath].AddRange(plugins);
-        }
-
         #endregion
 
         #region SolidWorks Callbacks
 
         /// <summary>
-        /// Called by the SolidWorks domain (AddInIntegration) when a callback is fired
+        /// Called by the SolidWorks domain (<see cref="SolidAddIn"/>) when a callback is fired
         /// </summary>
         /// <param name="name">The parameter passed into the generic callback</param>
-        public static void OnCallback(string name)
+        public void OnCallback(string name)
         {
             try
             {
@@ -193,8 +159,9 @@ namespace CADBooster.SolidDna
         /// Discovers all SolidDna plug-ins
         /// </summary>
         /// <param name="addinPath">The path to the add-in that is calling this setup (typically acquired using GetType().Assembly.Location)</param>
+        /// <param name="solidAddIn"></param>
         /// <returns></returns>
-        public static List<SolidPlugIn> SolidDnaPlugIns(string addinPath)
+        public List<SolidPlugIn> GetSolidPlugIns(string addinPath)
         {
             // Create new empty list
             var assemblies = new List<SolidPlugIn>();
@@ -204,9 +171,6 @@ namespace CADBooster.SolidDna
             {
                 // Log it
                 Logger?.LogDebugSource($"Loading all PlugIns...");
-
-                // Clear old list
-                PlugInDetails = new Dictionary<string, List<PlugInDetails>>();
 
                 // Add new based on if found
                 foreach (var path in Directory.GetFiles(addinPath, "*.dll", SearchOption.TopDirectoryOnly))
@@ -262,7 +226,7 @@ namespace CADBooster.SolidDna
         /// </summary>
         /// <param name="pluginFullPath">The full path to the plug-in dll to load</param>
         /// <param name="onFound">Called when a <see cref="SolidPlugIn"/> is found</param>
-        public static void GetPlugIns(string pluginFullPath, Action<SolidPlugIn> onFound)
+        public void GetPlugIns(string pluginFullPath, Action<SolidPlugIn> onFound)
         {
             // Load the assembly
             // NOTE: Calling LoadFrom instead of LoadFile will auto-resolve references in that folder
@@ -292,36 +256,23 @@ namespace CADBooster.SolidDna
             types.Where(p => type.IsAssignableFrom(p) && p.IsClass && !p.IsAbstract).ToList().ForEach(p =>
             {
                 // Create SolidDna plugin class instance
-                if (Activator.CreateInstance(p) is SolidPlugIn inter)
-                    onFound(inter);
+                if (Activator.CreateInstance(p) is SolidPlugIn plugIn)
+                {
+                    // Store the add-in that owns this plugin
+                    plugIn.ParentAddIn = ParentAddIn;
+
+                    // Call the action that further sets up the plugin
+                    onFound(plugIn);
+                }
             });
-        }
-
-        /// <summary>
-        /// Loads the assembly, finds all <see cref="SolidPlugIn"/> implementations and 
-        /// creates a list of <see cref="PlugInDetails"/> for them
-        /// </summary>
-        /// <param name="fullPath">The assembly full path to load</param>
-        /// <returns></returns>
-        public static List<PlugInDetails> GetPlugInDetails(string fullPath)
-        {
-            var list = new List<PlugInDetails>();
-
-            GetPlugIns(fullPath, (plugin) => list.Add(new PlugInDetails
-            {
-                AssemblyFullName = plugin.GetType().AssemblyBaseNormalized(),
-                FullPath = fullPath,
-                TypeFullName = plugin.GetType().FullName
-            }));
-
-            return list;
         }
 
         /// <summary>
         /// Runs any initialization code required on plug-ins
         /// </summary>
         /// <param name="addinPath">The path to the add-in that is calling this setup (typically acquired using GetType().Assembly.Location)</param>
-        public static void ConfigurePlugIns(string addinPath)
+        /// <param name="solidAddIn"></param>
+        public void ConfigurePlugIns(string addinPath, SolidAddIn solidAddIn)
         {
             // This is usually run for the ComRegister function
 
@@ -336,29 +287,24 @@ namespace CADBooster.SolidDna
             //   This results in any static instances being shared and only one version 
             //   of SolidDna being usable on an individual SolidWorks instance 
             //
-            //   I am not sure of the reason for this but I feel it is a bug in SolidWorks
-            //   as changing the GUID of the CADBooster.SolidDna.dll assembly and its 
-            //   Assembly and File versions doesn't change what gets loaded by SolidWorks
+            //   This is default .NET behavior because .NET reuses DLLs with the same filename and
+            //   ignores the version. Only when the DLL is strong-signed will it take the
+            //   DLL version into account.
             //
-            //   Perhaps when we make this a NuGet package the way it references may
-            //   make it work. Until then the only thing to keep in mind is any
-            //   static values inside the CADBooster.SolidDna class could be shared between
-            //   add-ins so things like PlugIns list will come in here initially at this 
-            //   point with the last PlugIns list from the previous add-in. This is not an
-            //   issue here as we override it straight away before making use of it,
-            //   but it is something to bare in mind until we find a better solution
+            //   Keep in mind that any static values inside the CADBooster.SolidDna class
+            //   are be shared between add-ins.
             //          
             //
             // *********************************************************************************
 
-            // Load all plug-in's at this stage for faster lookup
-            PlugIns = SolidDnaPlugIns(addinPath);
+            // Load all plug-ins at this stage for faster lookup
+            solidAddIn.PlugIns = GetSolidPlugIns(addinPath);
 
             // Log it
-            Logger?.LogDebugSource($"{PlugIns.Count} plug-ins found");
+            Logger?.LogDebugSource($"{solidAddIn.PlugIns.Count} plug-ins found");
 
             // Find first plug-in in the list and use that as the title and description (for COM register)
-            var firstPlugInWithTitle = PlugIns.FirstOrDefault(f => !string.IsNullOrEmpty(f.AddInTitle));
+            var firstPlugInWithTitle = solidAddIn.PlugIns.FirstOrDefault(f => !string.IsNullOrEmpty(f.AddInTitle));
 
             // If we have a title...
             if (firstPlugInWithTitle != null)
@@ -368,8 +314,8 @@ namespace CADBooster.SolidDna
                 Logger?.LogDebugSource($"Setting Add-In Description: {firstPlugInWithTitle.AddInDescription}");
 
                 // Set title and description details
-                AddInIntegration.SolidWorksAddInTitle = firstPlugInWithTitle.AddInTitle;
-                AddInIntegration.SolidWorksAddInDescription = firstPlugInWithTitle.AddInDescription;
+                solidAddIn.SolidWorksAddInTitle = firstPlugInWithTitle.AddInTitle;
+                solidAddIn.SolidWorksAddInDescription = firstPlugInWithTitle.AddInDescription;
             }
             // Otherwise
             else

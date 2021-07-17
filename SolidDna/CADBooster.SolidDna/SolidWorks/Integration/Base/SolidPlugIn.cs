@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace CADBooster.SolidDna
+﻿namespace CADBooster.SolidDna
 {
     /// <summary>
     /// An base class to implement to become a SolidDna plug-in. 
@@ -22,6 +20,11 @@ namespace CADBooster.SolidDna
         /// </summary>
         /// <returns></returns>
         public abstract string AddInDescription { get; }
+
+        /// <summary>
+        /// The add-in that owns this plugin.
+        /// </summary>
+        public SolidAddIn ParentAddIn { get; set; }
 
         #endregion
 
@@ -49,6 +52,31 @@ namespace CADBooster.SolidDna
     /// </summary>
     public abstract class SolidPlugIn<T> : SolidPlugIn
     {
+        private SolidAddIn mParentAddIn;
+
+        /// <summary>
+        /// The add-in that contains this plugin.
+        /// We override the default add-in property so we can call <see cref="AppDomainBoundary"/> and <see cref="PlugInIntegration"/> methods and include the generic T.
+        /// </summary>
+        public new SolidAddIn ParentAddIn
+        {
+            get => mParentAddIn;
+            set
+            {
+                // If we already have an add-in, do not change it.
+                if (mParentAddIn != null) return;
+                mParentAddIn = value;
+                
+                // Once we have our parent add-in, we can call these methods.
+
+                // Disable discovering plug-in and make it quicker by auto-adding it
+                ParentAddIn.PlugInIntegration.AutoDiscoverPlugins = false;
+
+                // Add this plug-in
+                ParentAddIn.PlugInIntegration.AddPlugIn<T>();
+            }
+        }
+
         #region Constructor
 
         /// <summary>
@@ -56,11 +84,7 @@ namespace CADBooster.SolidDna
         /// </summary>
         public SolidPlugIn() : base()
         {
-            // Disable discovering plug-in and make it quicker by auto-adding it
-            PlugInIntegration.AutoDiscoverPlugins = false;
 
-            // Add this plug-in
-            PlugInIntegration.AddPlugIn<T>();
         }
 
         #endregion

@@ -3,7 +3,7 @@
 namespace CADBooster.SolidDna
 {
     /// <summary>
-    /// The return value for the <see cref="AddInIntegration.IdentifyToSW"/> call to SolidWorks to verify our add-in partner status.
+    /// The return value for the <see cref="SolidAddIn.IdentifyToSW"/> call to SolidWorks to verify our add-in partner status.
     /// From <see cref="swPartnerEntitlementStatus_e"/>.
     /// </summary>
     public enum PartnerAddInKeyStatus

@@ -22,7 +22,7 @@ namespace CADBooster.SolidDna
         /// <summary>
         /// Flag if we have loaded into memory (as ConnectedToSolidWorks can happen multiple times if unloaded/reloaded)
         /// </summary>
-        protected static bool mLoaded;
+        protected bool mLoaded;
 
         #endregion
 

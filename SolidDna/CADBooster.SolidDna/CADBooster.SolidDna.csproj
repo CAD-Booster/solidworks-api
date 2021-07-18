@@ -1,0 +1,102 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>2.0.0.0</Version>
+    <Authors>Luke Malpass, Peter Brinkhuis</Authors>
+    <Company>CAD Booster B.V.</Company>
+    <Description>The new SolidDNA SDK, making the SolidWorks API easier, well behaved and modern</Description>
+    <Copyright>Copyright © 2016-2021</Copyright>
+    <PackageProjectUrl>https://github.com/CAD-Booster/solidworks-api</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/CAD-Booster/solidworks-api</RepositoryUrl>
+    <PackageTags>soliddna solidworks cadbooster angelsix api</PackageTags>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <Product>CADBooster.SolidDna</Product>
+    <PackageId>CADBooster.SolidDna</PackageId>
+    <AssemblyName>CADBooster.SolidDna</AssemblyName>
+    <RootNamespace>CADBooster.SolidDna</RootNamespace>
+    <PackageLicenseFile>license.txt</PackageLicenseFile>
+    <PackageReleaseNotes>Forked from AngelSix.SolidDna.
+Breaking: Made running multiple add-ins at the same time possible.
+Breaking: Added enabling certified partners to display their add-ins as such.
+Added component properties.
+Breaking: Removed ability to run add-ins in their own app domain because it exposed SolidWorks bugs and made multiple add-ins harder.
+Breaking: Removed allowing add-ins to add services to IoC during startup.
+Fixed mass bug.
+Fixed event reattach bug.
+Fixed file exists bug with 3DInterconnect</PackageReleaseNotes>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile></DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Release\net472\CADBooster.SolidDna.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Localization\Strings\Strings-en-US.xml" />
+    <None Include="license.txt">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Localization\Strings\Strings-en-US.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dna.Framework" Version="1.0.7.19" />
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="SolidWorks.Interop.sldworks">
+      <HintPath>..\..\References\2021\SolidWorks.Interop.sldworks.dll</HintPath>
+      <EmbedInteropTypes>false</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="SolidWorks.Interop.sw3dprinter">
+      <HintPath>..\..\References\2021\SolidWorks.Interop.sw3dprinter.dll</HintPath>
+      <EmbedInteropTypes>false</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="SolidWorks.Interop.swcommands">
+      <HintPath>..\..\References\2021\SolidWorks.Interop.swcommands.dll</HintPath>
+      <EmbedInteropTypes>false</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="SolidWorks.Interop.swconst">
+      <HintPath>..\..\References\2021\SolidWorks.Interop.swconst.dll</HintPath>
+      <EmbedInteropTypes>false</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="SolidWorks.Interop.swdimxpert">
+      <HintPath>..\..\References\2021\SolidWorks.Interop.swdimxpert.dll</HintPath>
+      <EmbedInteropTypes>false</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="SolidWorks.Interop.swdocumentmgr">
+      <HintPath>..\..\References\2021\SolidWorks.Interop.swdocumentmgr.dll</HintPath>
+      <EmbedInteropTypes>false</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="SolidWorks.Interop.swmotionstudy">
+      <HintPath>..\..\References\2021\SolidWorks.Interop.swmotionstudy.dll</HintPath>
+      <EmbedInteropTypes>false</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="SolidWorks.Interop.swpublished">
+      <HintPath>..\..\References\2021\SolidWorks.Interop.swpublished.dll</HintPath>
+      <EmbedInteropTypes>false</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="SolidWorks.Interop.SWRoutingLib">
+      <HintPath>..\..\References\2021\SolidWorks.Interop.SWRoutingLib.dll</HintPath>
+      <EmbedInteropTypes>false</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="WindowsBase" />
+    <Reference Include="WindowsFormsIntegration" />
+  </ItemGroup>
+  
+</Project>

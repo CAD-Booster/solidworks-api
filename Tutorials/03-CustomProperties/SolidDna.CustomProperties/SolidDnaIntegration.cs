@@ -1,14 +1,12 @@
-﻿using AngelSix.SolidDna;
-using Dna;
+﻿using CADBooster.SolidDna;
 using System.IO;
-using System.Threading.Tasks;
 
 namespace SolidDna.CustomProperties
 {
     /// <summary>
     /// Register as a SolidWorks Add-in
     /// </summary>
-    public class SolidDnaAddinIntegration : AddInIntegration
+    public class SolidDnaAddinIntegration : SolidAddIn
     {
         /// <summary>
         /// Specific application start-up code
@@ -33,12 +31,7 @@ namespace SolidDna.CustomProperties
             //       Be aware doing so sometimes causes API's to fail
             //       when they try to load dll's
             //
-            // PlugInIntegration.UseDetachedAppDomain = true;
-        }
-
-        public override void ConfigureServices(FrameworkConstruction construction)
-        {
-
+            // AppDomainBoundary.UseDetachedAppDomain = true;
         }
     }
 
@@ -52,7 +45,7 @@ namespace SolidDna.CustomProperties
         /// <summary>
         /// The Taskpane UI for our plug-in
         /// </summary>
-        private TaskpaneIntegration<TaskpaneUserControlHost> mTaskpane;
+        private TaskpaneIntegration<TaskpaneUserControlHost, SolidDnaAddinIntegration> mTaskpane;
 
         #endregion
 
@@ -75,9 +68,9 @@ namespace SolidDna.CustomProperties
         public override void ConnectedToSolidWorks()
         {
             // Create our taskpane
-            mTaskpane = new TaskpaneIntegration<TaskpaneUserControlHost>()
+            mTaskpane = new TaskpaneIntegration<TaskpaneUserControlHost, SolidDnaAddinIntegration>
             {
-                Icon = Path.Combine(this.AssemblyPath(), "logo-small.png"),
+                Icon = Path.Combine(this.AssemblyPath(), "logo-small.bmp"),
                 WpfControl = new CustomPropertiesUI()
             };
 

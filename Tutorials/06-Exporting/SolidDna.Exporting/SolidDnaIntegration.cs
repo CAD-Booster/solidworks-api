@@ -1,19 +1,17 @@
-﻿using Dna;
-using AngelSix.SolidDna;
+﻿using CADBooster.SolidDna;
 using System.Collections.Generic;
-using static AngelSix.SolidDna.SolidWorksEnvironment;
+using static CADBooster.SolidDna.SolidWorksEnvironment;
 
 namespace SolidDna.Exporting
 {
     /// <summary>
     /// Register as a SolidWorks Add-in
     /// </summary>
-    public class SolidDnaAddinIntegration : AddInIntegration
+    public class SolidDnaAddinIntegration : SolidAddIn
     {
         /// <summary>
         /// Specific application start-up code
         /// </summary>
-        /// <param name="solidWorks"></param>
         public override void ApplicationStartup()
         {
 
@@ -25,15 +23,6 @@ namespace SolidDna.Exporting
         }
 
         public override void PreConnectToSolidWorks()
-        {
-            // NOTE: To run in our own AppDomain do the following
-            //       Be aware doing so sometimes causes API's to fail
-            //       when they try to load dll's
-            //
-            // PlugInIntegration.UseDetachedAppDomain = true;
-        }
-
-        public override void ConfigureServices(FrameworkConstruction construction)
         {
 
         }
@@ -63,7 +52,7 @@ namespace SolidDna.Exporting
         public override void ConnectedToSolidWorks()
         {
             // Part commands
-            var partGroup = Application.CommandManager.CreateCommands(
+            var partGroup = Application.CommandManager.CreateCommandGroupAndTabs(
                 title: "Export Part",
                 items: new List<CommandManagerItem>(new[] {
 
@@ -94,12 +83,13 @@ namespace SolidDna.Exporting
                     },
 
                 }),
+                flyoutItems: null,
                 iconListsPath: "icons{0}.png",
                 hint: "Export parts in other formats",
                 tooltip: "Such as DXF, STEP and IGES");
 
             // Assembly commands
-            var assemblyGroup = Application.CommandManager.CreateCommands(
+            var assemblyGroup = Application.CommandManager.CreateCommandGroupAndTabs(
                 title: "Export Assembly",
                 items: new List<CommandManagerItem>(new[] {
 
@@ -117,12 +107,13 @@ namespace SolidDna.Exporting
                     },
 
                 }),
+                flyoutItems: null,
                 iconListsPath: "icons{0}.png",
                 hint: "Export assemblies in other formats",
                 tooltip: "Such as Step");
 
             // Drawing commands
-            var drawingGroup = Application.CommandManager.CreateCommands(
+            var drawingGroup = Application.CommandManager.CreateCommandGroupAndTabs(
                 title: "Export Drawing",
                 items: new List<CommandManagerItem>(new[] {
 
@@ -140,6 +131,7 @@ namespace SolidDna.Exporting
                     },
 
                 }),
+                flyoutItems: null,
                 iconListsPath: "icons{0}.png",
                 hint: "Export drawing to other formats",
                 tooltip: "Such as PDF");

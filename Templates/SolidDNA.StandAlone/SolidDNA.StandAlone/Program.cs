@@ -1,6 +1,6 @@
-﻿using AngelSix.SolidDna;
+﻿using CADBooster.SolidDna;
 using System;
-using static AngelSix.SolidDna.SolidWorksEnvironment;
+using static CADBooster.SolidDna.SolidWorksEnvironment;
 
 namespace SolidDNA.StandAlone
 {
@@ -18,7 +18,7 @@ namespace SolidDNA.StandAlone
     //        and run your code without having to restart SolidWorks.
     //
     //        A bunch of useful example projects available here 
-    //        https://github.com/angelsix/solidworks-api/tree/develop/Tutorials
+    //        https://github.com/cad-booster/solidworks-api/tree/develop/Tutorials
     //
     // 
     //  *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
@@ -30,7 +30,7 @@ namespace SolidDNA.StandAlone
             Console.WriteLine("Connecting to active SolidWorks instance...");
 
             // If we fail to connect to the active SolidWorks intance...
-            if (!AddInIntegration.ConnectToActiveSolidWorks())
+            if (!AddInIntegration.ConnectToActiveSolidWorksForStandAlone())
             {
                 // Tell the user it failed and exit
                 Console.WriteLine("Unable to connect to active SolidWorks instance");

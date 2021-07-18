@@ -98,8 +98,8 @@
     <Content Include="References\SolidWorks.Interop.SWRoutingLib.dll" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="AngelSix.SolidDna">
-      <Version>1.0.1.9</Version>
+    <PackageReference Include="CADBooster.SolidDna">
+      <Version>2.0.0</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -1,4 +1,4 @@
-﻿using AngelSix.SolidDna;
+﻿using CADBooster.SolidDna;
 using System.IO;
 
 namespace SolidDna.DynamicLoadPlugIn

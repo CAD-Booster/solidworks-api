@@ -1,18 +1,17 @@
-﻿using AngelSix.SolidDna;
+﻿using CADBooster.SolidDna;
 using System.Collections.Generic;
-using static AngelSix.SolidDna.SolidWorksEnvironment;
+using static CADBooster.SolidDna.SolidWorksEnvironment;
 
 namespace SolidDna.Exporting
 {
     /// <summary>
     /// Register as a SolidWorks Add-in
     /// </summary>
-    public class SolidDnaAddinIntegration : AddInIntegration
+    public class SolidDnaAddinIntegration : SolidAddIn
     {
         /// <summary>
         /// Specific application start-up code
         /// </summary>
-        /// <param name="solidWorks"></param>
         public override void ApplicationStartup()
         {
 
@@ -25,11 +24,7 @@ namespace SolidDna.Exporting
 
         public override void PreConnectToSolidWorks()
         {
-            // NOTE: To run in our own AppDomain do the following
-            //       Be aware doing so sometimes causes API's to fail
-            //       when they try to load dll's
-            //
-            // AppDomainBoundary.UseDetachedAppDomain = true;
+
         }
     }
 

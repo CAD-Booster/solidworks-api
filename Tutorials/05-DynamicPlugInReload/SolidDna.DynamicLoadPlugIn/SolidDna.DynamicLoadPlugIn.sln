@@ -5,9 +5,9 @@ VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SolidDna.DynamicLoadPlugIn", "SolidDna.DynamicLoadPlugIn.csproj", "{73B94EE6-BC16-49B2-824D-4C4E114859AC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AngelSix.SolidDna", "..\..\..\SolidDna\AngelSix.SolidDna\AngelSix.SolidDna.csproj", "{48CE7BA4-1082-4089-9056-657A6A3EEA39}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SolidDna.DynamicLoadPlugIn.Main", "..\SolidDna.DynamicLoadPlugIn.Main\SolidDna.DynamicLoadPlugIn.Main.csproj", "{2E67A063-015F-416A-89FF-785FA3668D8C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CADBooster.SolidDna", "..\..\..\SolidDna\CADBooster.SolidDna\CADBooster.SolidDna.csproj", "{9274EF25-44C2-4D15-A8FB-AFFA5CB9D5C1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,13 +18,14 @@ Global
 		{73B94EE6-BC16-49B2-824D-4C4E114859AC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{73B94EE6-BC16-49B2-824D-4C4E114859AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{73B94EE6-BC16-49B2-824D-4C4E114859AC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{48CE7BA4-1082-4089-9056-657A6A3EEA39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{48CE7BA4-1082-4089-9056-657A6A3EEA39}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{48CE7BA4-1082-4089-9056-657A6A3EEA39}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2E67A063-015F-416A-89FF-785FA3668D8C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2E67A063-015F-416A-89FF-785FA3668D8C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2E67A063-015F-416A-89FF-785FA3668D8C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2E67A063-015F-416A-89FF-785FA3668D8C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9274EF25-44C2-4D15-A8FB-AFFA5CB9D5C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9274EF25-44C2-4D15-A8FB-AFFA5CB9D5C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9274EF25-44C2-4D15-A8FB-AFFA5CB9D5C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9274EF25-44C2-4D15-A8FB-AFFA5CB9D5C1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

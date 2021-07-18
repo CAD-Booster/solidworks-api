@@ -102,15 +102,15 @@
     <Resource Include="part.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\SolidDna\AngelSix.SolidDna\AngelSix.SolidDna.csproj">
-      <Project>{48ce7ba4-1082-4089-9056-657a6a3eea39}</Project>
-      <Name>AngelSix.SolidDna</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="logo-small.bmp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\SolidDna\CADBooster.SolidDna\CADBooster.SolidDna.csproj">
+      <Project>{9274ef25-44c2-4d15-a8fb-affa5cb9d5c1}</Project>
+      <Name>CADBooster.SolidDna</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

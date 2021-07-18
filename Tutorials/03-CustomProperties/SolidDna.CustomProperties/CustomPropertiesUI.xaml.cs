@@ -1,8 +1,8 @@
-﻿using AngelSix.SolidDna;
+﻿using CADBooster.SolidDna;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Controls;
-using static AngelSix.SolidDna.SolidWorksEnvironment;
+using static CADBooster.SolidDna.SolidWorksEnvironment;
 
 namespace SolidDna.CustomProperties
 {

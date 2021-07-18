@@ -1,4 +1,4 @@
-﻿using AngelSix.SolidDna;
+﻿using CADBooster.SolidDna;
 using System.IO;
 
 namespace SolidDna.WpfAddIn
@@ -6,7 +6,7 @@ namespace SolidDna.WpfAddIn
     /// <summary>
     /// Register as a SolidWorks Add-in
     /// </summary>
-    public class MyAddinIntegration : AddInIntegration
+    public class MyAddinIntegration : SolidAddIn
     {
         /// <summary>
         /// Specific application start-up code
@@ -24,27 +24,24 @@ namespace SolidDna.WpfAddIn
         {
 
         }
+
         public override void PreConnectToSolidWorks()
         {
-            // NOTE: To run in our own AppDomain do the following
-            //       Be aware doing so sometimes causes API's to fail
-            //       when they try to load dll's
-            //
-            // AppDomainBoundary.UseDetachedAppDomain = true;
+
         }
     }
 
     /// <summary>
     /// My first SolidDna Plug-in
     /// </summary>
-    public class MySolidDnaPlguin : SolidPlugIn
+    public class MySolidDnaPlugin : SolidPlugIn
     {
         #region Private Members
 
         /// <summary>
         /// The Taskpane UI for our plug-in
         /// </summary>
-        private TaskpaneIntegration<MyTaskpaneUI> mTaskpane;
+        private TaskpaneIntegration<MyTaskpaneUI, MyAddinIntegration> mTaskpane;
 
         #endregion
 
@@ -67,7 +64,7 @@ namespace SolidDna.WpfAddIn
         public override void ConnectedToSolidWorks()
         {
             // Create our taskpane
-            mTaskpane = new TaskpaneIntegration<MyTaskpaneUI>()
+            mTaskpane = new TaskpaneIntegration<MyTaskpaneUI, MyAddinIntegration>
             {
                 Icon = Path.Combine(this.AssemblyPath(), "logo-small.bmp"),
                 WpfControl = new MyAddinControl()

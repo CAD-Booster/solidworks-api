@@ -1,5 +1,5 @@
 ﻿using System.Windows.Controls;
-using static AngelSix.SolidDna.SolidWorksEnvironment;
+using static CADBooster.SolidDna.SolidWorksEnvironment;
 
 namespace SolidDNA.WPF.Blank
 {

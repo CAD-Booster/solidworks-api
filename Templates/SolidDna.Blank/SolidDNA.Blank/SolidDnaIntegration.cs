@@ -1,7 +1,7 @@
-﻿using AngelSix.SolidDna;
+﻿using CADBooster.SolidDna;
 using Dna;
 using System.IO;
-using static AngelSix.SolidDna.SolidWorksEnvironment;
+using static CADBooster.SolidDna.SolidWorksEnvironment;
 
 namespace SolidDNA.Blank
 {
@@ -14,7 +14,7 @@ namespace SolidDNA.Blank
     //
     //        With this template you have a ready-to-go add-in that will load inside of SolidWorks
     //        and a bunch of useful example projects available here 
-    //        https://github.com/angelsix/solidworks-api/tree/develop/Tutorials
+    //        https://github.com/cad-booster/solidworks-api/tree/develop/Tutorials
     //
     //
     //     Registering Add-in Dll
@@ -49,7 +49,6 @@ namespace SolidDNA.Blank
     //
     //        This method will fire the following methods in this order:
     // 
-    //         - ConfigureServices
     //         - PreConnectToSolidWorks
     //         - PreLoadPlugIns
     //         - ApplicationStartup
@@ -66,7 +65,7 @@ namespace SolidDNA.Blank
     /// <summary>
     /// Register as a SolidWorks Add-In
     /// </summary>
-    public class MyAddinIntegration : AddInIntegration
+    public class MyAddinIntegration : SolidAddIn
     {
         /// <summary>
         /// Specific application start-up code
@@ -77,31 +76,8 @@ namespace SolidDNA.Blank
         }
 
         /// <summary>
-        /// Called when Dependency Injection is being setup
-        /// </summary>
-        /// <param name="construction">The framework construction</param>
-        public override void ConfigureServices(FrameworkConstruction construction)
-        {
-            //
-            //  Example
-            // ---------
-            //
-            //   Add a service like this (include using Microsoft.Extensions.DependencyInjection):
-            //
-            //      construction.Services.AddSingleton(new SomeClass());
-            //
-            //   Retrieve the service anywhere in your application like this
-            //
-            //      Dna.Framework.Service<SomeClass>();
-            //
-
-            // Add file logger (will be in /bin/Debug/SolidDNA.Blank.log.txt)
-            construction.AddFileLogger(Path.ChangeExtension(this.AssemblyFilePath(), "log.txt"));
-        }
-
-        /// <summary>
         /// Use this to do early initialization and any configuration of the 
-        /// PlugInIntegration class properties such as <see cref="PlugInIntegration.UseDetachedAppDomain"/>
+        /// PlugInIntegration class properties.
         /// </summary>
         public override void PreConnectToSolidWorks()
         {

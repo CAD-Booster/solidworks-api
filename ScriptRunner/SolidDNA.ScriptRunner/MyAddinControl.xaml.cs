@@ -1,4 +1,4 @@
-﻿using AngelSix.SolidDna;
+﻿using CADBooster.SolidDna;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using System;
@@ -7,7 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Controls;
-using static AngelSix.SolidDna.SolidWorksEnvironment;
+using static CADBooster.SolidDna.SolidWorksEnvironment;
 
 namespace SolidDNA.ScriptRunner
 {
@@ -175,7 +175,7 @@ namespace SolidDNA.ScriptRunner
         private List<MetadataReference> GetAssemblyReferences()
         {
             // Get references to all known references of this project
-            var references = IoC.AddIn.ReferencedAssemblies.Select(reference =>
+            var references = typeof(MyAddIn).Assembly.GetReferencedAssemblies().Select(reference =>
             {
                 // Load the reference
                 var loadedAssembly = Assembly.Load(reference);

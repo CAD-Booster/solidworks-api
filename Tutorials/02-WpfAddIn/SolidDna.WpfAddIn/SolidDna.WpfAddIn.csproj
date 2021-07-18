@@ -105,9 +105,9 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\SolidDna\AngelSix.SolidDna\AngelSix.SolidDna.csproj">
-      <Project>{6077a4a8-ab1e-45c2-a70a-a55eb3c9f1d8}</Project>
-      <Name>AngelSix.SolidDna</Name>
+    <ProjectReference Include="..\..\..\SolidDna\CADBooster.SolidDna\CADBooster.SolidDna.csproj">
+      <Project>{9a054985-2ffb-4e98-9726-aa5308f76027}</Project>
+      <Name>CADBooster.SolidDna</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

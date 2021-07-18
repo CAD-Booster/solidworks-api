@@ -1,20 +1,20 @@
-﻿using AngelSix.SolidDna;
+﻿using CADBooster.SolidDna;
 using Dna;
 using System.IO;
-using static AngelSix.SolidDna.SolidWorksEnvironment;
+using static CADBooster.SolidDna.SolidWorksEnvironment;
 
 namespace SolidDNA.WPF.Blank
 {
     // 
     //  *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
     //
-    //     Welcome to SolidDNA by AngelSix
+    //     Welcome to SolidDNA by AngelSix and CAD Booster
     //
     //        SolidDNA is a modern framework designed to make developing SolidWorks Add-ins easy.
     //
     //        With this template you have a ready-to-go add-in that will load inside of SolidWorks
     //        and a bunch of useful example projects available here 
-    //        https://github.com/angelsix/solidworks-api/tree/develop/Tutorials
+    //        https://github.com/cad-booster/solidworks-api/tree/develop/Tutorials
     //
     //
     //     Registering Add-in Dll
@@ -49,7 +49,6 @@ namespace SolidDNA.WPF.Blank
     //
     //        This method will fire the following methods in this order:
     // 
-    //         - ConfigureServices
     //         - PreConnectToSolidWorks
     //         - PreLoadPlugIns
     //         - ApplicationStartup
@@ -66,7 +65,7 @@ namespace SolidDNA.WPF.Blank
     /// <summary>
     /// Register as a SolidWorks Add-In
     /// </summary>
-    public class MyAddinIntegration : AddInIntegration
+    public class MyAddinIntegration : SolidAddIn
     {
         /// <summary>
         /// Specific application start-up code
@@ -77,31 +76,8 @@ namespace SolidDNA.WPF.Blank
         }
 
         /// <summary>
-        /// Called when Dependency Injection is being setup
-        /// </summary>
-        /// <param name="construction">The framework construction</param>
-        public override void ConfigureServices(FrameworkConstruction construction)
-        {
-            //
-            //  Example
-            // ---------
-            //
-            //   Add a service like this (include using Microsoft.Extensions.DependencyInjection):
-            //
-            //      construction.Services.AddSingleton(new SomeClass());
-            //
-            //   Retrieve the service anywhere in your application like this
-            //
-            //      Dna.Framework.Service<SomeClass>();
-            //
-
-            // Add file logger (will be in /bin/Debug/SolidDNA.WPF.Blank.log.txt)
-            construction.AddFileLogger(Path.ChangeExtension(this.AssemblyFilePath(), "log.txt"));
-        }
-
-        /// <summary>
         /// Use this to do early initialization and any configuration of the 
-        /// PlugInIntegration class properties such as <see cref="PlugInIntegration.UseDetachedAppDomain"/>
+        /// PlugInIntegration class properties.
         /// </summary>
         public override void PreConnectToSolidWorks()
         {
@@ -130,7 +106,7 @@ namespace SolidDNA.WPF.Blank
         /// <summary>
         /// The Taskpane UI for our plug-in
         /// </summary>
-        private TaskpaneIntegration<MyTaskpaneUI> mTaskpane;
+        private TaskpaneIntegration<MyTaskpaneUI, MyAddinIntegration> mTaskpane;
 
         #endregion
 
@@ -153,7 +129,7 @@ namespace SolidDNA.WPF.Blank
         public override void ConnectedToSolidWorks()
         {
             // Create our taskpane UI
-            mTaskpane = new TaskpaneIntegration<MyTaskpaneUI>()
+            mTaskpane = new TaskpaneIntegration<MyTaskpaneUI, MyAddinIntegration>
             {
                 // Set taskpane icon
                 Icon = Path.Combine(this.AssemblyPath(), "logo-small.png"),

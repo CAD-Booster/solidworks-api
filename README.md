@@ -5,14 +5,14 @@ Because SolidDna wasn't actively maintained and our proposed changes were effect
 
 We will be focusing on these topics:
 
-- Make SolidDna able to run multiple add-ins at the same time.
-- Fix bugs.
+- DONE: Make SolidDna able to run multiple add-ins at the same time.
+- DONE: Fix bugs.
 - Keep expanding SolidDna so we have to use less and less of the core SOLIDWORKS API.
 
 To do that, we'll probably:
 
-- Remove the ability to run in a separate app domain.
-- Remove the IOC?
+- DONE: Remove the ability to run in a separate app domain.
+- DONE: Remove the single add-in from the IOC 
 - Merge the add-in and plug-in types.
 
 

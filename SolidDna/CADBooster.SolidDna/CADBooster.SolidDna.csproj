@@ -27,6 +27,8 @@ Fixed mass bug.
 Fixed event reattach bug.
 Fixed file exists bug with 3DInterconnect</PackageReleaseNotes>
     <SignAssembly>false</SignAssembly>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageIconUrl />
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -39,6 +41,10 @@ Fixed file exists bug with 3DInterconnect</PackageReleaseNotes>
 
   <ItemGroup>
     <None Remove="Localization\Strings\Strings-en-US.xml" />
+    <None Include="icon.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
     <None Include="license.txt">
       <Pack>True</Pack>
       <PackagePath></PackagePath>

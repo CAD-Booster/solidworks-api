@@ -1,10 +1,12 @@
-﻿using SolidWorks.Interop.sldworks;
+﻿using Dna;
+using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swconst;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using static Dna.FrameworkDI;
 
 namespace CADBooster.SolidDna
 {
@@ -13,6 +15,13 @@ namespace CADBooster.SolidDna
     /// </summary>
     public class Model : SharedSolidDnaObject<ModelDoc2>
     {
+        #region Private Members
+
+        private int _solidWorksVersionYear;
+        private bool? _fileExists;
+
+        #endregion
+
         #region Public Properties
 
         /// <summary>
@@ -26,9 +35,35 @@ namespace CADBooster.SolidDna
         /// SolidWorks 2020 started setting a path for a file that is loaded with 3D Interconnect, so the path is no longer empty.
         /// That is why we have to check if the file actually exists.
         /// </summary>
-        public bool HasBeenSaved => SolidWorksEnvironment.Application.SolidWorksVersion.Version < 2020
-                ? !string.IsNullOrEmpty(FilePath)
-                : !string.IsNullOrEmpty(FilePath) && File.Exists(FilePath);
+        public bool HasBeenSaved {
+            get
+            {
+                // Get the version year if it hasn't been initialized yet.
+                if (_solidWorksVersionYear == 0)
+                {
+                    try
+                    {
+                        _solidWorksVersionYear = SolidWorksEnvironment.Application.SolidWorksVersion.Version;
+                    }
+                    catch (Exception e)
+                    {
+                        Logger?.LogErrorSource("Could not get SOLIDWORKS version", exception: e);
+                        _solidWorksVersionYear = -1;
+                    }
+                }
+
+                // Get if the file exist if it hasn't been initialized yet.
+                // You can't delete a file while it is open, so this should work reliably.
+                if (_fileExists == null)
+                {
+                    _fileExists = File.Exists(FilePath);
+                }
+
+                return _solidWorksVersionYear < 2020 || _solidWorksVersionYear == -1
+                    ? !string.IsNullOrEmpty(FilePath)
+                    : !string.IsNullOrEmpty(FilePath) && _fileExists == true;
+            }
+        } 
 
         /// <summary>
         /// Indicates if this file needs saving (has file changes).

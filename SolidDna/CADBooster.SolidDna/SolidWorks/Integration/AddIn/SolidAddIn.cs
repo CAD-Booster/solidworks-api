@@ -1,10 +1,8 @@
-﻿using Dna;
-using SolidWorks.Interop.sldworks;
+﻿using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swpublished;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using static Dna.FrameworkDI;
 
 namespace CADBooster.SolidDna
 {
@@ -111,6 +109,7 @@ namespace CADBooster.SolidDna
 
         /// <summary>
         /// Run immediately when <see cref="ConnectToSW(object, int)"/> is called to do any pre-setup.
+        /// For example, call <see cref="DnaLogger.AddFileLogger{TAddIn}"/> to add a file logger for SolidDna messages.
         /// </summary>
         public abstract void PreConnectToSolidWorks();
 
@@ -132,7 +131,7 @@ namespace CADBooster.SolidDna
         public void Callback(string arg)
         {
             // Log it
-            Logger?.LogDebugSource($"SolidWorks Callback fired {arg}");
+            DnaLogger.LogDebugSource($"SolidWorks Callback fired {arg}");
 
             PlugInIntegration.OnCallback(arg);
         }
@@ -157,13 +156,13 @@ namespace CADBooster.SolidDna
                 PreConnectToSolidWorks();
 
                 // Log it
-                Logger?.LogTraceSource($"Fired PreConnectToSolidWorks...");
+                DnaLogger.LogTraceSource($"Fired PreConnectToSolidWorks...");
 
                 // Get the directory path to this actual add-in dll
                 var assemblyPath = this.AssemblyPath();
 
                 // Log it
-                Logger?.LogDebugSource($"{SolidWorksAddInTitle} Connected to SolidWorks...");
+                DnaLogger.LogDebugSource($"{SolidWorksAddInTitle} Connected to SolidWorks...");
 
                 //
                 //   NOTE: Do not need to create it here, as we now create it inside PlugInIntegration.Setup in it's own AppDomain
@@ -174,19 +173,19 @@ namespace CADBooster.SolidDna
                 //SolidWorks = new SolidWorksApplication((SldWorks)ThisSW, Cookie);
 
                 // Log it
-                Logger?.LogDebugSource($"Setting AddinCallbackInfo...");
+                DnaLogger.LogDebugSource($"Setting AddinCallbackInfo...");
 
                 // Setup callback info
                 var ok = ((SldWorks)thisSw).SetAddinCallbackInfo2(0, this, cookie);
 
                 // Log it
-                Logger?.LogDebugSource($"PlugInIntegration Setup...");
+                DnaLogger.LogDebugSource($"PlugInIntegration Setup...");
 
                 // Setup plug-in application domain
                 PlugInIntegration.Setup(((SldWorks)thisSw).RevisionNumber(), cookie);
 
                 // Log it
-                Logger?.LogDebugSource($"Firing PreLoadPlugIns...");
+                DnaLogger.LogDebugSource($"Firing PreLoadPlugIns...");
 
                 // If this is the first load
                 if (!mLoaded)
@@ -195,7 +194,7 @@ namespace CADBooster.SolidDna
                     PreLoadPlugIns();
 
                     // Log it
-                    Logger?.LogDebugSource($"Configuring PlugIns...");
+                    DnaLogger.LogDebugSource($"Configuring PlugIns...");
 
                     // Perform any plug-in configuration
                     PlugInIntegration.ConfigurePlugIns(assemblyPath, this);
@@ -205,19 +204,19 @@ namespace CADBooster.SolidDna
                 }
 
                 // Log it
-                Logger?.LogDebugSource($"Firing ApplicationStartup...");
+                DnaLogger.LogDebugSource($"Firing ApplicationStartup...");
 
                 // Call the application startup function for an entry point to the application
                 ApplicationStartup();
 
                 // Log it
-                Logger?.LogDebugSource($"Firing ConnectedToSolidWorks...");
+                DnaLogger.LogDebugSource($"Firing ConnectedToSolidWorks...");
 
                 // Inform listeners
                 ConnectedToSolidWorks();
 
                 // Log it
-                Logger?.LogDebugSource($"PlugInIntegration ConnectedToSolidWorks...");
+                DnaLogger.LogDebugSource($"PlugInIntegration ConnectedToSolidWorks...");
 
                 // And plug-in domain listeners
                 PlugInIntegration.ConnectedToSolidWorks(this);
@@ -228,7 +227,7 @@ namespace CADBooster.SolidDna
             catch (Exception ex)
             {
                 // Log it
-                Logger?.LogCriticalSource($"Unexpected error: {ex}");
+                DnaLogger.LogCriticalSource($"Unexpected error: {ex}");
 
                 return false;
             }
@@ -241,10 +240,10 @@ namespace CADBooster.SolidDna
         public bool DisconnectFromSW()
         {
             // Log it
-            Logger?.LogDebugSource($"{SolidWorksAddInTitle} Disconnected from SolidWorks...");
+            DnaLogger.LogDebugSource($"{SolidWorksAddInTitle} Disconnected from SolidWorks...");
 
             // Log it
-            Logger?.LogDebugSource($"Firing DisconnectedFromSolidWorks...");
+            DnaLogger.LogDebugSource($"Firing DisconnectedFromSolidWorks...");
 
             // Inform listeners
             DisconnectedFromSolidWorks();
@@ -253,11 +252,14 @@ namespace CADBooster.SolidDna
             PlugInIntegration.DisconnectedFromSolidWorks(this);
 
             // Log it
-            Logger?.LogDebugSource($"Tearing down...");
+            DnaLogger.LogDebugSource($"Tearing down...");
 
             // Remove it from the list and tear down SOLIDWORKS when it was the last add-in.
             AddInIntegration.RemoveAddInAndTearDownSolidWorksWhenLast(this);
-            
+
+            // Remove the loggers for this add-in
+            DnaLogger.RemoveLoggers(this);
+
             // Clear our references
             PlugInIntegration = null;
 
@@ -291,7 +293,7 @@ namespace CADBooster.SolidDna
         public void OnConnectedToSolidWorks()
         {
             // Log it
-            Logger?.LogDebugSource($"Firing ConnectedToSolidWorks event...");
+            DnaLogger.LogDebugSource($"Firing ConnectedToSolidWorks event...");
 
             ConnectedToSolidWorks();
         }
@@ -302,7 +304,7 @@ namespace CADBooster.SolidDna
         public void OnDisconnectedFromSolidWorks()
         {
             // Log it
-            Logger?.LogDebugSource($"Firing DisconnectedFromSolidWorks event...");
+            DnaLogger.LogDebugSource($"Firing DisconnectedFromSolidWorks event...");
 
             DisconnectedFromSolidWorks();
         }
@@ -327,7 +329,7 @@ namespace CADBooster.SolidDna
                 var assemblyName = t.Assembly.Location;
 
                 // Log it
-                Logger?.LogInformationSource($"Registering {assemblyName}");
+                DnaLogger.LogInformationSource($"Registering {assemblyName}");
 
                 // Get registry key path
                 var keyPath = string.Format(@"SOFTWARE\SolidWorks\AddIns\{0:b}", t.GUID);
@@ -352,7 +354,7 @@ namespace CADBooster.SolidDna
                     // Force auto-discovering plug-in during COM registration
                     addIn.PlugInIntegration.AutoDiscoverPlugins = true;
 
-                    Logger?.LogInformationSource("Configuring plugins...");
+                    DnaLogger.LogInformationSource("Configuring plugins...");
 
                     // Let plug-ins configure title and descriptions
                     addIn.PlugInIntegration.ConfigurePlugIns(pluginPath, addIn);
@@ -361,12 +363,12 @@ namespace CADBooster.SolidDna
                     rk.SetValue("Title", addIn.SolidWorksAddInTitle);
                     rk.SetValue("Description", addIn.SolidWorksAddInDescription);
 
-                    Logger?.LogInformationSource($"COM Registration successful. '{addIn.SolidWorksAddInTitle}' : '{addIn.SolidWorksAddInDescription}'");
+                    DnaLogger.LogInformationSource($"COM Registration successful. '{addIn.SolidWorksAddInTitle}' : '{addIn.SolidWorksAddInDescription}'");
                 }
             }
             catch (Exception ex)
             {
-                Logger?.LogCriticalSource($"COM Registration error. {ex}");
+                DnaLogger.LogCriticalSource($"COM Registration error. {ex}");
                 throw;
             }
         }

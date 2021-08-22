@@ -1,6 +1,5 @@
 ﻿using Dna;
 using System;
-using static Dna.FrameworkDI;
 
 namespace CADBooster.SolidDna
 {
@@ -64,7 +63,7 @@ namespace CADBooster.SolidDna
             Framework.Construction.Build();
 
             // Log details
-            Logger?.LogDebugSource($"DI Setup complete");
+            DnaLogger.LogDebugSource($"DI Setup complete");
         }
 
         #endregion 
@@ -90,7 +89,7 @@ namespace CADBooster.SolidDna
             }
             catch (Exception ex)
             {
-                Logger?.LogCriticalSource($"Get '{typeof(T)}' failed. {ex.GetErrorMessage()}");
+                DnaLogger.LogCriticalSource($"Get '{typeof(T)}' failed. {ex.GetErrorMessage()}");
                 return default;
             }
         }
@@ -108,7 +107,7 @@ namespace CADBooster.SolidDna
             }
             catch (Exception ex)
             {
-                Logger?.LogCriticalSource($"Get '{type}' failed. {ex.GetErrorMessage()}");
+                DnaLogger.LogCriticalSource($"Get '{type}' failed. {ex.GetErrorMessage()}");
                 return null;
             }
         }

@@ -1,12 +1,10 @@
-﻿using Dna;
-using SolidWorks.Interop.sldworks;
+﻿using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swconst;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using static Dna.FrameworkDI;
 
 namespace CADBooster.SolidDna
 {
@@ -47,7 +45,7 @@ namespace CADBooster.SolidDna
                     }
                     catch (Exception e)
                     {
-                        Logger?.LogErrorSource("Could not get SOLIDWORKS version", exception: e);
+                        DnaLogger.LogErrorSource("Could not get SOLIDWORKS version", exception: e);
                         _solidWorksVersionYear = -1;
                     }
                 }

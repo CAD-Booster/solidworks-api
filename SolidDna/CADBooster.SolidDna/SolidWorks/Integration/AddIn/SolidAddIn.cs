@@ -2,6 +2,8 @@
 using SolidWorks.Interop.swpublished;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Runtime.InteropServices;
 
 namespace CADBooster.SolidDna
@@ -317,11 +319,11 @@ namespace CADBooster.SolidDna
         [ComRegisterFunction]
         protected static void ComRegister(Type t)
         {
-            // Create new instance of ComRegister add-in to setup DI
-            var addIn = new ComRegisterSolidAddIn();
-            
             try
             {
+                // Create new instance of a blank add-in
+                var addIn = new BlankSolidAddIn();
+
                 // Get assembly name
                 var assemblyName = t.Assembly.Location;
 
@@ -365,6 +367,17 @@ namespace CADBooster.SolidDna
             }
             catch (Exception ex)
             {
+                Debugger.Break();
+
+                // Get the path to this DLL
+                var assemblyLocation = typeof(SolidAddIn).AssemblyFilePath();
+
+                // Create a path for a text file. The assembly location is always lowercase.
+                var changeExtension = assemblyLocation.Replace(".dll", ".fatal.log.txt");
+
+                // Log an error to a new or existing text file 
+                File.AppendAllText(changeExtension, $"\r\nUnexpected error: {ex}");
+                
                 DnaLogger.LogCriticalSource($"COM Registration error. {ex}");
                 throw;
             }

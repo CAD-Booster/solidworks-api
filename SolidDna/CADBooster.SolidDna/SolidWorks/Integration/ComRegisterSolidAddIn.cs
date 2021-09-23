@@ -14,9 +14,7 @@ namespace CADBooster.SolidDna
         {
             try
             {
-                // During COM registration, ConnectedToSW doesn't get called
-                // and thereby no call to setup IoC, we do this manually here.
-                IoC.SetUpForFirstAddIn();
+                
             }
             catch (Exception ex)
             {

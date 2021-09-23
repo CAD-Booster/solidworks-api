@@ -146,9 +146,6 @@ namespace CADBooster.SolidDna
         {
             try
             {
-                // Set up the basic services like localization. Skips when another add-in has already done this.
-                IoC.SetUpForFirstAddIn();
-
                 // Add this add-in to the list of currently active add-ins.
                 AddInIntegration.AddAddIn(this);
 

@@ -43,7 +43,7 @@ namespace CADBooster.SolidDna
             if (Loggers.ContainsKey(typeof(TAddIn)))
                 Loggers[typeof(TAddIn)].Add(logger);
             else
-                Loggers.Add(typeof(TAddIn), new List<ILogger>{logger});
+                Loggers.Add(typeof(TAddIn), new List<ILogger> {logger});
         }
 
         /// <summary>
@@ -70,7 +70,7 @@ namespace CADBooster.SolidDna
         /// <param name="args">The additional arguments</param>
         /// <param name="eventId"></param>
         public static void LogCriticalSource(
-            string message, 
+            string message,
             EventId eventId = new EventId(),
             Exception exception = null,
             [CallerMemberName] string origin = "",
@@ -203,7 +203,7 @@ namespace CADBooster.SolidDna
             {
                 foreach (var logger in loggers)
                 {
-                    logger.Log(logLevel, eventId, args.Prepend(origin, filePath, lineNumber, message), exception, LoggerSourceFormatter.Format);    
+                    logger.Log(logLevel, eventId, args.Prepend(origin, filePath, lineNumber, message), exception, LoggerSourceFormatter.Format);
                 }
             }
         }

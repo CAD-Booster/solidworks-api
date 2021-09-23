@@ -28,9 +28,9 @@ namespace CADBooster.SolidDna
         /// <summary>
         /// If true, searches in the directory of the application (where CADBooster.SolidDna.dll is) for any dll that
         /// contains any <see cref="SolidPlugIn"/> implementations and adds them to the <see cref="PlugInDetails"/>
-        /// during the <see cref="ConfigurePlugIns(string)"/> stage.
+        /// during the <see cref="ConfigurePlugIns(string, SolidAddIn)"/> stage.
         /// If false, the user should during the <see cref="SolidAddIn.PreLoadPlugIns"/> method, add
-        /// any specific implementations of the <see cref="SolidPlugIn"/> to <see cref="PlugInIntegration.PlugInDetails"/> list
+        /// any specific implementations of the <see cref="SolidPlugIn"/> to <see cref="PlugInDetails"/> list
         /// </summary>
         public bool AutoDiscoverPlugins { get; set; } = true;
 
@@ -157,7 +157,6 @@ namespace CADBooster.SolidDna
         /// Discovers all SolidDna plug-ins
         /// </summary>
         /// <param name="addinPath">The path to the add-in that is calling this setup (typically acquired using GetType().Assembly.Location)</param>
-        /// <param name="solidAddIn"></param>
         /// <returns></returns>
         public List<SolidPlugIn> GetSolidPlugIns(string addinPath)
         {

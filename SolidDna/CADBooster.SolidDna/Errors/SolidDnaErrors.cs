@@ -58,7 +58,7 @@ namespace CADBooster.SolidDna
                     errorDescription), ex);
 
                 // If it should just be logged and ignored, log it
-                if (SolidDnaEnvironment.LogAndIgnoreUncaughtExceptions)
+                if (DnaLogger.LogAndIgnoreUncaughtExceptions)
                 {
                     // Log the error
                     DnaLogger.LogCriticalSource($"SolidDNA Exception created. {error.SolidDnaError}");
@@ -94,7 +94,7 @@ namespace CADBooster.SolidDna
                     errorDescription), ex);
 
                 // If it should just be logged and ignored, log it
-                if (SolidDnaEnvironment.LogAndIgnoreUncaughtExceptions)
+                if (DnaLogger.LogAndIgnoreUncaughtExceptions)
                 {
                     // Log the error
                     DnaLogger.LogCriticalSource($"SolidDNA Exception created. {error.SolidDnaError}");
@@ -131,7 +131,7 @@ namespace CADBooster.SolidDna
                     errorDescription), ex);
 
                 // If it should just be logged and ignored, log it
-                if (SolidDnaEnvironment.LogAndIgnoreUncaughtExceptions)
+                if (DnaLogger.LogAndIgnoreUncaughtExceptions)
                 {
                     // Log the error
                     DnaLogger.LogCriticalSource($"SolidDNA Exception created. {error.SolidDnaError}");
@@ -169,7 +169,7 @@ namespace CADBooster.SolidDna
                     errorDescription), ex);
 
                 // If it should just be logged and ignored, log it
-                if (SolidDnaEnvironment.LogAndIgnoreUncaughtExceptions)
+                if (DnaLogger.LogAndIgnoreUncaughtExceptions)
                 {
                     // Log the error
                     DnaLogger.LogCriticalSource($"SolidDNA Exception created. {error.SolidDnaError}");

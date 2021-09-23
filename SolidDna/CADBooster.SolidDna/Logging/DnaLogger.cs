@@ -11,6 +11,15 @@ namespace CADBooster.SolidDna
         private static readonly Dictionary<Type, List<ILogger>> Loggers = new Dictionary<Type, List<ILogger>>();
 
         /// <summary>
+        /// If true, any uncaught exceptions that get thrown will get caught, logged, then swallowed.
+        /// 
+        /// WARNING: If turning this on, be aware you may get null/default values
+        /// being returned from function calls if they throw errors
+        /// so be vigilant on null checking if so
+        /// </summary>
+        public static bool LogAndIgnoreUncaughtExceptions { get; set; } = false;
+
+        /// <summary>
         /// Add a file logger for all SolidDna log messages.
         /// Is cleaned up when your add-in unloads.
         /// </summary>

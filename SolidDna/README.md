@@ -16,4 +16,4 @@ Finally, right-click the project and select `Pack`.
 
 ### Uploading new NuGet package
 
-Your new package should be in `bin\Release\AngelSix.SolidDna.x.x.x.x.nupkg`. Go to that folder, type `cmd` in the address bar, then in that window type `dotnet nuget push AngelSix.SolidDna.x.x.x.x.nupkg -k myapikey -s https://api.nuget.org/v3/index.json`
+Your new package should be in `bin\Release\CADBooster.SolidDna.x.x.x.x.nupkg`. Go to that folder, type `cmd` in the address bar, then in that window type `dotnet nuget push CADBooster.SolidDna.x.x.x.x.nupkg -k myapikey -s https://api.nuget.org/v3/index.json`

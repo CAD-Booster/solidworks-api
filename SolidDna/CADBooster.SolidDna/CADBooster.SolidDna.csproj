@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>2.0.0.0</Version>
+    <Version>2.2.0.0</Version>
     <Authors>Luke Malpass, Peter Brinkhuis</Authors>
     <Company>CAD Booster B.V.</Company>
     <Description>The new SolidDNA SDK, making the SolidWorks API easier, well behaved and modern</Description>
@@ -11,25 +11,20 @@
     <PackageProjectUrl>https://github.com/CAD-Booster/solidworks-api</PackageProjectUrl>
     <RepositoryUrl>https://github.com/CAD-Booster/solidworks-api</RepositoryUrl>
     <PackageTags>soliddna solidworks cadbooster angelsix api</PackageTags>
-    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>2.2.0.0</AssemblyVersion>
     <Product>CADBooster.SolidDna</Product>
     <PackageId>CADBooster.SolidDna</PackageId>
     <AssemblyName>CADBooster.SolidDna</AssemblyName>
     <RootNamespace>CADBooster.SolidDna</RootNamespace>
     <PackageLicenseFile>license.txt</PackageLicenseFile>
     <PackageReleaseNotes>Forked from AngelSix.SolidDna.
-Breaking: Made running multiple add-ins at the same time possible.
-Breaking: Added enabling certified partners to display their add-ins as such.
-Added component properties.
-Breaking: Removed ability to run add-ins in their own app domain because it exposed SolidWorks bugs and made multiple add-ins harder.
-Breaking: Removed allowing add-ins to add services to IoC during startup.
-Fixed mass bug.
-Fixed event reattach bug.
-Fixed file exists bug with 3DInterconnect</PackageReleaseNotes>
-    <SignAssembly>false</SignAssembly>
+Breaking: removed Dna Framework reference and dependency injection.
+Added strong-name signing so we can run multiple versions of SolidDna at the same time.
+Added caching of SolidWorks verison.</PackageReleaseNotes>
     <SignAssembly>true</SignAssembly>
     <PackageIcon>icon.png</PackageIcon>
     <PackageIconUrl />
+    <FileVersion>2.2.0.0</FileVersion>
     <AssemblyOriginatorKeyFile>StrongNameKey.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 

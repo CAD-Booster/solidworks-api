@@ -41,7 +41,7 @@ namespace CADBooster.SolidDna
                 SolidWorks = new SolidWorksApplication((SldWorks)Marshal.GetActiveObject("SldWorks.Application"), 0);
 
                 // Log it
-                DnaLogger.LogDebugSource($"Acquired active instance SolidWorks in Stand-Alone mode");
+                Logger.LogDebugSource($"Acquired active instance SolidWorks in Stand-Alone mode");
 
                 // Return if successful
                 return SolidWorks != null;
@@ -50,7 +50,7 @@ namespace CADBooster.SolidDna
             catch (COMException)
             {
                 // Log it
-                DnaLogger.LogDebugSource($"Failed to get active instance of SolidWorks in Stand-Alone mode");
+                Logger.LogDebugSource($"Failed to get active instance of SolidWorks in Stand-Alone mode");
 
                 // Return failure
                 return false;
@@ -66,7 +66,7 @@ namespace CADBooster.SolidDna
         {
             if (SolidWorks != null)
             {
-                DnaLogger.LogDebugSource("SolidWorks instance was already created");
+                Logger.LogDebugSource("SolidWorks instance was already created");
                 return;
             }
 
@@ -81,11 +81,11 @@ namespace CADBooster.SolidDna
                 SolidWorks = new SolidWorksApplication((SldWorks)Activator.CreateInstance(Type.GetTypeFromProgID("SldWorks.Application" + postFix)), cookie);
 
                 // Log it
-                DnaLogger.LogDebugSource($"SolidWorks Instance Created? {SolidWorks != null}");
+                Logger.LogDebugSource($"SolidWorks Instance Created? {SolidWorks != null}");
             }
             catch (Exception e)
             {
-                DnaLogger.LogDebugSource("Failed to get active instance of SolidWorks in add-in mode", exception: e);
+                Logger.LogDebugSource("Failed to get active instance of SolidWorks in add-in mode", exception: e);
             }
         }
 
@@ -139,7 +139,7 @@ namespace CADBooster.SolidDna
             if (SolidWorks != null)
             {
                 // Log it
-                DnaLogger.LogDebugSource($"Disposing SolidWorks COM reference...");
+                Logger.LogDebugSource($"Disposing SolidWorks COM reference...");
 
                 // Dispose SolidWorks COM
                 SolidWorks?.Dispose();

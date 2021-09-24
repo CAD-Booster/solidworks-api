@@ -45,7 +45,7 @@ namespace CADBooster.SolidDna
                     }
                     catch (Exception e)
                     {
-                        DnaLogger.LogErrorSource("Could not get SOLIDWORKS version", exception: e);
+                        Logger.LogErrorSource("Could not get SOLIDWORKS version", exception: e);
                         _solidWorksVersionYear = -1;
                     }
                 }

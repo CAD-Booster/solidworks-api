@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 
 namespace CADBooster.SolidDna
 {
-    public static class DnaLogger
+    public static class Logger
     {
         private static readonly Dictionary<Type, List<ILogger>> Loggers = new Dictionary<Type, List<ILogger>>();
 

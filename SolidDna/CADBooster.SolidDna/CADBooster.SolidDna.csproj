@@ -27,8 +27,10 @@ Fixed mass bug.
 Fixed event reattach bug.
 Fixed file exists bug with 3DInterconnect</PackageReleaseNotes>
     <SignAssembly>false</SignAssembly>
+    <SignAssembly>true</SignAssembly>
     <PackageIcon>icon.png</PackageIcon>
     <PackageIconUrl />
+    <AssemblyOriginatorKeyFile>StrongNameKey.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

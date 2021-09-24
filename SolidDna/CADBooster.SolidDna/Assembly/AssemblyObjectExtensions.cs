@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace CADBooster.SolidDna
 {
@@ -27,6 +28,17 @@ namespace CADBooster.SolidDna
         public static string AssemblyFilePath(this object self)
         {
             return self.GetType().Assembly.Location;
+        }
+
+        /// <summary>
+        /// Gets the full path (including filename) of the physical file (typically .exe or .dll)
+        /// for where the callers type is located 
+        /// </summary>
+        /// <param name="type">A calling type</param>
+        /// <returns></returns>
+        public static string AssemblyFilePath(this Type type)
+        {
+            return type.Assembly.Location;
         }
     }
 }

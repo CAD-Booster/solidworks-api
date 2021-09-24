@@ -1,11 +1,9 @@
-﻿using Dna;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using static Dna.FrameworkDI;
 
 namespace CADBooster.SolidDna
 {
@@ -30,9 +28,9 @@ namespace CADBooster.SolidDna
         /// <summary>
         /// If true, searches in the directory of the application (where CADBooster.SolidDna.dll is) for any dll that
         /// contains any <see cref="SolidPlugIn"/> implementations and adds them to the <see cref="PlugInDetails"/>
-        /// during the <see cref="ConfigurePlugIns(string)"/> stage.
+        /// during the <see cref="ConfigurePlugIns(string, SolidAddIn)"/> stage.
         /// If false, the user should during the <see cref="SolidAddIn.PreLoadPlugIns"/> method, add
-        /// any specific implementations of the <see cref="SolidPlugIn"/> to <see cref="PlugInIntegration.PlugInDetails"/> list
+        /// any specific implementations of the <see cref="SolidPlugIn"/> to <see cref="PlugInDetails"/> list
         /// </summary>
         public bool AutoDiscoverPlugins { get; set; } = true;
 
@@ -57,7 +55,7 @@ namespace CADBooster.SolidDna
         public void Setup(string version, int cookie)
         {
             // Log it
-            Logger?.LogDebugSource($"PlugIn Setup...");
+            Logger.LogDebugSource($"PlugIn Setup...");
 
             // Store a reference to the current SolidWorks instance as a SolidDNA class.
             AddInIntegration.ConnectToActiveSolidWorks(version, cookie);
@@ -78,7 +76,7 @@ namespace CADBooster.SolidDna
             solidAddIn.PlugIns.ForEach(plugin =>
             {
                 // Log it
-                Logger?.LogDebugSource($"Firing ConnectedToSolidWorks event for plugin `{plugin.AddInTitle}`...");
+                Logger.LogDebugSource($"Firing ConnectedToSolidWorks event for plugin `{plugin.AddInTitle}`...");
 
                 plugin.ConnectedToSolidWorks();
             });
@@ -95,7 +93,7 @@ namespace CADBooster.SolidDna
             solidAddIn.PlugIns.ForEach(plugin =>
             {
                 // Log it
-                Logger?.LogDebugSource($"Firing DisconnectedFromSolidWorks event for plugin `{plugin.AddInTitle}`...");
+                Logger.LogDebugSource($"Firing DisconnectedFromSolidWorks event for plugin `{plugin.AddInTitle}`...");
 
                 plugin.DisconnectedFromSolidWorks();
             });
@@ -147,7 +145,7 @@ namespace CADBooster.SolidDna
                 Debugger.Break();
 
                 // Log it
-                Logger?.LogCriticalSource($"OnCallback failed. {ex.GetErrorMessage()}");
+                Logger.LogCriticalSource($"OnCallback failed. {ex.GetErrorMessage()}");
             }
         }
 
@@ -159,7 +157,6 @@ namespace CADBooster.SolidDna
         /// Discovers all SolidDna plug-ins
         /// </summary>
         /// <param name="addinPath">The path to the add-in that is calling this setup (typically acquired using GetType().Assembly.Location)</param>
-        /// <param name="solidAddIn"></param>
         /// <returns></returns>
         public List<SolidPlugIn> GetSolidPlugIns(string addinPath)
         {
@@ -170,14 +167,14 @@ namespace CADBooster.SolidDna
             if (AutoDiscoverPlugins)
             {
                 // Log it
-                Logger?.LogDebugSource($"Loading all PlugIns...");
+                Logger.LogDebugSource($"Loading all PlugIns...");
 
                 // Add new based on if found
                 foreach (var path in Directory.GetFiles(addinPath, "*.dll", SearchOption.TopDirectoryOnly))
                     GetPlugIns(path, (plugin) =>
                     {
                         // Log it
-                        Logger?.LogDebugSource($"Found plugin {plugin.AddInTitle} in {path}");
+                        Logger.LogDebugSource($"Found plugin {plugin.AddInTitle} in {path}");
 
                         assemblies.Add(plugin);
                     });
@@ -186,7 +183,7 @@ namespace CADBooster.SolidDna
             else
             {
                 // Log it
-                Logger?.LogDebugSource($"Explicitly loading {PlugInDetails?.Count} PlugIns...");
+                Logger.LogDebugSource($"Explicitly loading {PlugInDetails?.Count} PlugIns...");
 
                 // For each assembly
                 foreach (var p in PlugInDetails)
@@ -200,7 +197,7 @@ namespace CADBooster.SolidDna
                             GetPlugIns(path.FullPath, (plugin) =>
                             {
                                 // Log it
-                                Logger?.LogDebugSource($"Found plugin {plugin.AddInTitle} in {path}");
+                                Logger.LogDebugSource($"Found plugin {plugin.AddInTitle} in {path}");
 
                                 // Add it to the list
                                 assemblies.Add(plugin);
@@ -209,14 +206,14 @@ namespace CADBooster.SolidDna
                         catch (Exception ex)
                         {
                             // Log error
-                            Logger?.LogCriticalSource($"Unexpected error: {ex}");
+                            Logger.LogCriticalSource($"Unexpected error: {ex}");
                         }
                     }
                 }
             }
 
             // Log it
-            Logger?.LogDebugSource($"Loaded {assemblies?.Count} plug-ins from {addinPath}");
+            Logger.LogDebugSource($"Loaded {assemblies?.Count} plug-ins from {addinPath}");
 
             return assemblies;
         }
@@ -301,7 +298,7 @@ namespace CADBooster.SolidDna
             solidAddIn.PlugIns = GetSolidPlugIns(addinPath);
 
             // Log it
-            Logger?.LogDebugSource($"{solidAddIn.PlugIns.Count} plug-ins found");
+            Logger.LogDebugSource($"{solidAddIn.PlugIns.Count} plug-ins found");
 
             // Find first plug-in in the list and use that as the title and description (for COM register)
             var firstPlugInWithTitle = solidAddIn.PlugIns.FirstOrDefault(f => !string.IsNullOrEmpty(f.AddInTitle));
@@ -310,8 +307,8 @@ namespace CADBooster.SolidDna
             if (firstPlugInWithTitle != null)
             {
                 // Log it
-                Logger?.LogDebugSource($"Setting Add-In Title:       {firstPlugInWithTitle.AddInTitle}");
-                Logger?.LogDebugSource($"Setting Add-In Description: {firstPlugInWithTitle.AddInDescription}");
+                Logger.LogDebugSource($"Setting Add-In Title:       {firstPlugInWithTitle.AddInTitle}");
+                Logger.LogDebugSource($"Setting Add-In Description: {firstPlugInWithTitle.AddInDescription}");
 
                 // Set title and description details
                 solidAddIn.SolidWorksAddInTitle = firstPlugInWithTitle.AddInTitle;
@@ -320,7 +317,7 @@ namespace CADBooster.SolidDna
             // Otherwise
             else
                 // Log it
-                Logger?.LogDebugSource($"No PlugIn's found with a title.");
+                Logger.LogDebugSource($"No PlugIn's found with a title.");
         }
 
         #endregion

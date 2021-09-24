@@ -84,36 +84,4 @@ namespace CADBooster.SolidDna
             return value;
         }
     }
-
-    /// <summary>
-    /// Static shortcut functions for the LocalizationManager
-    /// </summary>
-    public static class Localization
-    {
-        /// <summary>
-        /// Gets a string resource
-        /// </summary>
-        /// <param name="name">The name of the string resource to retrieve</param>
-        /// <param name="culture">The culture to use if different than the default</param>
-        /// <returns>Returns the value of the string if found, and null if not found</returns>
-        public static async Task<string> GetStringAsync(string name, string culture = null)
-        {
-            // NOTE: No null check because it should always be injected or throw if not as the expected result would be the actual resource string
-            //       We do not want to fail silently
-            return await IoC.Localization.GetStringAsync(name, culture);
-        }
-
-        /// <summary>
-        /// Gets a string resource
-        /// </summary>
-        /// <param name="name">The name of the string resource to retrieve</param>
-        /// <param name="culture">The culture to use if different than the default</param>
-        /// <returns>Returns the value of the string if found, and null if not found</returns>
-        public static string GetString(string name, string culture = null)
-        {
-            // NOTE: No null check because it should always be injected or throw if not as the expected result would be the actual resource string
-            //       We do not want to fail silently
-            return AsyncHelpers.RunSync(() => IoC.Localization.GetStringAsync(name, culture));
-        }
-    }
 }

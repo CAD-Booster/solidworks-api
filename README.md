@@ -6,15 +6,16 @@ Because SolidDna wasn't actively maintained and our proposed changes were effect
 We will be focusing on these topics:
 
 - DONE: Make SolidDna able to run multiple add-ins at the same time.
-- DONE: Fix bugs.
+- DONE: Strong name sign the NuGet package so multiple versions of SolidDna can be loaded at the same time.
+- DONE: Fix known bugs.
 - Keep expanding SolidDna so we have to use less and less of the core SOLIDWORKS API.
 
 To do that, we'll probably:
 
 - DONE: Remove the ability to run in a separate app domain.
-- DONE: Remove the single add-in from the IOC 
+- DONE: Remove IoC / dependency injection because it interferes with running multiple add-ins.
+- DONE: Remove reference to the Dna framework so we don't have to strong-name sign it.
 - Merge the add-in and plug-in types.
-
 
 # Getting Started
 Here are some videos by AngelSix on how to get started with developing your own SOLIDWORKS add-ins with C# and SolidDna.

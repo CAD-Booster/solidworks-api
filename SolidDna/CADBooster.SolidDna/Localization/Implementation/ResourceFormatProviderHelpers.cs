@@ -59,7 +59,7 @@ namespace CADBooster.SolidDna
         /// <returns></returns>
         public static string GetCultureName(string culture = null)
         {
-            return culture ?? IoC.Localization.DefaultCulture;
+            return culture ?? Localization.DefaultCulture;
         }
 
         /// <summary>

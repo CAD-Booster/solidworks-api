@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
@@ -195,8 +194,8 @@ namespace CADBooster.SolidDna
         {
             // Write to debugger (only in Debug mode) and the console for easier debugging
             var completeMessage = $"{logLevel}: {message}";
-            Console.WriteLine(completeMessage);
             Debug.WriteLine(completeMessage);
+            Console.WriteLine(completeMessage);
 
             // Write to all other loggers
             foreach (var loggers in Loggers.Values)

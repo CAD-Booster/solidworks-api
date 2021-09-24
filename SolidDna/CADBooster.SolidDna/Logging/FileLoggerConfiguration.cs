@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-
-namespace CADBooster.SolidDna
+﻿namespace CADBooster.SolidDna
 {
     /// <summary>
     /// The configuration for a <see cref="CADBooster.SolidDna.FileLogger"/>

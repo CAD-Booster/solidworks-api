@@ -1,7 +1,5 @@
-﻿using Dna;
-using System;
+﻿using System;
 using System.Diagnostics;
-using static Dna.FrameworkDI;
 
 namespace CADBooster.SolidDna
 {
@@ -61,11 +59,11 @@ namespace CADBooster.SolidDna
                     Debugger.Break();
 
                 // Log the error
-                Logger?.LogCriticalSource($"Unexpected error at {source}. {ex.GetErrorMessage()}");
+                Logger.LogCriticalSource($"Unexpected error at {source}. {ex.GetErrorMessage()}");
             }
             catch (Exception iex)
             {
-                Logger?.LogCriticalSource("GLOBAL EXCEPTION CRASHED ITSELF WITH " + iex.GetErrorMessage());
+                Logger.LogCriticalSource("GLOBAL EXCEPTION CRASHED ITSELF WITH " + iex.GetErrorMessage());
             }
         }
     }

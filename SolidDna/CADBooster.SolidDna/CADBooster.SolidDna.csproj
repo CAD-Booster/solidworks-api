@@ -56,7 +56,6 @@ Fixed file exists bug with 3DInterconnect</PackageReleaseNotes>
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dna.Framework" Version="1.0.7.19" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
   </ItemGroup>
 

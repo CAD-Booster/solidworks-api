@@ -1,10 +1,8 @@
-﻿using Dna;
-using SolidWorks.Interop.sldworks;
+﻿using SolidWorks.Interop.sldworks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
-using static Dna.FrameworkDI;
 
 namespace CADBooster.SolidDna
 {
@@ -43,7 +41,7 @@ namespace CADBooster.SolidDna
                 SolidWorks = new SolidWorksApplication((SldWorks)Marshal.GetActiveObject("SldWorks.Application"), 0);
 
                 // Log it
-                Logger?.LogDebugSource($"Acquired active instance SolidWorks in Stand-Alone mode");
+                Logger.LogDebugSource($"Acquired active instance SolidWorks in Stand-Alone mode");
 
                 // Return if successful
                 return SolidWorks != null;
@@ -52,7 +50,7 @@ namespace CADBooster.SolidDna
             catch (COMException)
             {
                 // Log it
-                Logger?.LogDebugSource($"Failed to get active instance of SolidWorks in Stand-Alone mode");
+                Logger.LogDebugSource($"Failed to get active instance of SolidWorks in Stand-Alone mode");
 
                 // Return failure
                 return false;
@@ -83,7 +81,7 @@ namespace CADBooster.SolidDna
                 SolidWorks = new SolidWorksApplication((SldWorks)Activator.CreateInstance(Type.GetTypeFromProgID("SldWorks.Application" + postFix)), cookie);
 
                 // Log it
-                Logger?.LogDebugSource($"SolidWorks Instance Created? {SolidWorks != null}");
+                Logger.LogDebugSource($"SolidWorks Instance Created? {SolidWorks != null}");
             }
             catch (Exception e)
             {
@@ -141,7 +139,7 @@ namespace CADBooster.SolidDna
             if (SolidWorks != null)
             {
                 // Log it
-                Logger?.LogDebugSource($"Disposing SolidWorks COM reference...");
+                Logger.LogDebugSource($"Disposing SolidWorks COM reference...");
 
                 // Dispose SolidWorks COM
                 SolidWorks?.Dispose();

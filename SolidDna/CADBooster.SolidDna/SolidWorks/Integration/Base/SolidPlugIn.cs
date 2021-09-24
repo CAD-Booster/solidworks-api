@@ -56,7 +56,7 @@
 
         /// <summary>
         /// The add-in that contains this plugin.
-        /// We override the default add-in property so we can call <see cref="AppDomainBoundary"/> and <see cref="PlugInIntegration"/> methods and include the generic T.
+        /// We override the default add-in property so we can call <see cref="PlugInIntegration"/> methods and include the generic T.
         /// </summary>
         public new SolidAddIn ParentAddIn
         {

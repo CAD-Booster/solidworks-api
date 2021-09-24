@@ -1,7 +1,5 @@
-﻿using Dna;
-using System;
+﻿using System;
 using System.Threading.Tasks;
-using static Dna.FrameworkDI;
 
 namespace CADBooster.SolidDna
 {
@@ -60,12 +58,12 @@ namespace CADBooster.SolidDna
                     errorDescription), ex);
 
                 // If it should just be logged and ignored, log it
-                if (SolidDnaEnvironment.LogAndIgnoreUncaughtExceptions)
+                if (Logger.LogAndIgnoreUncaughtExceptions)
                 {
                     // Log the error
-                    Logger?.LogCriticalSource($"SolidDNA Exception created. {error.SolidDnaError}");
+                    Logger.LogCriticalSource($"SolidDNA Exception created. {error.SolidDnaError}");
                     if (error.InnerException != null)
-                        Logger?.LogCriticalSource($"Inner Exception: { error.InnerException.GetErrorMessage()}");
+                        Logger.LogCriticalSource($"Inner Exception: { error.InnerException.GetErrorMessage()}");
                 }
                 // Otherwise, throw 
                 else
@@ -96,12 +94,12 @@ namespace CADBooster.SolidDna
                     errorDescription), ex);
 
                 // If it should just be logged and ignored, log it
-                if (SolidDnaEnvironment.LogAndIgnoreUncaughtExceptions)
+                if (Logger.LogAndIgnoreUncaughtExceptions)
                 {
                     // Log the error
-                    Logger?.LogCriticalSource($"SolidDNA Exception created. {error.SolidDnaError}");
+                    Logger.LogCriticalSource($"SolidDNA Exception created. {error.SolidDnaError}");
                     if (error.InnerException != null)
-                        Logger?.LogCriticalSource($"Inner Exception: { error.InnerException.GetErrorMessage()}");
+                        Logger.LogCriticalSource($"Inner Exception: { error.InnerException.GetErrorMessage()}");
 
                     return default;
                 }
@@ -133,12 +131,12 @@ namespace CADBooster.SolidDna
                     errorDescription), ex);
 
                 // If it should just be logged and ignored, log it
-                if (SolidDnaEnvironment.LogAndIgnoreUncaughtExceptions)
+                if (Logger.LogAndIgnoreUncaughtExceptions)
                 {
                     // Log the error
-                    Logger?.LogCriticalSource($"SolidDNA Exception created. {error.SolidDnaError}");
+                    Logger.LogCriticalSource($"SolidDNA Exception created. {error.SolidDnaError}");
                     if (error.InnerException != null)
-                        Logger?.LogCriticalSource($"Inner Exception: { error.InnerException.GetErrorMessage()}");
+                        Logger.LogCriticalSource($"Inner Exception: { error.InnerException.GetErrorMessage()}");
                 }
                 // Otherwise, throw 
                 else
@@ -171,12 +169,12 @@ namespace CADBooster.SolidDna
                     errorDescription), ex);
 
                 // If it should just be logged and ignored, log it
-                if (SolidDnaEnvironment.LogAndIgnoreUncaughtExceptions)
+                if (Logger.LogAndIgnoreUncaughtExceptions)
                 {
                     // Log the error
-                    Logger?.LogCriticalSource($"SolidDNA Exception created. {error.SolidDnaError}");
+                    Logger.LogCriticalSource($"SolidDNA Exception created. {error.SolidDnaError}");
                     if (error.InnerException != null)
-                        Logger?.LogCriticalSource($"Inner Exception: { error.InnerException.GetErrorMessage()}");
+                        Logger.LogCriticalSource($"Inner Exception: { error.InnerException.GetErrorMessage()}");
 
                     // Return a default object
                     return default;

@@ -1,11 +1,13 @@
 ﻿using CADBooster.SolidDna;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace SolidDna.WpfAddIn
 {
     /// <summary>
     /// Register as a SolidWorks Add-in
     /// </summary>
+    [Guid("DBD0F7F2-FD55-4512-8C97-28AC70719FEC"), ComVisible(true)]  // Replace the GUID with your own.
     public class MyAddinIntegration : SolidAddIn
     {
         /// <summary>

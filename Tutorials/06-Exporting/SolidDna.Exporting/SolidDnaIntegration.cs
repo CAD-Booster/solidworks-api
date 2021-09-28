@@ -1,5 +1,6 @@
 ﻿using CADBooster.SolidDna;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using static CADBooster.SolidDna.SolidWorksEnvironment;
 
 namespace SolidDna.Exporting
@@ -7,6 +8,7 @@ namespace SolidDna.Exporting
     /// <summary>
     /// Register as a SolidWorks Add-in
     /// </summary>
+    [Guid("6D769D97-6103-4495-AACD-63CDD0EC396B"), ComVisible(true)]  // Replace the GUID with your own.
     public class SolidDnaAddinIntegration : SolidAddIn
     {
         /// <summary>

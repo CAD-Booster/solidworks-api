@@ -1,5 +1,4 @@
 ﻿using CADBooster.SolidDna;
-using Dna;
 using static CADBooster.SolidDna.SolidWorksEnvironment;
 
 namespace SolidDnaNuGet

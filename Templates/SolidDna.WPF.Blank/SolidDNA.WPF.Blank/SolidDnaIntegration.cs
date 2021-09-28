@@ -1,5 +1,4 @@
 ﻿using CADBooster.SolidDna;
-using Dna;
 using System.IO;
 using static CADBooster.SolidDna.SolidWorksEnvironment;
 

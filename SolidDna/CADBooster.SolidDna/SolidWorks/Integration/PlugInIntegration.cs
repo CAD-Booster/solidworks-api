@@ -47,20 +47,6 @@ namespace CADBooster.SolidDna
 
         #region Setup / Tear down
 
-        /// <summary>
-        /// Must be called to setup the PlugInIntegration
-        /// </summary>
-        /// <param name="cookie">The cookie Id of the SolidWorks instance</param>
-        /// <param name="version">The version of the currently connected SolidWorks instance</param>
-        public void Setup(string version, int cookie)
-        {
-            // Log it
-            Logger.LogDebugSource($"PlugIn Setup...");
-
-            // Store a reference to the current SolidWorks instance as a SolidDNA class.
-            AddInIntegration.ConnectToActiveSolidWorks(version, cookie);
-        }
-
         #endregion
 
         #region Connected to SolidWorks

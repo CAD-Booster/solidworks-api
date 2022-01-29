@@ -100,7 +100,7 @@ namespace CADBooster.SolidDna
             var fullPath = typeof(T).Assembly.CodeBase.Replace(@"file:\", "").Replace(@"file:///", "");
 
             // Add the path to list if it isn't in there yet
-            if (!PlugInAssemblyPaths.Contains(fullPath))
+            if (!PlugInAssemblyPaths.ContainsIgnoreCase(fullPath))
                 PlugInAssemblyPaths.Add(fullPath);
         }
 

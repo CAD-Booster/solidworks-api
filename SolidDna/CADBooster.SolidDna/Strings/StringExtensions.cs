@@ -1,4 +1,8 @@
-﻿namespace CADBooster.SolidDna
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace CADBooster.SolidDna
 {
     /// <summary>
     /// Extension methods for strings
@@ -23,6 +27,17 @@
         public static bool IsNullOrWhiteSpace(this string content)
         {
             return string.IsNullOrWhiteSpace(content);
+        }
+
+        /// <summary>
+        /// Get if a list of strings contains a needle string and ignores the case.
+        /// </summary>
+        /// <param name="hayStack"></param>
+        /// <param name="needle"></param>
+        /// <returns></returns>
+        public static bool ContainsIgnoreCase(this List<string> hayStack, string needle)
+        {
+            return hayStack.Any(x => x.Equals(needle, StringComparison.InvariantCultureIgnoreCase));
         }
     }
 }

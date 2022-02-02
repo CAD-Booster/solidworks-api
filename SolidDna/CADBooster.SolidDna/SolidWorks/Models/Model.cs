@@ -39,6 +39,7 @@ namespace CADBooster.SolidDna
                 if (SolidWorksVersionYear < 2020)
                     return !string.IsNullOrEmpty(FilePath);
                 
+                // Get if the file exists if it hasn't been initialized yet. Is set to null in ReloadModelData.
                 // You can't delete a file while it is open, so this should work reliably.
                 if (_fileExists == null)
                     _fileExists = File.Exists(FilePath);
@@ -541,6 +542,10 @@ namespace CADBooster.SolidDna
         {
             // Were we saved or is this a new file?
             var wasNewFile = !HasBeenSaved;
+
+            // Reset it so we will check again when we request HasBeenSaved
+            // Do this before calling ModelSaved or ReloadModelData because attached event handlers can use HasBeenSaved.
+            _fileExists = null;
 
             // Update filepath
             FilePath = BaseObject.GetPathName();

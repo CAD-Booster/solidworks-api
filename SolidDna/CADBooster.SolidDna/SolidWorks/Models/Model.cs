@@ -36,16 +36,14 @@ namespace CADBooster.SolidDna
         public bool HasBeenSaved {
             get
             {
-                // Get if the file exist if it hasn't been initialized yet.
+                if (SolidWorksVersionYear < 2020)
+                    return !string.IsNullOrEmpty(FilePath);
+                
                 // You can't delete a file while it is open, so this should work reliably.
                 if (_fileExists == null)
-                {
                     _fileExists = File.Exists(FilePath);
-                }
 
-                return _solidWorksVersionYear < 2020 || _solidWorksVersionYear == -1
-                    ? !string.IsNullOrEmpty(FilePath)
-                    : !string.IsNullOrEmpty(FilePath) && _fileExists == true;
+                return !string.IsNullOrEmpty(FilePath) && _fileExists == true;
             }
         } 
 

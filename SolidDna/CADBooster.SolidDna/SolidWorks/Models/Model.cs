@@ -15,7 +15,7 @@ namespace CADBooster.SolidDna
     {
         #region Private Members
 
-        private int _solidWorksVersionYear;
+        private static readonly int SolidWorksVersionYear = SolidWorksEnvironment.Application.SolidWorksVersion.Version;
         private bool? _fileExists;
 
         #endregion
@@ -36,20 +36,6 @@ namespace CADBooster.SolidDna
         public bool HasBeenSaved {
             get
             {
-                // Get the version year if it hasn't been initialized yet.
-                if (_solidWorksVersionYear == 0)
-                {
-                    try
-                    {
-                        _solidWorksVersionYear = SolidWorksEnvironment.Application.SolidWorksVersion.Version;
-                    }
-                    catch (Exception e)
-                    {
-                        Logger.LogErrorSource("Could not get SOLIDWORKS version", exception: e);
-                        _solidWorksVersionYear = -1;
-                    }
-                }
-
                 // Get if the file exist if it hasn't been initialized yet.
                 // You can't delete a file while it is open, so this should work reliably.
                 if (_fileExists == null)

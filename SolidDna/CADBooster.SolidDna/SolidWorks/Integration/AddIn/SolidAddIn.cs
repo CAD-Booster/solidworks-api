@@ -178,10 +178,10 @@ namespace CADBooster.SolidDna
                 var ok = ((SldWorks)thisSw).SetAddinCallbackInfo2(0, this, cookie);
 
                 // Log it
-                Logger.LogDebugSource($"PlugInIntegration Setup...");
+                Logger.LogDebugSource($"Storing the SOLIDWORKS instance...");
 
-                // Setup plug-in application domain
-                PlugInIntegration.Setup(((SldWorks)thisSw).RevisionNumber(), cookie);
+                // Setup the current SolidWorks instance as a SolidDNA class.
+                AddInIntegration.ConnectToActiveSolidWorks(((SldWorks)thisSw).RevisionNumber(), cookie);
 
                 // Log it
                 Logger.LogDebugSource($"Firing PreLoadPlugIns...");

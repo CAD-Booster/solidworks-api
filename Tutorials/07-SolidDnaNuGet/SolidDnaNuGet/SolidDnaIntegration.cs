@@ -1,5 +1,5 @@
 ﻿using CADBooster.SolidDna;
-using Dna;
+using System.Runtime.InteropServices;
 using static CADBooster.SolidDna.SolidWorksEnvironment;
 
 namespace SolidDnaNuGet
@@ -66,6 +66,7 @@ namespace SolidDnaNuGet
     /// <summary>
     /// Register as a SolidWorks Add-In
     /// </summary>
+    [Guid("7AB5B7B6-139A-4609-B04F-D22BF0C82127"), ComVisible(true)]  // Replace the GUID with your own.
     public class MyAddinIntegration : SolidAddIn
     {
         /// <summary>

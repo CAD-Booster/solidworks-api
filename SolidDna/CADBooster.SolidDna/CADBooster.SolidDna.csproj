@@ -3,28 +3,29 @@
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>2.2.0.0</Version>
+    <Version>2.3.0.0</Version>
     <Authors>Luke Malpass, Peter Brinkhuis</Authors>
     <Company>CAD Booster B.V.</Company>
     <Description>The new SolidDNA SDK, making the SolidWorks API easier, well behaved and modern</Description>
-    <Copyright>Copyright © 2016-2021</Copyright>
+    <Copyright>Copyright © 2016-2022</Copyright>
     <PackageProjectUrl>https://github.com/CAD-Booster/solidworks-api</PackageProjectUrl>
     <RepositoryUrl>https://github.com/CAD-Booster/solidworks-api</RepositoryUrl>
     <PackageTags>soliddna solidworks cadbooster angelsix api</PackageTags>
-    <AssemblyVersion>2.2.0.0</AssemblyVersion>
+    <AssemblyVersion>2.3.0.0</AssemblyVersion>
     <Product>CADBooster.SolidDna</Product>
     <PackageId>CADBooster.SolidDna</PackageId>
     <AssemblyName>CADBooster.SolidDna</AssemblyName>
     <RootNamespace>CADBooster.SolidDna</RootNamespace>
     <PackageLicenseFile>license.txt</PackageLicenseFile>
     <PackageReleaseNotes>Forked from AngelSix.SolidDna.
-Breaking: removed Dna Framework reference and dependency injection.
-Added strong-name signing so we can run multiple versions of SolidDna at the same time.
-Added caching of SolidWorks verison.</PackageReleaseNotes>
+Fix: file exist check did not refresh correctly.
+Change: updated references to SolidWorks 2022.
+Change: added GUIDs to add-ins
+Change: remove plugin detail object</PackageReleaseNotes>
     <SignAssembly>true</SignAssembly>
     <PackageIcon>icon.png</PackageIcon>
     <PackageIconUrl />
-    <FileVersion>2.2.0.0</FileVersion>
+    <FileVersion>2.3.0.0</FileVersion>
     <AssemblyOriginatorKeyFile>StrongNameKey.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
@@ -61,39 +62,39 @@ Added caching of SolidWorks verison.</PackageReleaseNotes>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="SolidWorks.Interop.sldworks">
-      <HintPath>..\..\References\2021\SolidWorks.Interop.sldworks.dll</HintPath>
+      <HintPath>..\..\References\2022\SolidWorks.Interop.sldworks.dll</HintPath>
       <EmbedInteropTypes>false</EmbedInteropTypes>
     </Reference>
     <Reference Include="SolidWorks.Interop.sw3dprinter">
-      <HintPath>..\..\References\2021\SolidWorks.Interop.sw3dprinter.dll</HintPath>
+      <HintPath>..\..\References\2022\SolidWorks.Interop.sw3dprinter.dll</HintPath>
       <EmbedInteropTypes>false</EmbedInteropTypes>
     </Reference>
     <Reference Include="SolidWorks.Interop.swcommands">
-      <HintPath>..\..\References\2021\SolidWorks.Interop.swcommands.dll</HintPath>
+      <HintPath>..\..\References\2022\SolidWorks.Interop.swcommands.dll</HintPath>
       <EmbedInteropTypes>false</EmbedInteropTypes>
     </Reference>
     <Reference Include="SolidWorks.Interop.swconst">
-      <HintPath>..\..\References\2021\SolidWorks.Interop.swconst.dll</HintPath>
+      <HintPath>..\..\References\2022\SolidWorks.Interop.swconst.dll</HintPath>
       <EmbedInteropTypes>false</EmbedInteropTypes>
     </Reference>
     <Reference Include="SolidWorks.Interop.swdimxpert">
-      <HintPath>..\..\References\2021\SolidWorks.Interop.swdimxpert.dll</HintPath>
+      <HintPath>..\..\References\2022\SolidWorks.Interop.swdimxpert.dll</HintPath>
       <EmbedInteropTypes>false</EmbedInteropTypes>
     </Reference>
     <Reference Include="SolidWorks.Interop.swdocumentmgr">
-      <HintPath>..\..\References\2021\SolidWorks.Interop.swdocumentmgr.dll</HintPath>
+      <HintPath>..\..\References\2022\SolidWorks.Interop.swdocumentmgr.dll</HintPath>
       <EmbedInteropTypes>false</EmbedInteropTypes>
     </Reference>
     <Reference Include="SolidWorks.Interop.swmotionstudy">
-      <HintPath>..\..\References\2021\SolidWorks.Interop.swmotionstudy.dll</HintPath>
+      <HintPath>..\..\References\2022\SolidWorks.Interop.swmotionstudy.dll</HintPath>
       <EmbedInteropTypes>false</EmbedInteropTypes>
     </Reference>
     <Reference Include="SolidWorks.Interop.swpublished">
-      <HintPath>..\..\References\2021\SolidWorks.Interop.swpublished.dll</HintPath>
+      <HintPath>..\..\References\2022\SolidWorks.Interop.swpublished.dll</HintPath>
       <EmbedInteropTypes>false</EmbedInteropTypes>
     </Reference>
     <Reference Include="SolidWorks.Interop.SWRoutingLib">
-      <HintPath>..\..\References\2021\SolidWorks.Interop.SWRoutingLib.dll</HintPath>
+      <HintPath>..\..\References\2022\SolidWorks.Interop.SWRoutingLib.dll</HintPath>
       <EmbedInteropTypes>false</EmbedInteropTypes>
     </Reference>
     <Reference Include="System.Windows.Forms" />

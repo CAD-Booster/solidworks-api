@@ -15,7 +15,7 @@ namespace CADBooster.SolidDna
     {
         #region Private Members
 
-        private int _solidWorksVersionYear;
+        private static readonly int SolidWorksVersionYear = SolidWorksEnvironment.Application.SolidWorksVersion.Version;
         private bool? _fileExists;
 
         #endregion
@@ -36,30 +36,15 @@ namespace CADBooster.SolidDna
         public bool HasBeenSaved {
             get
             {
-                // Get the version year if it hasn't been initialized yet.
-                if (_solidWorksVersionYear == 0)
-                {
-                    try
-                    {
-                        _solidWorksVersionYear = SolidWorksEnvironment.Application.SolidWorksVersion.Version;
-                    }
-                    catch (Exception e)
-                    {
-                        Logger.LogErrorSource("Could not get SOLIDWORKS version", exception: e);
-                        _solidWorksVersionYear = -1;
-                    }
-                }
-
-                // Get if the file exist if it hasn't been initialized yet.
+                if (SolidWorksVersionYear < 2020)
+                    return !string.IsNullOrEmpty(FilePath);
+                
+                // Get if the file exists if it hasn't been initialized yet. Is set to null in ReloadModelData.
                 // You can't delete a file while it is open, so this should work reliably.
                 if (_fileExists == null)
-                {
                     _fileExists = File.Exists(FilePath);
-                }
 
-                return _solidWorksVersionYear < 2020 || _solidWorksVersionYear == -1
-                    ? !string.IsNullOrEmpty(FilePath)
-                    : !string.IsNullOrEmpty(FilePath) && _fileExists == true;
+                return !string.IsNullOrEmpty(FilePath) && _fileExists == true;
             }
         } 
 
@@ -557,6 +542,10 @@ namespace CADBooster.SolidDna
         {
             // Were we saved or is this a new file?
             var wasNewFile = !HasBeenSaved;
+
+            // Reset it so we will check again when we request HasBeenSaved
+            // Do this before calling ModelSaved or ReloadModelData because attached event handlers can use HasBeenSaved.
+            _fileExists = null;
 
             // Update filepath
             FilePath = BaseObject.GetPathName();

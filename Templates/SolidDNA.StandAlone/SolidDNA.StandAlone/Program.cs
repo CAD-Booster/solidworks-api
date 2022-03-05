@@ -29,7 +29,7 @@ namespace SolidDNA.StandAlone
         {
             Console.WriteLine("Connecting to active SolidWorks instance...");
 
-            // If we fail to connect to the active SolidWorks intance...
+            // If we fail to connect to the active SolidWorks instance...
             if (!AddInIntegration.ConnectToActiveSolidWorksForStandAlone())
             {
                 // Tell the user it failed and exit

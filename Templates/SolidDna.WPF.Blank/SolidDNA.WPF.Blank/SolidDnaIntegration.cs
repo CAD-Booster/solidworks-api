@@ -1,6 +1,6 @@
 ﻿using CADBooster.SolidDna;
-using Dna;
 using System.IO;
+using System.Runtime.InteropServices;
 using static CADBooster.SolidDna.SolidWorksEnvironment;
 
 namespace SolidDNA.WPF.Blank
@@ -65,6 +65,7 @@ namespace SolidDNA.WPF.Blank
     /// <summary>
     /// Register as a SolidWorks Add-In
     /// </summary>
+    [Guid("3F6838DB-A6B7-4415-BC77-47EF9A6A6160"), ComVisible(true)]  // Replace the GUID with your own.
     public class MyAddinIntegration : SolidAddIn
     {
         /// <summary>

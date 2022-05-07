@@ -25,7 +25,10 @@ namespace CADBooster.SolidDna
         private readonly Dictionary<int, string> mIconListPaths = new Dictionary<int, string>();
 
         /// <summary>
+        /// A dictionary for the main group icon, with all icon sizes and their paths.
+        /// Entries are only added when path exists.
         /// </summary>
+        private readonly Dictionary<int, string> mMainIconPaths = new Dictionary<int, string>();
 
         /// <summary>
         /// A list of all tabs that have been created
@@ -208,6 +211,16 @@ namespace CADBooster.SolidDna
         }
 
         /// <summary>
+        /// The list of full paths to a bmp or png's that contains the icon.
+        /// from first in the list being the smallest, to last being the largest
+        /// NOTE: Supported sizes for the icon is 20x20, 32x32, 40x40, 64x64, 96x96 and 128x128
+        /// </summary>
+        public string[] GetMainIconListPaths()
+        {
+            return mMainIconPaths.Values.ToArray();
+        }
+
+        /// <summary>
         /// Sets all icon lists based on a string format of the absolute path to the icon list images, replacing {0} with the size.
         /// For example C:\Folder\myiconlist{0}.png would look for all sizes such as
         /// C:\Folder\myiconlist20.png
@@ -216,7 +229,8 @@ namespace CADBooster.SolidDna
         /// ... and so on
         /// </summary>
         /// <param name="pathFormat">The absolute path, with {0} used to replace with the icon size</param>
-        public void SetIconLists(string pathFormat)
+        /// <param name="isMainIcon">Whether we are setting the main group icon or the normal list of item icons.</param>
+        public void SetIconLists(string pathFormat, bool isMainIcon)
         {
             // Make sure we have something
             if (string.IsNullOrWhiteSpace(pathFormat))
@@ -236,7 +250,10 @@ namespace CADBooster.SolidDna
                 var path = string.Format(pathFormat, iconSize);
                 if (File.Exists(path))
                 {
-                    mIconListPaths.Add(iconSize, path);
+                    if (isMainIcon)
+                        mMainIconPaths.Add(iconSize, path);
+                    else
+                        mIconListPaths.Add(iconSize, path);
                 }
             }
         }
@@ -311,20 +328,31 @@ namespace CADBooster.SolidDna
             // Set all icon lists 
             var icons = GetIconListPaths();
 
-            // 2016+ support
-            BaseObject.IconList = icons;
-
-            // <2016 support
-            if (icons.Length > 0)
+            // If we set all properties, the wrong image sizes appear in the Customize window. So we check the SolidWorks version first.
+            if (SolidWorksEnvironment.Application.SolidWorksVersion.Version >= 2016)
             {
-                // Largest icon for this one
-                BaseObject.LargeIconList = icons.Last();
+                // 2016+ support
 
-                // The list of icons
-                BaseObject.MainIconList = icons;
+                // The list of icons for the toolbar or menu. There should be a sprite (a combination of all icons) for each icon size.
+                BaseObject.IconList = icons;
 
-                // Use largest icon still (otherwise command groups are always small icons)
-                BaseObject.SmallIconList = icons.Last();
+                // The icon that is visible in the Customize window 
+                BaseObject.MainIconList = GetMainIconListPaths();
+            }
+            else
+            {
+                // <2016 support
+                if (icons.Length > 0)
+                {
+                    // Largest icon for this one
+                    BaseObject.LargeIconList = icons.Last();
+
+                    // The list of icons
+                    BaseObject.MainIconList = icons;
+
+                    // Use largest icon still (otherwise command groups are always small icons)
+                    BaseObject.SmallIconList = icons.Last();
+                }
             }
 
             #endregion

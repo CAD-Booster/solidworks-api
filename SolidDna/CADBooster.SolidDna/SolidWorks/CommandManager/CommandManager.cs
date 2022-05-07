@@ -63,6 +63,9 @@ namespace CADBooster.SolidDna
         /// <param name="addDropdownBoxForAssemblies">If true, adds a command box to the toolbar for assemblies that has a dropdown of all commands that are part of this group. The tooltip of the command group is used as the name.</param>
         /// <param name="addDropdownBoxForDrawings">If true, adds a command box to the toolbar for drawings that has a dropdown of all commands that are part of this group. The tooltip of the command group is used as the name.</param>
         /// <param name="documentTypes">The document types where this menu/toolbar is visible.</param>
+        /// <param name="mainIconPath">The icon absolute path base on a string format of the absolute path to the main icon images, replacing {0} with the size.
+        /// The main icon is visible in the Customize window. If you don't set a main icon, SolidWorks uses the first icon in <paramref name="iconListsPath"/>.
+        /// </param>
         /// <returns></returns>
         public CommandManagerGroup CreateCommandGroupAndTabs(
             string title,
@@ -78,7 +81,8 @@ namespace CADBooster.SolidDna
             bool addDropdownBoxForParts = false,
             bool addDropdownBoxForAssemblies = false,
             bool addDropdownBoxForDrawings = false,
-            ModelTemplateType documentTypes = ModelTemplateType.Part | ModelTemplateType.Assembly | ModelTemplateType.Drawing)
+            ModelTemplateType documentTypes = ModelTemplateType.Part | ModelTemplateType.Assembly | ModelTemplateType.Drawing,
+            string mainIconPath = "")
         {
             // Wrap any error creating the taskpane in a SolidDna exception
             return SolidDnaErrors.Wrap(() =>
@@ -106,7 +110,10 @@ namespace CADBooster.SolidDna
                     mCommandFlyouts = flyoutItems;
 
                     // Set icon list
-                    group.SetIconLists(iconListsPath);
+                    group.SetIconLists(iconListsPath, false);
+
+                    // Set the main icon list
+                    group.SetIconLists(mainIconPath, true);
 
                     // Create the group
                     group.Create(this);

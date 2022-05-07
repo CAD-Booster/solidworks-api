@@ -32,6 +32,11 @@ namespace CADBooster.SolidDna
         /// </summary>
         protected Model mActiveModel;
 
+        /// <summary>
+        /// List of icon sizes used by SOLIDWORKS. Icons are square, so these values are both width and height.
+        /// </summary>
+        private static readonly int[] mIconSizes = { 20, 32, 40, 64, 96, 128 };
+
         #endregion
 
         #region Private Members
@@ -718,7 +723,7 @@ namespace CADBooster.SolidDna
         #region Taskpane Methods
 
         /// <summary>
-        /// Attempts to create 
+        /// Attempts to create a task pane. Uses a single icon.
         /// </summary>
         /// <param name="iconPath">
         ///     An absolute path to an icon to use for the taskpane.
@@ -744,6 +749,58 @@ namespace CADBooster.SolidDna
                 SolidDnaErrorTypeCode.SolidWorksTaskpane,
                 SolidDnaErrorCode.SolidWorksTaskpaneCreateError,
                 await Localization.GetStringAsync("ErrorSolidWorksTaskpaneCreateError"));
+        }
+
+        /// <summary>
+        /// Attempts to create a task pane. Uses a list of PNG icon sizes: 20, 32, 40, 64, 96 and 128 pixels square.
+        /// </summary>
+        /// <param name="iconPathFormat">The absolute path to all icons, based on a string format of the absolute path. Replaces "{0}" in the string with the icons sizes. 
+        /// For example C:\Folder\myiconlist{0}.png
+        /// </param>
+        /// <param name="toolTip">The title text to show at the top of the taskpane</param>
+        public async Task<Taskpane> CreateTaskpaneAsync2(string iconPathFormat, string toolTip)
+        {
+            // Wrap any error creating the taskpane in a SolidDna exception
+            return SolidDnaErrors.Wrap<Taskpane>(() =>
+                {
+                    // Get up to six icon paths
+                    var icons = GetIconPathsFromPathFormat(iconPathFormat);
+
+                    // Attempt to create the taskpane
+                    var comTaskpane = BaseObject.CreateTaskpaneView3(icons, toolTip);
+
+                    // If we fail, return null
+                    if (comTaskpane == null)
+                        return null;
+
+                    // If we succeed, create SolidDna object
+                    return new Taskpane(comTaskpane);
+                },
+                SolidDnaErrorTypeCode.SolidWorksTaskpane,
+                SolidDnaErrorCode.SolidWorksTaskpaneCreateError,
+                await Localization.GetStringAsync("ErrorSolidWorksTaskpaneCreateError"));
+        }
+
+        /// <summary>
+        /// Convert a single string with a format for an absolute path to an array of existing paths.
+        /// </summary>
+        /// <param name="iconPathFormat"></param>
+        /// <returns></returns>
+        internal static string[] GetIconPathsFromPathFormat(string iconPathFormat)
+        {
+            var iconPaths = new Dictionary<int, string>();
+            foreach (var iconSize in mIconSizes)
+            {
+                // Replace "{0}" in the string with the icon size
+                var path = string.Format(iconPathFormat, iconSize);
+                if (File.Exists(path))
+                {
+                    iconPaths.Add(iconSize, path);
+                }
+            }
+
+            // Get icon paths from the dictionary
+            return iconPaths.Values.ToArray();
         }
 
         #endregion

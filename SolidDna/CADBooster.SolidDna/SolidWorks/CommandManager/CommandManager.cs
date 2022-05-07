@@ -2,7 +2,6 @@
 using SolidWorks.Interop.swconst;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 
@@ -26,11 +25,6 @@ namespace CADBooster.SolidDna
         /// Unique Id for flyouts (just increment every time we add one)
         /// </summary>
         private int mFlyoutIdCount = 1000;
-
-        /// <summary>
-        /// List of icon sizes used by SOLIDWORKS. Icons are square, so these values are both width and height.
-        /// </summary>
-        private readonly int[] mIconSizes = { 20, 32, 40, 64, 96, 128 };
 
         #endregion
 
@@ -150,20 +144,8 @@ namespace CADBooster.SolidDna
                     SolidDnaErrorCode.SolidWorksCommandGroupInvalidPathFormatError,
                     Localization.GetString("ErrorSolidWorksCommandGroupIconListInvalidPathError")));
 
-            var iconListPaths = new Dictionary<int, string>();
-
-            // Fill the dictionary with all paths that exist
-            foreach (var iconSize in mIconSizes)
-            {
-                var path = string.Format(pathFormat, iconSize);
-                if (File.Exists(path))
-                {
-                    iconListPaths.Add(iconSize, path);
-                }
-            }
-
             // Get icon paths
-            var icons = iconListPaths.Values.ToArray();
+            var icons = SolidWorksApplication.GetIconPathsFromPathFormat(pathFormat);
 
             #endregion
 

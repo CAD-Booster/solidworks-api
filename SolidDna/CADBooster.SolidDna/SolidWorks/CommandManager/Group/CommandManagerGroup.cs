@@ -25,9 +25,7 @@ namespace CADBooster.SolidDna
         private readonly Dictionary<int, string> mIconListPaths = new Dictionary<int, string>();
 
         /// <summary>
-        /// List of icon sizes used by SOLIDWORKS. Icons are square, so these values are both width and height.
         /// </summary>
-        private readonly int[] mIconSizes = {20, 32, 40, 64, 96, 128};
 
         /// <summary>
         /// A list of all tabs that have been created
@@ -233,7 +231,7 @@ namespace CADBooster.SolidDna
 
 
             // Fill the dictionary with all paths that exist
-            foreach (var iconSize in mIconSizes)
+            foreach (var iconSize in SolidWorksApplication.mIconSizes)
             {
                 var path = string.Format(pathFormat, iconSize);
                 if (File.Exists(path))

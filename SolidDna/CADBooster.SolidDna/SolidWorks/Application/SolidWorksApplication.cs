@@ -14,6 +14,16 @@ namespace CADBooster.SolidDna
     /// </summary>
     public partial class SolidWorksApplication : SharedSolidDnaObject<SldWorks>
     {
+        #region Public members
+
+        /// <summary>
+        /// List of icon sizes used by SOLIDWORKS for the task pane and command manager.
+        /// Icons are square, so these values are both width and height.
+        /// </summary>
+        public static readonly int[] mIconSizes = { 20, 32, 40, 64, 96, 128 };
+
+        #endregion
+
         #region Protected Members
 
         /// <summary>
@@ -31,11 +41,6 @@ namespace CADBooster.SolidDna
         /// The currently active document
         /// </summary>
         protected Model mActiveModel;
-
-        /// <summary>
-        /// List of icon sizes used by SOLIDWORKS. Icons are square, so these values are both width and height.
-        /// </summary>
-        private static readonly int[] mIconSizes = { 20, 32, 40, 64, 96, 128 };
 
         #endregion
 

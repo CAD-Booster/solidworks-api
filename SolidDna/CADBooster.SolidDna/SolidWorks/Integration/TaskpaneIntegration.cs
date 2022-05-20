@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Windows.Forms.Integration;
 
@@ -47,11 +48,19 @@ namespace CADBooster.SolidDna
         #region Public Properties
 
         /// <summary>
-        ///     An absolute path to an icon to use for the taskpane.
-        ///     The bitmap should be 16 colors and 16 x 18 (width x height) pixels. 
-        ///     Any portions of the bitmap that are white (RGB 255,255,255) will be transparent.
+        /// An absolute path to an icon to use for the taskpane.
+        /// The bitmap should be 16 colors and 16 x 18 (width x height) pixels. 
+        /// Any portions of the bitmap that are white (RGB 255,255,255) will be transparent.
+        /// Use <see cref="IconPathFormat"/> and leave <see cref="Icon"/> null to set multiple icon sizes.
         /// </summary>
         public string Icon { get; set; }
+
+        /// <summary>
+        /// The absolute path to a list of icons, based on a string format of the absolute path to the icon list images, replacing {0} with the size. 
+        /// For example C:\Folder\myiconlist{0}.png
+        /// Works best with PNG files with transparency. Is supported by SolidWorks 2017 and newer.
+        /// </summary>
+        public string IconPathFormat { get; set; }
 
         /// <summary>
         /// The WPF user control to inject as the main control inside the <see cref="ITaskpaneControl"/> control
@@ -92,8 +101,10 @@ namespace CADBooster.SolidDna
             // Get the title for the task pane from the parent add-in. If something goes wrong and we cannot find the parent add-in, set it to a default value.
             var taskpaneTitle = mParentAddin?.SolidWorksAddInTitle ?? "Unknown add-in";
 
-            // Create our Taskpane
-            mTaskpaneView = await AddInIntegration.SolidWorks.CreateTaskpaneAsync(Icon, taskpaneTitle);
+            // Create our Taskpane. Use the old version if no IconPathFormat is set or if we are running SolidWorks 2016 or older.
+            mTaskpaneView = IconPathFormat == null || SolidWorksEnvironment.Application.SolidWorksVersion.Version < 2017
+                ? await AddInIntegration.SolidWorks.CreateTaskpaneAsync(Icon, taskpaneTitle)
+                : await AddInIntegration.SolidWorks.CreateTaskpaneAsync2(IconPathFormat, taskpaneTitle);
 
             // Load our UI into the taskpane
             mHostControl = await mTaskpaneView.AddControlAsync<ITaskpaneControl>(mHostProgId, string.Empty);

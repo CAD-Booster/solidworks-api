@@ -131,8 +131,8 @@ namespace SolidDNA.ScriptRunner
             // Create our taskpane UI
             mTaskpane = new TaskpaneIntegration<MyTaskpaneUI, MyAddIn>()
             {
-                // Set taskpane icon
-                Icon = Path.Combine(this.AssemblyPath(), "logo-small.png"),
+                // Set taskpane icons. {0} is replaced by the actual image sizes.
+                IconPathFormat = Path.Combine(this.AssemblyPath(), "Assets\\icons{0}.png"),
                 WpfControl = new MyAddinControl()
             };
 

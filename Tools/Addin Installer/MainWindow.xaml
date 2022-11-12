@@ -134,13 +134,19 @@
             <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="3" Width="1" HorizontalAlignment="Center" 
                     BorderThickness="1" BorderBrush="Gray" />
 
-            <Label Grid.Row="0" Grid.Column="4" Content="Currently installed add-ins" 
-                   FontWeight="Bold" FontSize="16"/>
-            <ItemsControl Grid.Row="1" Grid.Column="4" ItemsSource="{Binding InstalledAddInTitles, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"
+            <StackPanel Grid.Row="0" Grid.Column="4" Orientation="Horizontal">
+                <Label Content="Currently installed add-ins" FontWeight="Bold" FontSize="16" Margin="0 0 10 0"/>
+                <Button Width="25" Height="25" Click="RefreshCurrentAddIns" ToolTip="Refresh">
+                    <Image Source="Resources/Refresh.png" Height="20" />
+                </Button>
+            </StackPanel>
+          
+            <ItemsControl Grid.Row="1" Grid.Column="4" ItemsSource="{Binding InstalledAddInProperties, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"
                           HorizontalContentAlignment="Stretch">
                 <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding}" VerticalAlignment="Center" Margin="0 5"/>
+                    <DataTemplate DataType="local:AddInProperties">
+                        <TextBlock Text="{Binding Title}" ToolTip="{Binding Path}"
+                                   VerticalAlignment="Center" Margin="0 5"/>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>

@@ -11,6 +11,7 @@ using System.Windows.Controls;
 using AngelSix.SolidWorksApi.AddinInstaller.Properties;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using Path = System.IO.Path;
 
 namespace AngelSix.SolidWorksApi.AddinInstaller
 {
@@ -38,6 +39,11 @@ namespace AngelSix.SolidWorksApi.AddinInstaller
         /// List of installed add-ins. We use a backing field so we can call <see cref="PropertyChanged"/> when the list is set.
         /// </summary>
         private ObservableCollection<AddInProperties> _installedAddInProperties = new ObservableCollection<AddInProperties>();
+
+        /// <summary>
+        /// List of paths to previously used add-ins. We use a backing field so we can call <see cref="PropertyChanged"/> when the list is set.
+        /// </summary>
+        private ObservableCollection<string> _previousAddInPaths = new ObservableCollection<string>();
 
         #endregion
 
@@ -79,7 +85,15 @@ namespace AngelSix.SolidWorksApi.AddinInstaller
         /// <summary>
         /// A list of all add-ins that were previously registered.
         /// </summary>
-        public ObservableCollection<string> PreviousAddInPaths { get; private set; } = new ObservableCollection<string>();
+        public ObservableCollection<string> PreviousAddInPaths
+        {
+            get => _previousAddInPaths;
+            private set
+            {
+                _previousAddInPaths = new ObservableCollection<string>(value.OrderBy(Path.GetFileName));
+                OnPropertyChanged();
+            }
+        }
 
         /// <summary>
         /// A list of all add-ins that are currently installed.
@@ -319,7 +333,10 @@ namespace AngelSix.SolidWorksApi.AddinInstaller
         private void AddPathToPreviousPaths(string addinPath)
         {
             if (!PreviousAddInPaths.Any(x => x.Equals(addinPath, StringComparison.InvariantCultureIgnoreCase)))
+            {
                 PreviousAddInPaths.Add(addinPath);
+                ReadPreviousPaths();
+            }
         }
 
         #endregion

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace AngelSix.SolidWorksApi.AddinInstaller
 {
@@ -39,7 +40,7 @@ namespace AngelSix.SolidWorksApi.AddinInstaller
                 }
             }
 
-            return new ObservableCollection<AddInProperties>(addInProperties);
+            return new ObservableCollection<AddInProperties>(addInProperties.OrderBy(x => x.Title));
         }
 
         /// <summary>

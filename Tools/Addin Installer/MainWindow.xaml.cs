@@ -11,6 +11,7 @@ using System.Windows.Controls;
 using AngelSix.SolidWorksApi.AddinInstaller.Properties;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using Path = System.IO.Path;
 
 namespace AngelSix.SolidWorksApi.AddinInstaller
 {
@@ -37,7 +38,12 @@ namespace AngelSix.SolidWorksApi.AddinInstaller
         /// <summary>
         /// List of installed add-ins. We use a backing field so we can call <see cref="PropertyChanged"/> when the list is set.
         /// </summary>
-        private ObservableCollection<string> _installedAddInTitles = new ObservableCollection<string>();
+        private ObservableCollection<AddInProperties> _installedAddInProperties = new ObservableCollection<AddInProperties>();
+
+        /// <summary>
+        /// List of paths to previously used add-ins. We use a backing field so we can call <see cref="PropertyChanged"/> when the list is set.
+        /// </summary>
+        private ObservableCollection<string> _previousAddInPaths = new ObservableCollection<string>();
 
         #endregion
 
@@ -79,17 +85,25 @@ namespace AngelSix.SolidWorksApi.AddinInstaller
         /// <summary>
         /// A list of all add-ins that were previously registered.
         /// </summary>
-        public ObservableCollection<string> PreviousAddInPaths { get; private set; } = new ObservableCollection<string>();
+        public ObservableCollection<string> PreviousAddInPaths
+        {
+            get => _previousAddInPaths;
+            private set
+            {
+                _previousAddInPaths = new ObservableCollection<string>(value.OrderBy(Path.GetFileName));
+                OnPropertyChanged();
+            }
+        }
 
         /// <summary>
         /// A list of all add-ins that are currently installed.
         /// </summary>
-        public ObservableCollection<string> InstalledAddInTitles
+        public ObservableCollection<AddInProperties> InstalledAddInProperties
         {
-            get => _installedAddInTitles;
+            get => _installedAddInProperties;
             private set
             {
-                _installedAddInTitles = value;
+                _installedAddInProperties = value;
                 OnPropertyChanged();
             }
         }
@@ -115,35 +129,7 @@ namespace AngelSix.SolidWorksApi.AddinInstaller
         /// <summary>
         /// Get all add-ins that are currently installed.
         /// </summary>
-        private void GetInstalledAddIns()
-        {
-            const RegistryHive hive = RegistryHive.LocalMachine;
-            const RegistryView view = RegistryView.Registry64;
-            const string keyPath = "SOFTWARE\\SolidWorks\\AddIns";
-
-            var addInTitles = new List<string>();
-            using (var registryKey = RegistryKey.OpenBaseKey(hive, view).OpenSubKey(keyPath))
-            {
-                if (registryKey == null)
-                    return;
-
-                foreach (var subKeyName in registryKey.GetSubKeyNames())
-                {
-                    using (var key = registryKey.OpenSubKey(subKeyName))
-                    {
-                        var value = (string) key?.GetValue("Title");
-
-                        // The Presentation Manager can be listed multiple times and it's not listed in the add-in window, so we skip it.
-                        if (value == null || value.Equals("Presentation Manager"))
-                            continue;
-
-                        addInTitles.Add(value);
-                    }
-                }
-            }
-
-            InstalledAddInTitles = new ObservableCollection<string>(addInTitles);
-        }
+        private void GetInstalledAddIns() => InstalledAddInProperties = RegistryHelpers.GetAddInPropertiesList();
 
         /// <summary>
         /// Call this method when a property changes and the user interface needs a refresh.
@@ -347,7 +333,10 @@ namespace AngelSix.SolidWorksApi.AddinInstaller
         private void AddPathToPreviousPaths(string addinPath)
         {
             if (!PreviousAddInPaths.Any(x => x.Equals(addinPath, StringComparison.InvariantCultureIgnoreCase)))
+            {
                 PreviousAddInPaths.Add(addinPath);
+                ReadPreviousPaths();
+            }
         }
 
         #endregion
@@ -449,6 +438,13 @@ namespace AngelSix.SolidWorksApi.AddinInstaller
             // Try to uninstall the addin
             UninstallAddin(addInPath);
         }
+
+        /// <summary>
+        /// Refresh the list of installed add-ins.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void RefreshCurrentAddIns(object sender, RoutedEventArgs e) => GetInstalledAddIns();
 
         /// <summary>
         /// Removes an addin path from the list of previous paths

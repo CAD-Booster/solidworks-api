@@ -798,10 +798,9 @@ namespace CADBooster.SolidDna
             {
                 // Replace "{0}" in the string with the icon size
                 var path = string.Format(iconPathFormat, iconSize);
-                if (File.Exists(path))
-                {
-                    iconPaths.Add(iconSize, path);
-                }
+                
+                // Don't check if the path exists because SolidWorks does that for us. If all files don't exist and we return an empty array, the task pane is not created.
+                iconPaths.Add(iconSize, path);
             }
 
             // Get icon paths from the dictionary

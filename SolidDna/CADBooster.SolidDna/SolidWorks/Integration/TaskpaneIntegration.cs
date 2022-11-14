@@ -106,6 +106,10 @@ namespace CADBooster.SolidDna
                 ? await AddInIntegration.SolidWorks.CreateTaskpaneAsync(Icon, taskpaneTitle)
                 : await AddInIntegration.SolidWorks.CreateTaskpaneAsync2(IconPathFormat, taskpaneTitle);
 
+            // If creating the task pane failed for any reason, we don't try to continue because that forces a crash.
+            if (mTaskpaneView == null)
+                return;
+
             // Load our UI into the taskpane
             mHostControl = await mTaskpaneView.AddControlAsync<ITaskpaneControl>(mHostProgId, string.Empty);
 

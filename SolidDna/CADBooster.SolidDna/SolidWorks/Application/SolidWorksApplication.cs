@@ -114,6 +114,11 @@ namespace CADBooster.SolidDna
         /// </summary>
         public event Action Idle = () => { };
 
+        /// <summary>
+        /// Called when SolidWorks is about to close.
+        /// </summary>
+        public event Action SolidWorksClosing = () => { };
+
         #endregion
 
         #region Constructor
@@ -131,6 +136,7 @@ namespace CADBooster.SolidDna
 
             // Hook into main events
             BaseObject.ActiveModelDocChangeNotify += ActiveModelChanged;
+            BaseObject.DestroyNotify += OnSolidWorksClosing;
             BaseObject.FileOpenPreNotify += FileOpenPreNotify;
             BaseObject.FileOpenPostNotify += FileOpenPostNotify;
             BaseObject.FileNewNotify2 += FileNewPostNotify;
@@ -204,6 +210,19 @@ namespace CADBooster.SolidDna
                 SolidDnaErrorTypeCode.SolidWorksApplication,
                 SolidDnaErrorCode.SolidWorksApplicationError,
                 Localization.GetString("SolidWorksApplicationOnIdleNotificationError"));
+
+            // NOTE: 0 is OK, anything else is an error
+            return 0;
+        }
+
+        /// <summary>
+        /// Called when SolidWorks is about to close.
+        /// </summary>
+        /// <returns></returns>
+        private int OnSolidWorksClosing()
+        {
+            // Inform listeners
+            SolidWorksClosing();
 
             // NOTE: 0 is OK, anything else is an error
             return 0;

@@ -407,7 +407,7 @@ namespace CADBooster.SolidDna
             },
                 SolidDnaErrorTypeCode.SolidWorksModel,
                 SolidDnaErrorCode.SolidWorksModelPackAndGoError,
-                Localization.GetString("SolidWorksModelPackAndGoError"));
+                nameof(SolidDnaErrorCode.SolidWorksModelPackAndGoError));
 
         }
 
@@ -1049,7 +1049,7 @@ namespace CADBooster.SolidDna
             },
                 SolidDnaErrorTypeCode.SolidWorksModel,
                 SolidDnaErrorCode.SolidWorksModelGetMaterialError,
-                Localization.GetString("SolidWorksModelGetMaterialError"));
+                nameof(SolidDnaErrorCode.SolidWorksModelGetMaterialError));
         }
 
         /// <summary>
@@ -1076,7 +1076,7 @@ namespace CADBooster.SolidDna
             },
                 SolidDnaErrorTypeCode.SolidWorksModel,
                 SolidDnaErrorCode.SolidWorksModelSetMaterialError,
-                Localization.GetString("SolidWorksModelSetMaterialError"));
+                nameof(SolidDnaErrorCode.SolidWorksModelSetMaterialError));
         }
 
         #endregion
@@ -1323,7 +1323,7 @@ namespace CADBooster.SolidDna
             },
                 SolidDnaErrorTypeCode.SolidWorksModel,
                 SolidDnaErrorCode.SolidWorksModelSaveError,
-                Localization.GetString("SolidWorksModelSaveError"));
+                nameof(SolidDnaErrorCode.SolidWorksModelSaveError));
         }
 
         /// <summary>
@@ -1377,7 +1377,7 @@ namespace CADBooster.SolidDna
             },
                 SolidDnaErrorTypeCode.SolidWorksModel,
                 SolidDnaErrorCode.SolidWorksModelSaveAsError,
-                Localization.GetString("SolidWorksModelSaveAsError"));
+                nameof(SolidDnaErrorCode.SolidWorksModelSaveAsError));
         }
 
         #endregion

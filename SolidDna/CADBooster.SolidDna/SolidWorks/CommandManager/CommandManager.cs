@@ -127,7 +127,7 @@ namespace CADBooster.SolidDna
             },
                 SolidDnaErrorTypeCode.SolidWorksCommandManager,
                 SolidDnaErrorCode.SolidWorksCommandGroupCreateError,
-                Localization.GetString("ErrorSolidWorksCommandGroupAddError"));
+                "ErrorSolidWorksCommandGroupAddError");
         }
 
         /// <summary>
@@ -149,7 +149,7 @@ namespace CADBooster.SolidDna
                 throw new SolidDnaException(SolidDnaErrors.CreateError(
                     SolidDnaErrorTypeCode.SolidWorksCommandManager,
                     SolidDnaErrorCode.SolidWorksCommandGroupInvalidPathFormatError,
-                    Localization.GetString("ErrorSolidWorksCommandGroupIconListInvalidPathError")));
+                    "ErrorSolidWorksCommandGroupIconListInvalidPathError"));
 
             // Get icon paths
             var icons = SolidWorksApplication.GetIconPathsFromPathFormat(pathFormat);
@@ -245,7 +245,7 @@ namespace CADBooster.SolidDna
                 throw new SolidDnaException(SolidDnaErrors.CreateError(
                     SolidDnaErrorTypeCode.SolidWorksCommandManager,
                     SolidDnaErrorCode.SolidWorksCommandGroupCreateError,
-                    Localization.GetString("ErrorSolidWorksCommandGroupAddError") + $". {errorEnumString}"));
+                    "ErrorSolidWorksCommandGroupAddError" + $". {errorEnumString}"));
             }
 
             // Otherwise we got the command group
@@ -336,7 +336,7 @@ namespace CADBooster.SolidDna
                 throw new SolidDnaException(SolidDnaErrors.CreateError(
                     SolidDnaErrorTypeCode.SolidWorksCommandManager,
                     SolidDnaErrorCode.SolidWorksCommandGroupCreateTabError,
-                    Localization.GetString("ErrorSolidWorksCommandCreateTabError")));
+                    "ErrorSolidWorksCommandCreateTabError"));
 
             // Return tab
             return new CommandManagerTab(unsafeTab);

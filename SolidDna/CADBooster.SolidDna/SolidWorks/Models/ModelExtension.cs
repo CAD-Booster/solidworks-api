@@ -101,7 +101,7 @@ namespace CADBooster.SolidDna
             },
                 SolidDnaErrorTypeCode.SolidWorksModel,
                 SolidDnaErrorCode.SolidWorksModelGetMassPropertiesError,
-                Localization.GetString("SolidWorksModelGetMassPropertiesError"));
+                nameof(SolidDnaErrorCode.SolidWorksModelGetMassPropertiesError));
         }
 
         #endregion

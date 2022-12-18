@@ -61,7 +61,7 @@ namespace CADBooster.SolidDna
             },
                 SolidDnaErrorTypeCode.SolidWorksModel,
                 SolidDnaErrorCode.SolidWorksModelPartGetFeatureByNameError,
-                Localization.GetString(nameof(SolidDnaErrorCode.SolidWorksModelPartGetFeatureByNameError)));
+                nameof(SolidDnaErrorCode.SolidWorksModelPartGetFeatureByNameError));
         }
 
         #endregion

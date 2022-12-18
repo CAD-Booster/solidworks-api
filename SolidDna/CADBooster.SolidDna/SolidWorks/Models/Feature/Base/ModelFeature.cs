@@ -989,7 +989,7 @@ namespace CADBooster.SolidDna
                 SolidDnaErrors.CreateError(
                     SolidDnaErrorTypeCode.SolidWorksModel,
                     SolidDnaErrorCode.SolidWorksModelFeatureGetCustomPropertyEditor,
-                    Localization.GetString("SolidWorksModelFeatureGetCustomPropertyEditor")));
+                    nameof(SolidDnaErrorCode.SolidWorksModelFeatureGetCustomPropertyEditor)));
         }
 
         /// <summary>

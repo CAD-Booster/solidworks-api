@@ -188,7 +188,7 @@ namespace CADBooster.SolidDna
             },
                 SolidDnaErrorTypeCode.SolidWorksApplication,
                 SolidDnaErrorCode.SolidWorksApplicationVersionError,
-                Localization.GetString("SolidWorksApplicationVersionError"));
+                nameof(SolidDnaErrorCode.SolidWorksApplicationVersionError));
         }
 
         #endregion
@@ -209,7 +209,7 @@ namespace CADBooster.SolidDna
             },
                 SolidDnaErrorTypeCode.SolidWorksApplication,
                 SolidDnaErrorCode.SolidWorksApplicationError,
-                Localization.GetString("SolidWorksApplicationOnIdleNotificationError"));
+                "SolidWorksApplicationOnIdleNotificationError");
 
             // NOTE: 0 is OK, anything else is an error
             return 0;
@@ -292,7 +292,7 @@ namespace CADBooster.SolidDna
             },
                 SolidDnaErrorTypeCode.SolidWorksApplication,
                 SolidDnaErrorCode.SolidWorksApplicationFilePostOpenError,
-                Localization.GetString("SolidWorksApplicationFilePostOpenError"));
+                nameof(SolidDnaErrorCode.SolidWorksApplicationFilePostOpenError));
 
             // NOTE: 0 is OK, anything else is an error
             return 0;
@@ -320,7 +320,7 @@ namespace CADBooster.SolidDna
             },
                 SolidDnaErrorTypeCode.SolidWorksApplication,
                 SolidDnaErrorCode.SolidWorksApplicationFilePreOpenError,
-                Localization.GetString("SolidWorksApplicationFilePreOpenError"));
+                nameof(SolidDnaErrorCode.SolidWorksApplicationFilePreOpenError));
 
             // NOTE: 0 is OK, anything else is an error
             return 0;
@@ -363,7 +363,7 @@ namespace CADBooster.SolidDna
             },
                 SolidDnaErrorTypeCode.SolidWorksApplication,
                 SolidDnaErrorCode.SolidWorksApplicationActiveModelChangedError,
-                Localization.GetString("SolidWorksApplicationActiveModelChangedError"));
+                nameof(SolidDnaErrorCode.SolidWorksApplicationActiveModelChangedError));
 
             // NOTE: 0 is OK, anything else is an error
             return 0;
@@ -527,7 +527,7 @@ namespace CADBooster.SolidDna
             },
                 SolidDnaErrorTypeCode.SolidWorksApplication,
                 SolidDnaErrorCode.SolidWorksModelOpenError,
-                Localization.GetString("SolidWorksModelOpenFileError"));
+                "SolidWorksModelOpenFileError");
         }
 
         /// <summary>
@@ -543,7 +543,7 @@ namespace CADBooster.SolidDna
             },
                 SolidDnaErrorTypeCode.SolidWorksApplication,
                 SolidDnaErrorCode.SolidWorksModelCloseError,
-                Localization.GetString("SolidWorksModelCloseFileError"));
+                "SolidWorksModelCloseFileError");
         }
 
         #endregion
@@ -599,7 +599,7 @@ namespace CADBooster.SolidDna
             },
                 SolidDnaErrorTypeCode.SolidWorksApplication,
                 SolidDnaErrorCode.SolidWorksApplicationGetMaterialsError,
-                Localization.GetString("SolidWorksApplicationGetMaterialsError"));
+                nameof(SolidDnaErrorCode.SolidWorksApplicationGetMaterialsError));
         }
 
         /// <summary>
@@ -622,7 +622,7 @@ namespace CADBooster.SolidDna
             },
                 SolidDnaErrorTypeCode.SolidWorksApplication,
                 SolidDnaErrorCode.SolidWorksApplicationFindMaterialsError,
-                Localization.GetString("SolidWorksApplicationFindMaterialsError"));
+                nameof(SolidDnaErrorCode.SolidWorksApplicationFindMaterialsError));
         }
 
         #region Private Helpers
@@ -640,7 +640,7 @@ namespace CADBooster.SolidDna
                     SolidDnaErrors.CreateError(
                         SolidDnaErrorTypeCode.SolidWorksApplication,
                         SolidDnaErrorCode.SolidWorksApplicationGetMaterialsFileNotFoundError,
-                        Localization.GetString("SolidWorksApplicationGetMaterialsFileNotFoundError")));
+                        nameof(SolidDnaErrorCode.SolidWorksApplicationGetMaterialsFileNotFoundError)));
 
             try
             {
@@ -686,7 +686,7 @@ namespace CADBooster.SolidDna
                         SolidDnaErrors.CreateError(
                             SolidDnaErrorTypeCode.SolidWorksApplication,
                             SolidDnaErrorCode.SolidWorksApplicationGetMaterialsFileFormatError,
-                            Localization.GetString("SolidWorksApplicationGetMaterialsFileFormatError"),
+                            nameof(SolidDnaErrorCode.SolidWorksApplicationGetMaterialsFileFormatError),
                             ex));
             }
         }
@@ -772,7 +772,7 @@ namespace CADBooster.SolidDna
             },
                 SolidDnaErrorTypeCode.SolidWorksTaskpane,
                 SolidDnaErrorCode.SolidWorksTaskpaneCreateError,
-                await Localization.GetStringAsync("ErrorSolidWorksTaskpaneCreateError"));
+                "ErrorSolidWorksTaskpaneCreateError");
         }
 
         /// <summary>
@@ -802,7 +802,7 @@ namespace CADBooster.SolidDna
                 },
                 SolidDnaErrorTypeCode.SolidWorksTaskpane,
                 SolidDnaErrorCode.SolidWorksTaskpaneCreateError,
-                await Localization.GetStringAsync("ErrorSolidWorksTaskpaneCreateError"));
+                "ErrorSolidWorksTaskpaneCreateError");
         }
 
         /// <summary>

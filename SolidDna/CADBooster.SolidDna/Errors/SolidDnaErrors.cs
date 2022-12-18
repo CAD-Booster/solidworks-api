@@ -13,9 +13,9 @@ namespace CADBooster.SolidDna
         /// <summary>
         /// Creates a <see cref="SolidDnaError"/> from the given details
         /// </summary>
-        /// <param name="errorDetails">Specific details about this exact error</param>
         /// <param name="errorTypeCode">The error type code of this error</param>
         /// <param name="errorCode">The specific error code of this error</param>
+        /// <param name="errorDetails">Specific details about this exact error. Will get localized first.</param>
         /// <param name="innerException">If an inner exception is supplied, its message is appended to the errorDetails</param>
         /// <returns></returns>
         public static SolidDnaError CreateError(SolidDnaErrorTypeCode errorTypeCode, SolidDnaErrorCode errorCode, string errorDetails, Exception innerException = null)
@@ -24,7 +24,7 @@ namespace CADBooster.SolidDna
             var error = new SolidDnaError
             {
                 ErrorCodeValue = errorCode,
-                ErrorMessage = errorDetails,
+                ErrorMessage = Localization.GetString(errorDetails),
                 ErrorTypeCodeValue = errorTypeCode,
             };
 
@@ -42,7 +42,7 @@ namespace CADBooster.SolidDna
         /// <param name="action">The action to run</param>
         /// <param name="errorTypeCode">The <see cref="SolidDnaErrorTypeCode"/> to wrap the exception in</param>
         /// <param name="errorCode">The <see cref="SolidDnaErrorCode"/> to wrap the exception in</param>
-        /// <param name="errorDescription">The description of the error if thrown</param>
+        /// <param name="errorDescription">The description of the error if thrown. Gets localized before being thrown</param>
         public static void Wrap(Action action, SolidDnaErrorTypeCode errorTypeCode, SolidDnaErrorCode errorCode, string errorDescription)
         {
             try
@@ -52,10 +52,7 @@ namespace CADBooster.SolidDna
             catch (Exception ex)
             {
                 // Create the SolidDNA exception
-                var error = new SolidDnaException(CreateError(
-                    errorTypeCode,
-                    errorCode,
-                    errorDescription), ex);
+                var error = new SolidDnaException(CreateError(errorTypeCode, errorCode, errorDescription), ex);
 
                 // If it should just be logged and ignored, log it
                 if (Logger.LogAndIgnoreUncaughtExceptions)
@@ -78,7 +75,7 @@ namespace CADBooster.SolidDna
         /// <param name="func">The function to run</param>
         /// <param name="errorTypeCode">The <see cref="SolidDnaErrorTypeCode"/> to wrap the exception in</param>
         /// <param name="errorCode">The <see cref="SolidDnaErrorCode"/> to wrap the exception in</param>
-        /// <param name="errorDescription">The description of the error if thrown</param>
+        /// <param name="errorDescription">The description of the error if thrown. Gets localized before being thrown</param>
         public static T Wrap<T>(Func<T> func, SolidDnaErrorTypeCode errorTypeCode, SolidDnaErrorCode errorCode, string errorDescription)
         {
             try
@@ -88,10 +85,7 @@ namespace CADBooster.SolidDna
             catch (Exception ex)
             {
                 // Create the SolidDNA exception
-                var error = new SolidDnaException(CreateError(
-                    errorTypeCode,
-                    errorCode,
-                    errorDescription), ex);
+                var error = new SolidDnaException(CreateError(errorTypeCode, errorCode, errorDescription), ex);
 
                 // If it should just be logged and ignored, log it
                 if (Logger.LogAndIgnoreUncaughtExceptions)
@@ -115,7 +109,7 @@ namespace CADBooster.SolidDna
         /// <param name="task">The task to run</param>
         /// <param name="errorTypeCode">The <see cref="SolidDnaErrorTypeCode"/> to wrap the exception in</param>
         /// <param name="errorCode">The <see cref="SolidDnaErrorCode"/> to wrap the exception in</param>
-        /// <param name="errorDescription">The description of the error if thrown</param>
+        /// <param name="errorDescription">The description of the error if thrown. Gets localized before being thrown</param>
         public static async Task WrapAwaitAsync(Func<Task> task, SolidDnaErrorTypeCode errorTypeCode, SolidDnaErrorCode errorCode, string errorDescription)
         {
             try
@@ -125,10 +119,7 @@ namespace CADBooster.SolidDna
             catch (Exception ex)
             {
                 // Create the SolidDNA exception
-                var error = new SolidDnaException(CreateError(
-                    errorTypeCode,
-                    errorCode,
-                    errorDescription), ex);
+                var error = new SolidDnaException(CreateError(errorTypeCode, errorCode, errorDescription), ex);
 
                 // If it should just be logged and ignored, log it
                 if (Logger.LogAndIgnoreUncaughtExceptions)
@@ -153,7 +144,7 @@ namespace CADBooster.SolidDna
         /// <param name="task">The task to run</param>
         /// <param name="errorTypeCode">The <see cref="SolidDnaErrorTypeCode"/> to wrap the exception in</param>
         /// <param name="errorCode">The <see cref="SolidDnaErrorCode"/> to wrap the exception in</param>
-        /// <param name="errorDescription">The description of the error if thrown</param>
+        /// <param name="errorDescription">The description of the error if thrown. Gets localized before being thrown</param>
         public static async Task<T> WrapAwaitAsync<T>(Func<Task<T>> task, SolidDnaErrorTypeCode errorTypeCode, SolidDnaErrorCode errorCode, string errorDescription)
         {
             try
@@ -163,10 +154,7 @@ namespace CADBooster.SolidDna
             catch (Exception ex)
             {
                 // Create the SolidDNA exception
-                var error = new SolidDnaException(CreateError(
-                    errorTypeCode,
-                    errorCode,
-                    errorDescription), ex);
+                var error = new SolidDnaException(CreateError(errorTypeCode, errorCode, errorDescription), ex);
 
                 // If it should just be logged and ignored, log it
                 if (Logger.LogAndIgnoreUncaughtExceptions)

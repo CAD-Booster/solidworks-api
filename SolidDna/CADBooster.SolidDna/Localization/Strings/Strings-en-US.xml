@@ -16,7 +16,7 @@
   <String Name="SolidWorksApplicationGetMaterialsFileFormatError">An error occurred attempting to read the SolidWorks Materials databases because the file was of an unexpected format</String>
   <String Name="SolidWorksApplicationFindMaterialsError">An error occurred attempting to find a material from a SolidWorks Materials database file</String>
   <String Name="SolidWorksApplicationVersionError">An error occurred attempting to get the SolidWorks version information</String>
-  <String Name="SolidWorksApplicationOnIdleNotificationError">An error occurred when calling listeners of the Idle event</String>
+  <String Name="SolidWorksApplicationIdleNotificationError">An error occurred when calling listeners of the Idle event</String>
 
   <!-- SolidWorks Taskpane -->
   <String Name="SolidWorksTaskpaneCreateError">An error occurred creating the SolidWorks Taskpane</String>
@@ -44,11 +44,11 @@
   <String Name="ThreadInvokerNullError">Unable to find UI thread as Thread Invoker Enable was never called on a UI thread</String>
 
   <!-- SolidWorks Command Manager -->
-  <String Name="SolidWorksCommandGroupAddError">An error occurred adding a SolidWorks Command Group</String>
-  <String Name="SolidWorksCommandGroupReCreateError">An error occurred activating a SolidWorks Command Group. It was already activated so must be removed before re-activating</String>
-  <String Name="SolidWorksCommandGroupIconListInvalidPathError">An error occurred setting a SolidWorks Command Group Icon list path. The string was an invalid format</String>
+  <String Name="SolidWorksCommandGroupCreateError">An error occurred adding a SolidWorks Command Group</String>
+  <String Name="SolidWorksCommandGroupReActivateError">An error occurred activating a SolidWorks Command Group. It was already activated so must be removed before re-activating</String>
+  <String Name="SolidWorksCommandGroupInvalidPathFormatError">An error occurred setting a SolidWorks Command Group Icon list path. The string was an invalid format</String>
   <String Name="SolidWorksCommandGroupActivateError">An error occurred activating a SolidWorks Command Group</String>
-  <String Name="SolidWorksCommandCreateTabError">An error occurred creating a SolidWorks Command Group Tab</String>
+  <String Name="SolidWorksCommandGroupCreateTabError">An error occurred creating a SolidWorks Command Group Tab</String>
 
   <!-- Export Data -->
   <String Name="SolidWorksExportDataError">An unknown error occurred in the Export Data class</String>

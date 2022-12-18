@@ -196,7 +196,7 @@ namespace CADBooster.SolidDna
         #region SolidWorks Event Methods
 
         /// <summary>
-        ///  Called when SolidWorks is idle
+        /// Called when SolidWorks is idle
         /// </summary>
         /// <returns></returns>
         private int OnIdleNotify()
@@ -208,8 +208,8 @@ namespace CADBooster.SolidDna
                 Idle();
             },
                 SolidDnaErrorTypeCode.SolidWorksApplication,
-                SolidDnaErrorCode.SolidWorksApplicationError,
-                "SolidWorksApplicationOnIdleNotificationError");
+                SolidDnaErrorCode.SolidWorksApplicationIdleNotificationError,
+                nameof(SolidDnaErrorCode.SolidWorksApplicationIdleNotificationError));
 
             // NOTE: 0 is OK, anything else is an error
             return 0;
@@ -526,8 +526,8 @@ namespace CADBooster.SolidDna
                 return new Model(modelCom);
             },
                 SolidDnaErrorTypeCode.SolidWorksApplication,
-                SolidDnaErrorCode.SolidWorksModelOpenError,
-                "SolidWorksModelOpenFileError");
+                SolidDnaErrorCode.SolidWorksModelOpenFileError,
+                nameof(SolidDnaErrorCode.SolidWorksModelOpenFileError));
         }
 
         /// <summary>
@@ -542,8 +542,8 @@ namespace CADBooster.SolidDna
                 BaseObject.CloseDoc(filePath);
             },
                 SolidDnaErrorTypeCode.SolidWorksApplication,
-                SolidDnaErrorCode.SolidWorksModelCloseError,
-                "SolidWorksModelCloseFileError");
+                SolidDnaErrorCode.SolidWorksModelCloseFileError,
+                nameof(SolidDnaErrorCode.SolidWorksModelCloseFileError));
         }
 
         #endregion

@@ -40,7 +40,7 @@ namespace CADBooster.SolidDna
             },
                 SolidDnaErrorTypeCode.SolidWorksTaskpane,
                 SolidDnaErrorCode.SolidWorksTaskpaneAddControlError,
-                "ErrorSolidWorksTaskpaneAddControlError");
+                nameof(SolidDnaErrorCode.SolidWorksTaskpaneAddControlError));
         }
 
 

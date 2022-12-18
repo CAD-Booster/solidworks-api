@@ -241,7 +241,7 @@ namespace CADBooster.SolidDna
                 throw new SolidDnaException(SolidDnaErrors.CreateError(
                     SolidDnaErrorTypeCode.SolidWorksCommandManager,
                     SolidDnaErrorCode.SolidWorksCommandGroupInvalidPathFormatError,
-                    "ErrorSolidWorksCommandGroupIconListInvalidPathError"));
+                    "SolidWorksCommandGroupIconListInvalidPathError"));
 
 
             // Fill the dictionary with all paths that exist
@@ -310,7 +310,7 @@ namespace CADBooster.SolidDna
                 throw new SolidDnaException(SolidDnaErrors.CreateError(
                     SolidDnaErrorTypeCode.SolidWorksCommandManager,
                     SolidDnaErrorCode.SolidWorksCommandGroupReActivateError,
-                    "ErrorSolidWorksCommandGroupReCreateError"));
+                    "SolidWorksCommandGroupReCreateError"));
 
             #region Set Icons
 
@@ -447,7 +447,7 @@ namespace CADBooster.SolidDna
                 throw new SolidDnaException(SolidDnaErrors.CreateError(
                     SolidDnaErrorTypeCode.SolidWorksCommandManager,
                     SolidDnaErrorCode.SolidWorksCommandGroupActivateError,
-                    "ErrorSolidWorksCommandGroupActivateError"));
+                    "SolidWorksCommandGroupActivateError"));
         }
 
         /// <summary>

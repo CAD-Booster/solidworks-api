@@ -772,7 +772,7 @@ namespace CADBooster.SolidDna
             },
                 SolidDnaErrorTypeCode.SolidWorksTaskpane,
                 SolidDnaErrorCode.SolidWorksTaskpaneCreateError,
-                "ErrorSolidWorksTaskpaneCreateError");
+                nameof(SolidDnaErrorCode.SolidWorksTaskpaneCreateError));
         }
 
         /// <summary>
@@ -802,7 +802,7 @@ namespace CADBooster.SolidDna
                 },
                 SolidDnaErrorTypeCode.SolidWorksTaskpane,
                 SolidDnaErrorCode.SolidWorksTaskpaneCreateError,
-                "ErrorSolidWorksTaskpaneCreateError");
+                nameof(SolidDnaErrorCode.SolidWorksTaskpaneCreateError));
         }
 
         /// <summary>

@@ -64,7 +64,7 @@ namespace CADBooster.SolidDna
         {
             // If we are on the UI thread already, just run the action
             if (mInvoker == null)
-                throw new ArgumentNullException(await Localization.GetStringAsync("ErrorThreadInvokerNullError"));
+                throw new ArgumentNullException(await Localization.GetStringAsync("ThreadInvokerNullError"));
 
             // If we are already on the UI thread, just run
             if (!mInvoker.InvokeRequired)

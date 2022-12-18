@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Windows.Forms.Integration;
 
@@ -149,13 +148,13 @@ namespace CADBooster.SolidDna
                 AppContext.SetSwitch("Switch.System.Windows.Input.Stylus.DisableStylusAndTouchSupport", true);
 
                 // Add and dock it to the parent control
-                if (mHostControl is Control)
+                if (mHostControl is Control control)
                 {
                     // Make sure parent is docked
-                    (mHostControl as Control).Dock = DockStyle.Fill;
+                    control.Dock = DockStyle.Fill;
 
                     // Add WPF host
-                    (mHostControl as Control).Controls.Add(mElementHost);
+                    control.Controls.Add(mElementHost);
                 }
 
             }

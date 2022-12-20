@@ -13,13 +13,6 @@ namespace CADBooster.SolidDna
     /// </summary>
     public class Model : SharedSolidDnaObject<ModelDoc2>
     {
-        #region Private Members
-
-        private static readonly int SolidWorksVersionYear = SolidWorksEnvironment.Application.SolidWorksVersion.Version;
-        private bool? _fileExists;
-
-        #endregion
-
         #region Public Properties
 
         /// <summary>
@@ -30,23 +23,8 @@ namespace CADBooster.SolidDna
         /// <summary>
         /// Indicates if this file has been saved (so exists on disk).
         /// If not, it's a new model currently only in-memory and will not have a file path.
-        /// SolidWorks 2020 started setting a path for a file that is loaded with 3D Interconnect, so the path is no longer empty.
-        /// That is why we have to check if the file actually exists.
         /// </summary>
-        public bool HasBeenSaved {
-            get
-            {
-                if (SolidWorksVersionYear < 2020)
-                    return !string.IsNullOrEmpty(FilePath);
-                
-                // Get if the file exists if it hasn't been initialized yet. Is set to null in ReloadModelData.
-                // You can't delete a file while it is open, so this should work reliably.
-                if (_fileExists == null)
-                    _fileExists = File.Exists(FilePath);
-
-                return !string.IsNullOrEmpty(FilePath) && _fileExists == true;
-            }
-        } 
+        public bool HasBeenSaved => !string.IsNullOrEmpty(FilePath);
 
         /// <summary>
         /// Indicates if this file needs saving (has file changes).
@@ -706,10 +684,6 @@ namespace CADBooster.SolidDna
         {
             // Were we saved or is this a new file?
             var wasNewFile = !HasBeenSaved;
-
-            // Reset it so we will check again when we request HasBeenSaved
-            // Do this before calling ModelSaved or ReloadModelData because attached event handlers can use HasBeenSaved.
-            _fileExists = null;
 
             // Update filepath
             FilePath = BaseObject.GetPathName();

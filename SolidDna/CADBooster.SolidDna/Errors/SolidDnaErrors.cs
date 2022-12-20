@@ -18,13 +18,16 @@ namespace CADBooster.SolidDna
         /// <param name="errorDetails">Specific details about this exact error. Will get localized first.</param>
         /// <param name="innerException">If an inner exception is supplied, its message is appended to the errorDetails</param>
         /// <returns></returns>
-        public static SolidDnaError CreateError(SolidDnaErrorTypeCode errorTypeCode, SolidDnaErrorCode errorCode, string errorDetails, Exception innerException = null)
+        public static SolidDnaError CreateError(SolidDnaErrorTypeCode errorTypeCode, SolidDnaErrorCode errorCode, string errorDetails = null, Exception innerException = null)
         {
+            var translatedErrorCode = Localization.GetString(errorCode.ToString());
+            var errorMessage = errorDetails.IsNullOrWhiteSpace() ? translatedErrorCode : $"{translatedErrorCode}. {errorDetails}";
+
             // Create the error
             var error = new SolidDnaError
             {
                 ErrorCodeValue = errorCode,
-                ErrorMessage = Localization.GetString(errorDetails),
+                ErrorMessage = errorMessage,
                 ErrorTypeCodeValue = errorTypeCode,
             };
 
@@ -43,7 +46,7 @@ namespace CADBooster.SolidDna
         /// <param name="errorTypeCode">The <see cref="SolidDnaErrorTypeCode"/> to wrap the exception in</param>
         /// <param name="errorCode">The <see cref="SolidDnaErrorCode"/> to wrap the exception in</param>
         /// <param name="errorDescription">The description of the error if thrown. Gets localized before being thrown</param>
-        public static void Wrap(Action action, SolidDnaErrorTypeCode errorTypeCode, SolidDnaErrorCode errorCode, string errorDescription)
+        public static void Wrap(Action action, SolidDnaErrorTypeCode errorTypeCode, SolidDnaErrorCode errorCode, string errorDescription = null)
         {
             try
             {
@@ -76,7 +79,7 @@ namespace CADBooster.SolidDna
         /// <param name="errorTypeCode">The <see cref="SolidDnaErrorTypeCode"/> to wrap the exception in</param>
         /// <param name="errorCode">The <see cref="SolidDnaErrorCode"/> to wrap the exception in</param>
         /// <param name="errorDescription">The description of the error if thrown. Gets localized before being thrown</param>
-        public static T Wrap<T>(Func<T> func, SolidDnaErrorTypeCode errorTypeCode, SolidDnaErrorCode errorCode, string errorDescription)
+        public static T Wrap<T>(Func<T> func, SolidDnaErrorTypeCode errorTypeCode, SolidDnaErrorCode errorCode, string errorDescription = null)
         {
             try
             {
@@ -110,7 +113,7 @@ namespace CADBooster.SolidDna
         /// <param name="errorTypeCode">The <see cref="SolidDnaErrorTypeCode"/> to wrap the exception in</param>
         /// <param name="errorCode">The <see cref="SolidDnaErrorCode"/> to wrap the exception in</param>
         /// <param name="errorDescription">The description of the error if thrown. Gets localized before being thrown</param>
-        public static async Task WrapAwaitAsync(Func<Task> task, SolidDnaErrorTypeCode errorTypeCode, SolidDnaErrorCode errorCode, string errorDescription)
+        public static async Task WrapAwaitAsync(Func<Task> task, SolidDnaErrorTypeCode errorTypeCode, SolidDnaErrorCode errorCode, string errorDescription = null)
         {
             try
             {
@@ -145,7 +148,7 @@ namespace CADBooster.SolidDna
         /// <param name="errorTypeCode">The <see cref="SolidDnaErrorTypeCode"/> to wrap the exception in</param>
         /// <param name="errorCode">The <see cref="SolidDnaErrorCode"/> to wrap the exception in</param>
         /// <param name="errorDescription">The description of the error if thrown. Gets localized before being thrown</param>
-        public static async Task<T> WrapAwaitAsync<T>(Func<Task<T>> task, SolidDnaErrorTypeCode errorTypeCode, SolidDnaErrorCode errorCode, string errorDescription)
+        public static async Task<T> WrapAwaitAsync<T>(Func<Task<T>> task, SolidDnaErrorTypeCode errorTypeCode, SolidDnaErrorCode errorCode, string errorDescription = null)
         {
             try
             {

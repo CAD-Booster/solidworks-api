@@ -100,8 +100,7 @@ namespace CADBooster.SolidDna
                 return new MassProperties(massProps);
             },
                 SolidDnaErrorTypeCode.SolidWorksModel,
-                SolidDnaErrorCode.SolidWorksModelGetMassPropertiesError,
-                nameof(SolidDnaErrorCode.SolidWorksModelGetMassPropertiesError));
+                SolidDnaErrorCode.SolidWorksModelGetMassPropertiesError);
         }
 
         #endregion

@@ -34,39 +34,39 @@
   <ItemGroup>
     <Reference Include="SolidWorks.Interop.sldworks">
       <EmbedInteropTypes>False</EmbedInteropTypes>
-      <HintPath>D:\git\angelsix\solidworks-api\References\2019\SolidWorks.Interop.sldworks.dll</HintPath>
+      <HintPath>D:\git\angelsix\solidworks-api\References\2023\SolidWorks.Interop.sldworks.dll</HintPath>
     </Reference>
     <Reference Include="SolidWorks.Interop.sw3dprinter">
       <EmbedInteropTypes>False</EmbedInteropTypes>
-      <HintPath>D:\git\angelsix\solidworks-api\References\2019\SolidWorks.Interop.sw3dprinter.dll</HintPath>
+      <HintPath>D:\git\angelsix\solidworks-api\References\2023\SolidWorks.Interop.sw3dprinter.dll</HintPath>
     </Reference>
     <Reference Include="SolidWorks.Interop.swcommands">
       <EmbedInteropTypes>False</EmbedInteropTypes>
-      <HintPath>D:\git\angelsix\solidworks-api\References\2019\SolidWorks.Interop.swcommands.dll</HintPath>
+      <HintPath>D:\git\angelsix\solidworks-api\References\2023\SolidWorks.Interop.swcommands.dll</HintPath>
     </Reference>
     <Reference Include="SolidWorks.Interop.swconst">
       <EmbedInteropTypes>False</EmbedInteropTypes>
-      <HintPath>D:\git\angelsix\solidworks-api\References\2019\SolidWorks.Interop.swconst.dll</HintPath>
+      <HintPath>D:\git\angelsix\solidworks-api\References\2023\SolidWorks.Interop.swconst.dll</HintPath>
     </Reference>
     <Reference Include="SolidWorks.Interop.swdimxpert">
       <EmbedInteropTypes>False</EmbedInteropTypes>
-      <HintPath>D:\git\angelsix\solidworks-api\References\2019\SolidWorks.Interop.swdimxpert.dll</HintPath>
+      <HintPath>D:\git\angelsix\solidworks-api\References\2023\SolidWorks.Interop.swdimxpert.dll</HintPath>
     </Reference>
     <Reference Include="SolidWorks.Interop.swdocumentmgr">
       <EmbedInteropTypes>False</EmbedInteropTypes>
-      <HintPath>D:\git\angelsix\solidworks-api\References\2019\SolidWorks.Interop.swdocumentmgr.dll</HintPath>
+      <HintPath>D:\git\angelsix\solidworks-api\References\2023\SolidWorks.Interop.swdocumentmgr.dll</HintPath>
     </Reference>
     <Reference Include="SolidWorks.Interop.swmotionstudy">
       <EmbedInteropTypes>False</EmbedInteropTypes>
-      <HintPath>D:\git\angelsix\solidworks-api\References\2019\SolidWorks.Interop.swmotionstudy.dll</HintPath>
+      <HintPath>D:\git\angelsix\solidworks-api\References\2023\SolidWorks.Interop.swmotionstudy.dll</HintPath>
     </Reference>
     <Reference Include="SolidWorks.Interop.swpublished">
       <EmbedInteropTypes>False</EmbedInteropTypes>
-      <HintPath>D:\git\angelsix\solidworks-api\References\2019\SolidWorks.Interop.swpublished.dll</HintPath>
+      <HintPath>D:\git\angelsix\solidworks-api\References\2023\SolidWorks.Interop.swpublished.dll</HintPath>
     </Reference>
     <Reference Include="SolidWorks.Interop.SWRoutingLib">
       <EmbedInteropTypes>False</EmbedInteropTypes>
-      <HintPath>D:\git\angelsix\solidworks-api\References\2019\SolidWorks.Interop.SWRoutingLib.dll</HintPath>
+      <HintPath>D:\git\angelsix\solidworks-api\References\2023\SolidWorks.Interop.SWRoutingLib.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

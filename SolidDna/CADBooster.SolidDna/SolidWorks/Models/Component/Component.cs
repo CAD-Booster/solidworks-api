@@ -94,6 +94,13 @@ namespace CADBooster.SolidDna
         }
 
         /// <summary>
+        /// Get the type of component, either a part or an assembly.
+        /// </summary>
+        public ModelType ModelType => FilePath.ToLower().EndsWith(".sldprt")
+            ? ModelType.Part
+            : ModelType.Assembly;
+
+        /// <summary>
         /// Get the name of the component
         /// </summary>
         public string Name => BaseObject.Name2;

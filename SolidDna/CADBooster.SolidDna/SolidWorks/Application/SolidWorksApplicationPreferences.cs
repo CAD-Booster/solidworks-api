@@ -8,6 +8,33 @@ namespace CADBooster.SolidDna
         public class SolidWorksPreferences
         {
             /// <summary>
+            /// Get the default assembly template path.
+            /// </summary>
+            public string DefaultAssemblyTemplate
+            {
+                get => SolidWorksEnvironment.Application.GetUserPreferencesString(swUserPreferenceStringValue_e.swDefaultTemplateAssembly);
+                set => SolidWorksEnvironment.Application.SetUserPreferencesString(swUserPreferenceStringValue_e.swDefaultTemplateAssembly, value);
+            }
+
+            /// <summary>
+            /// Get the default drawing template path.
+            /// </summary>
+            public string DefaultDrawingTemplate
+            {
+                get => SolidWorksEnvironment.Application.GetUserPreferencesString(swUserPreferenceStringValue_e.swDefaultTemplateDrawing);
+                set => SolidWorksEnvironment.Application.SetUserPreferencesString(swUserPreferenceStringValue_e.swDefaultTemplateDrawing, value);
+            }
+
+            /// <summary>
+            /// Get the default part template path.
+            /// </summary>
+            public string DefaultPartTemplate
+            {
+                get => SolidWorksEnvironment.Application.GetUserPreferencesString(swUserPreferenceStringValue_e.swDefaultTemplatePart);
+                set => SolidWorksEnvironment.Application.SetUserPreferencesString(swUserPreferenceStringValue_e.swDefaultTemplatePart, value);
+            }
+
+            /// <summary>
             /// The scaling factor used when exporting as DXF
             /// </summary>
             public double DxfOutputScaleFactor

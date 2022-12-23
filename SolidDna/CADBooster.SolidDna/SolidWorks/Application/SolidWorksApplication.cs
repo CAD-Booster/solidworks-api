@@ -722,6 +722,21 @@ namespace CADBooster.SolidDna
         /// </summary>
         /// <param name="preference">The preference to get</param>
         /// <returns></returns>
+        public string GetUserPreferencesString(swUserPreferenceStringValue_e preference) => BaseObject.GetUserPreferenceStringValue((int)preference);
+
+        /// <summary>
+        /// Sets the specified user preference value
+        /// </summary>
+        /// <param name="preference">The preference to set</param>
+        /// <param name="value">The new value of the preference</param>
+        /// <returns></returns>
+        public bool SetUserPreferencesString(swUserPreferenceStringValue_e preference, string value) => BaseObject.SetUserPreferenceStringValue((int)preference, value);
+
+        /// <summary>
+        /// Gets the specified user preference value
+        /// </summary>
+        /// <param name="preference">The preference to get</param>
+        /// <returns></returns>
         public bool GetUserPreferencesToggle(swUserPreferenceToggle_e preference) => BaseObject.GetUserPreferenceToggle((int)preference);
 
         /// <summary>

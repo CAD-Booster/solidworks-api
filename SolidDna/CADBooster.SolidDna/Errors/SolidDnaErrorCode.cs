@@ -12,6 +12,11 @@
         /// </summary>
         FileUnexpectedError = 1000,
 
+        /// <summary>
+        /// There was an error while creating a new file
+        /// </summary>
+        FileCreateError = 1001,
+
         #endregion
 
         #region SolidWorks Application (9,000)

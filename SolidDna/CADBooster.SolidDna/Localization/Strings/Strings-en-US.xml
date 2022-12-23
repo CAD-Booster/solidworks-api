@@ -7,6 +7,9 @@
   <!-- #                Errors               # -->
   <!-- ####################################### -->
 
+  <!-- File -->
+  <String Name="FileCreateError">An error occurred while creating a new file</String>
+
   <!-- SolidWorks Application -->
   <String Name="SolidWorksApplicationFilePostOpenError">An error occurred during the post-file open event in the SolidWorks application</String>
   <String Name="SolidWorksApplicationFilePreOpenError">An error occurred during the pre-file open event in the SolidWorks application</String>

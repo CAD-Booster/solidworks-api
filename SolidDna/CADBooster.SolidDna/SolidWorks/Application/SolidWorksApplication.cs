@@ -469,6 +469,94 @@ namespace CADBooster.SolidDna
 
         #endregion
 
+        #region Create a new file
+
+        /// <summary>
+        /// Create a new assembly. Throws if it fails.
+        /// </summary>
+        /// <param name="templatePath">Your preferred assembly template path. Pass null to use the default assembly template.</param>
+        /// <returns></returns>
+        public Model CreateAssembly(string templatePath = null)
+        {
+            // If the user did not pass a template path, we get the default template path from SolidWorks.
+            if (templatePath.IsNullOrEmpty())
+                templatePath = Preferences.DefaultAssemblyTemplate;
+            
+            return CreateFile(templatePath);
+        }
+
+        /// <summary>
+        /// Create a new drawing with a standard paper size. Throws if it fails.
+        /// </summary>
+        /// <param name="paperSize"></param>
+        /// <param name="templatePath">Your preferred drawing template path. Pass null to use the default drawing template.</param>
+        /// <returns></returns>
+        public Model CreateDrawing(swDwgPaperSizes_e paperSize, string templatePath = null)
+        {
+            // If the user did not pass a template path, we get the default template path from SolidWorks.
+            if (templatePath.IsNullOrEmpty())
+                templatePath = Preferences.DefaultDrawingTemplate;
+            
+            return CreateFile(templatePath, paperSize);
+        }
+
+        /// <summary>
+        /// Create a new drawing with a custom paper size. Throws if it fails.
+        /// </summary>
+        /// <param name="height"></param>
+        /// <param name="width"></param>
+        /// <param name="templatePath">Your preferred drawing template path. Pass null to use the default drawing template.</param>
+        /// <returns></returns>
+        public Model CreateDrawing(double width, double height, string templatePath = null)
+        {
+            // If the user did not pass a template path, we get the default template path from SolidWorks.
+            if (templatePath.IsNullOrEmpty())
+                templatePath = Preferences.DefaultDrawingTemplate;
+
+            return CreateFile(templatePath, swDwgPaperSizes_e.swDwgPapersUserDefined, width, height);
+        }
+
+        /// <summary>
+        /// Create a new part. Throws if it fails.
+        /// </summary>
+        /// <param name="templatePath">Your preferred part template path. Pass null to use the default part template.</param>
+        /// <returns></returns>
+        public Model CreatePart(string templatePath = null)
+        {
+            // If the user did not pass a template path, we get the default template path from SolidWorks.
+            if (templatePath.IsNullOrEmpty())
+                templatePath = Preferences.DefaultPartTemplate;
+
+            return CreateFile(templatePath);
+        }
+
+        /// <summary>
+        /// Create a new model. Throws if it fails.
+        /// </summary>
+        /// <param name="templatePath"></param>
+        /// <param name="paperSize"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <returns></returns>
+        private Model CreateFile(string templatePath, swDwgPaperSizes_e paperSize = swDwgPaperSizes_e.swDwgPaperA3size, double width = 0, double height = 0)
+        {
+            // Wrap any error
+            return SolidDnaErrors.Wrap(() =>
+            {
+                // Create the new file
+                var swModel = UnsafeObject.INewDocument2(templatePath, (int)paperSize, width, height);
+
+                // If the modelDoc is null, creating a new file failed
+                if (swModel == null)
+                    throw new Exception("Failed to create a new file");
+
+                // If we have a value, we wrap it in a Model
+                return new Model(swModel);
+            }, SolidDnaErrorTypeCode.File, SolidDnaErrorCode.FileCreateError);
+        }
+
+        #endregion
+
         #region Open/Close Models
 
         /// <summary>

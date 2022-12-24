@@ -42,6 +42,7 @@
   <String Name="SolidWorksModelOpenFileError">An error occurred trying to open a model</String>
   <String Name="SolidWorksModelPackAndGoError">An error occurred during a Pack and Go operation</String>
   <String Name="SolidWorksModelCloseFileError">An error occurred trying to close a file</String>
+  <String Name="SolidWorksModelAssemblyComponentRigidFlexibleError">An error occurred trying to mark a sub-assembly component as rigid or flexible</String>
 
   <!-- Thread Helpers -->
   <String Name="ThreadInvokerNullError">Unable to find UI thread as Thread Invoker Enable was never called on a UI thread</String>

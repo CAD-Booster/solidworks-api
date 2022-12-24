@@ -159,6 +159,11 @@
         /// </summary>
         SolidWorksModelFeatureGetCustomPropertyEditor = 11012,
 
+        /// <summary>
+        /// There was an error setting the assembly component to rigid or flexible.
+        /// </summary>
+        SolidWorksModelAssemblyComponentRigidFlexibleError = 11013,
+
         #endregion
 
         #region SolidWorks Command Manager (12,000)

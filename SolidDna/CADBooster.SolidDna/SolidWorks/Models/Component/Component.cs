@@ -125,6 +125,53 @@ namespace CADBooster.SolidDna
 
         #endregion
 
+        #region Flexible / rigid component
+
+        /// <summary>
+        /// Select the sub-assembly component and mark it as flexible.
+        /// </summary>
+        /// <param name="assemblyModel"></param>
+        /// <returns>True if successful</returns>
+        public bool SetFlexible(Model assemblyModel) => SetFlexibleRigid(assemblyModel, swComponentSolvingOption_e.swComponentFlexibleSolving);
+
+        /// <summary>
+        /// Select the sub-assembly component and mark it as rigid.
+        /// </summary>
+        /// <param name="assemblyModel"></param>
+        /// <returns>True if successful</returns>
+        public bool SetRigid(Model assemblyModel) => SetFlexibleRigid(assemblyModel, swComponentSolvingOption_e.swComponentRigidSolving);
+
+        /// <summary>
+        /// Select the sub-assembly component and mark it as rigid or flexible.
+        /// </summary>
+        /// <param name="assemblyModel"></param>
+        /// <param name="solving"></param>
+        /// <returns>True if successful</returns>
+        private bool SetFlexibleRigid(Model assemblyModel, swComponentSolvingOption_e solving)
+        {
+            return SolidDnaErrors.Wrap(() =>
+                {
+                    // Make sure the active model and the component are assemblies
+                    if (assemblyModel == null || !assemblyModel.IsAssembly || ModelType != ModelType.Assembly)
+                        return false;
+
+                    // Select the component
+                    var selected = BaseObject.Select4(false, null, false);
+                    if (!selected)
+                        return false;
+
+                    // Get the current component suppression state so we can reuse it
+                    var suppressionState = (swComponentSuppressionState_e)BaseObject.GetSuppression();
+
+                    // Call the assembly to mark the selected component as rigid/flexible.
+                    // Use as many existing properties and methods as possible so we only change the rigid/flexible setting
+                    return assemblyModel.AsAssembly().CompConfigProperties5((int)suppressionState, (int)solving,
+                        IsVisible, false, ConfigurationName, BaseObject.ExcludeFromBOM, BaseObject.IsEnvelope());
+                }, SolidDnaErrorTypeCode.SolidWorksModel, SolidDnaErrorCode.SolidWorksModelAssemblyComponentRigidFlexibleError);
+        }
+
+        #endregion
+
         #region ToString
 
         /// <summary>

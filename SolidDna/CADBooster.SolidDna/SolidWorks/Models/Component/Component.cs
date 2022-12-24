@@ -106,7 +106,7 @@ namespace CADBooster.SolidDna
         public string Name => BaseObject.Name2;
 
         /// <summary>
-        /// Get the parent component for this component.  Is null for the root component.
+        /// Get the parent component for this component. Is null for the root component.
         /// </summary>
         public Component Parent
         {
@@ -205,13 +205,13 @@ namespace CADBooster.SolidDna
         /// Suppress this component in the current assembly configuration.
         /// </summary>
         /// <returns>Result enum</returns>
-        public swSuppressionError_e Suppress() => (swSuppressionError_e)BaseObject.SetSuppression2((int)swComponentSuppressionState_e.swComponentSuppressed);
+        public ComponentSuppressionResults Suppress() => (ComponentSuppressionResults)BaseObject.SetSuppression2((int)swComponentSuppressionState_e.swComponentSuppressed);
 
         /// <summary>
         /// Unsuppress this component in the current assembly configuration.
         /// </summary>
         /// <returns>Result enum</returns>
-        public swSuppressionError_e Unsuppress() => (swSuppressionError_e)BaseObject.SetSuppression2((int)swComponentSuppressionState_e.swComponentResolved);
+        public ComponentSuppressionResults Unsuppress() => (ComponentSuppressionResults)BaseObject.SetSuppression2((int)swComponentSuppressionState_e.swComponentResolved);
 
         #endregion
 

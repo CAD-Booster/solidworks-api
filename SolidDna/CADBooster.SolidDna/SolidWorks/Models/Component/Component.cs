@@ -62,7 +62,7 @@ namespace CADBooster.SolidDna
         }
 
         /// <summary>
-        /// The complete path to the component. Can be null.
+        /// The complete path to the component.
         /// </summary>
         public string FilePath => BaseObject.GetPathName();
 

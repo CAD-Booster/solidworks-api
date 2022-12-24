@@ -172,6 +172,22 @@ namespace CADBooster.SolidDna
 
         #endregion
 
+        #region Suppress / unsuppress component
+
+        /// <summary>
+        /// Suppress this component in the current assembly configuration.
+        /// </summary>
+        /// <returns>Result enum</returns>
+        public swSuppressionError_e Suppress() => (swSuppressionError_e)BaseObject.SetSuppression2((int)swComponentSuppressionState_e.swComponentSuppressed);
+
+        /// <summary>
+        /// Unsuppress this component in the current assembly configuration.
+        /// </summary>
+        /// <returns>Result enum</returns>
+        public swSuppressionError_e Unsuppress() => (swSuppressionError_e)BaseObject.SetSuppression2((int)swComponentSuppressionState_e.swComponentResolved);
+
+        #endregion
+
         #region ToString
 
         /// <summary>

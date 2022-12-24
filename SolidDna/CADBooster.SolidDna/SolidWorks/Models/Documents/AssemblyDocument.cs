@@ -1,5 +1,7 @@
 ﻿using SolidWorks.Interop.sldworks;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CADBooster.SolidDna
 {
@@ -35,6 +37,32 @@ namespace CADBooster.SolidDna
         public AssemblyDocument(AssemblyDoc model)
         {
             mBaseObject = model;
+        }
+
+        #endregion
+
+        #region Component methods
+
+        /// <summary>
+        /// Set the suppression state for a list of components in a certain configuration.
+        /// You cannot set components as Lightweight with this method.
+        /// </summary>
+        /// <param name="components"></param>
+        /// <param name="state"></param>
+        /// <param name="configurationOption"></param>
+        /// <param name="configurationName">If you select <see cref="ModelConfigurationOptions.SpecificConfiguration"/>, pass the configuration name here.</param>
+        /// <returns>True if successful, false if it fails or if the list is empty</returns>
+        public bool SetComponentSuppressionState(List<Component> components, ComponentSuppressionStates state,
+            ModelConfigurationOptions configurationOption = ModelConfigurationOptions.ThisConfiguration, string configurationName = null)
+        {
+            // Check if there are components in the list
+            if (!components.Any()) return false;
+
+            // Convert the list of SolidDna Components into an array of SolidWorks IComponent2
+            var swComponents = components.Select(x => x.UnsafeObject).ToArray();
+
+            // Change the suppression state
+            return mBaseObject.SetComponentState((int)state, swComponents, (int)configurationOption, configurationName, true);
         }
 
         #endregion

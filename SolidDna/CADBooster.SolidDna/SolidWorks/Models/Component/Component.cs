@@ -127,8 +127,7 @@ namespace CADBooster.SolidDna
                 var assemblyModel = GetParentAssembly();
 
                 // Get the root component via the active configuration
-                var activeConfiguration = assemblyModel.UnsafeObject.ConfigurationManager.ActiveConfiguration;
-                var rootComponent = activeConfiguration.GetRootComponent3(true);
+                var rootComponent = assemblyModel.ActiveConfiguration.UnsafeObject.GetRootComponent3(true);
 
                 // Wrap the root IComponent2 as a Component
                 return rootComponent == null ? null : new Component(rootComponent);

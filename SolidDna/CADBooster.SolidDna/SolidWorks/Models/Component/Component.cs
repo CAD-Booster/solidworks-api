@@ -106,10 +106,34 @@ namespace CADBooster.SolidDna
         public string Name => BaseObject.Name2;
 
         /// <summary>
-        /// Get the parent component for this component.
-        /// Is null for the root component and for top-level components.
+        /// Get the parent component for this component.  Is null for the root component.
         /// </summary>
-        public Component Parent => BaseObject.GetParent() == null ? null : new Component(BaseObject.GetParent());
+        public Component Parent
+        {
+            get
+            {
+                // The root component does not have a parent
+                if (IsRoot) return null;
+                
+                // Get the parent component. If we are working with a top-level component, this returns null
+                var parentComponent = BaseObject.GetParent();
+                if (parentComponent != null)
+                {
+                    // This is not a top-level component
+                    return new Component(parentComponent);
+                }
+
+                // This is a top-level component. SolidWorks returns null for its parent, but we will find the root component, the real parent.
+                var assemblyModel = GetParentAssembly();
+
+                // Get the root component via the active configuration
+                var activeConfiguration = assemblyModel.UnsafeObject.ConfigurationManager.ActiveConfiguration;
+                var rootComponent = activeConfiguration.GetRootComponent3(true);
+
+                // Wrap the root IComponent2 as a Component
+                return rootComponent == null ? null : new Component(rootComponent);
+            }
+        }
 
         #endregion
 

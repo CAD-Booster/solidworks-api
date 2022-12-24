@@ -130,16 +130,14 @@ namespace CADBooster.SolidDna
         /// <summary>
         /// Select the sub-assembly component and mark it as flexible.
         /// </summary>
-        /// <param name="assemblyModel"></param>
         /// <returns>True if successful</returns>
-        public bool SetFlexible(Model assemblyModel) => SetFlexibleRigid(assemblyModel, swComponentSolvingOption_e.swComponentFlexibleSolving);
+        public bool SetFlexible() => SetFlexibleRigid(swComponentSolvingOption_e.swComponentFlexibleSolving);
 
         /// <summary>
         /// Select the sub-assembly component and mark it as rigid.
         /// </summary>
-        /// <param name="assemblyModel"></param>
         /// <returns>True if successful</returns>
-        public bool SetRigid(Model assemblyModel) => SetFlexibleRigid(assemblyModel, swComponentSolvingOption_e.swComponentRigidSolving);
+        public bool SetRigid() => SetFlexibleRigid(swComponentSolvingOption_e.swComponentRigidSolving);
 
         /// <summary>
         /// Select the sub-assembly component and mark it as rigid or flexible.
@@ -147,12 +145,17 @@ namespace CADBooster.SolidDna
         /// <param name="assemblyModel"></param>
         /// <param name="solving"></param>
         /// <returns>True if successful</returns>
-        private bool SetFlexibleRigid(Model assemblyModel, swComponentSolvingOption_e solving)
+        private bool SetFlexibleRigid(swComponentSolvingOption_e solving)
         {
             return SolidDnaErrors.Wrap(() =>
                 {
-                    // Make sure the active model and the component are assemblies
-                    if (assemblyModel == null || !assemblyModel.IsAssembly || ModelType != ModelType.Assembly)
+                    // Make sure the component is a sub-assembly
+                    if (ModelType != ModelType.Assembly || IsRoot)
+                        return false;
+
+                    // Make sure the active model is an assembly
+                    var assemblyModel = GetParentAssembly();
+                    if (assemblyModel.UnsafeObject == null || !assemblyModel.IsAssembly)
                         return false;
 
                     // Select the component
@@ -185,6 +188,28 @@ namespace CADBooster.SolidDna
         /// </summary>
         /// <returns>Result enum</returns>
         public swSuppressionError_e Unsuppress() => (swSuppressionError_e)BaseObject.SetSuppression2((int)swComponentSuppressionState_e.swComponentResolved);
+
+        #endregion
+
+        #region Get assembly from component
+
+        /// <summary>
+        /// Get the assembly that owns this component. A bit hacky but it works.
+        /// </summary>
+        /// <returns></returns>
+        public Model GetParentAssembly()
+        {
+            // Get the string to select this component. The string ends with the name of the root assembly
+            var selectByIdString = BaseObject.GetSelectByIDString();
+
+            // Get the assembly name from the bit after the last @ symbol. Add the assembly extension, just to make sure
+            var lastIndex = selectByIdString.LastIndexOf('@');
+            var rootAssemblyName = selectByIdString.Substring(lastIndex + 1) + ".sldasm";
+
+            // Get the assembly model by its name. Should never be null because the top-level assembly model is always loaded.
+            var modelDoc = SolidWorksEnvironment.Application.UnsafeObject.GetOpenDocument(rootAssemblyName);
+            return new Model(modelDoc);
+        }
 
         #endregion
 

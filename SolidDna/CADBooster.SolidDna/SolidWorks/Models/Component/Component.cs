@@ -72,7 +72,9 @@ namespace CADBooster.SolidDna
         public bool IsFlexible => BaseObject.Solving == (int)swComponentSolvingOption_e.swComponentFlexibleSolving;
 
         /// <summary>
-        /// Check if the Component is Root
+        /// Check if the Component is the root component.
+        /// In an assembly, this is the assembly itself. In a part, this is the part itself.
+        /// Not all methods return useful results when the component is the root.
         /// </summary>
         public bool IsRoot => BaseObject.IsRoot();
 

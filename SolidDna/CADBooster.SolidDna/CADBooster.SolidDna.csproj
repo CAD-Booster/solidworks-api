@@ -55,7 +55,6 @@ Added (un)suppressing component, marking component as flexible, ModelType proper
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="SolidWorks.Interop.sldworks" HintPath="..\..\References\2023\SolidWorks.Interop.sldworks.dll" EmbedInteropTypes="false" />
@@ -71,5 +70,4 @@ Added (un)suppressing component, marking component as flexible, ModelType proper
     <Reference Include="WindowsBase" />
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
-  
 </Project>

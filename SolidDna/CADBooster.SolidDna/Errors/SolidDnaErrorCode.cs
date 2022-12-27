@@ -164,6 +164,11 @@
         /// </summary>
         SolidWorksModelAssemblyComponentRigidFlexibleError = 11013,
 
+        /// <summary>
+        /// There was an error getting a configuration by its name. The configuration probably does not exist.
+        /// </summary>
+        SolidWorksModelGetConfigurationError = 11014,
+
         #endregion
 
         #region SolidWorks Command Manager (12,000)

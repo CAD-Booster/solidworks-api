@@ -898,6 +898,27 @@ namespace CADBooster.SolidDna
         /// <returns>True if successful</returns>
         public bool DeleteConfiguration(string configurationName) => UnsafeObject.DeleteConfiguration2(configurationName);
 
+        /// <summary>
+        /// Get a configuration by its name. Throws when it fails.
+        /// </summary>
+        /// <param name="configurationName"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public ModelConfiguration GetConfiguration(string configurationName)
+        {
+            return SolidDnaErrors.Wrap(() =>
+            {
+                // Get the SolidWorks configuration object
+                var configuration = UnsafeObject.IGetConfigurationByName(configurationName);
+
+                // If we receive a configuration, we wrap it and return it. If not, the configuration probably does not exist in this model.
+                return configuration == null
+                    ? throw new Exception("No configuration found with this name")
+                    : new ModelConfiguration(configuration);
+
+            }, SolidDnaErrorTypeCode.SolidWorksModel, SolidDnaErrorCode.SolidWorksModelGetConfigurationError);
+        }
+
         #endregion
 
         #region Custom Properties

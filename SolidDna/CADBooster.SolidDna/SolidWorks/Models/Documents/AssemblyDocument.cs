@@ -65,6 +65,14 @@ namespace CADBooster.SolidDna
             return mBaseObject.SetComponentState((int)state, swComponents, (int)configurationOption, configurationName, true);
         }
 
+        /// <summary>
+        /// Set the configuration for a file that was just dropped into the assembly.
+        /// Use this method after receiving a <see cref="Model.FileDropped"/> event to set the configuration name of the dropped model.
+        /// </summary>
+        /// <param name="configurationName"></param>
+        /// <returns>True if successful</returns>
+        public bool SetConfigurationForDroppedFile(string configurationName) => UnsafeObject.SetDroppedFileConfigName(configurationName);
+
         #endregion
 
         #region Feature Methods

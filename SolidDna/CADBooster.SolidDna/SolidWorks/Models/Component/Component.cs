@@ -167,7 +167,6 @@ namespace CADBooster.SolidDna
         /// <summary>
         /// Select the sub-assembly component and mark it as rigid or flexible.
         /// </summary>
-        /// <param name="assemblyModel"></param>
         /// <param name="solving"></param>
         /// <returns>True if successful</returns>
         private bool SetFlexibleRigid(swComponentSolvingOption_e solving)
@@ -175,7 +174,7 @@ namespace CADBooster.SolidDna
             return SolidDnaErrors.Wrap(() =>
                 {
                     // Make sure the component is a sub-assembly
-                    if (ModelType != ModelType.Assembly || IsRoot)
+                    if (ModelType != ComponentTypes.Assembly || IsRoot)
                         return false;
 
                     // Make sure the active model is an assembly

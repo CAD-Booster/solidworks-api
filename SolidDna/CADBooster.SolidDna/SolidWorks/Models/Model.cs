@@ -863,6 +863,43 @@ namespace CADBooster.SolidDna
 
         #endregion
 
+        #region Configurations
+
+        /// <summary>
+        /// Make another configuration the active configuration.
+        /// </summary>
+        /// <param name="configurationName"></param>
+        /// <returns>True if successful</returns>
+        public bool ActivateConfiguration(string configurationName) => UnsafeObject.ShowConfiguration2(configurationName);
+
+        /// <summary>
+        /// Add a configuration to the model. Pass a parent name to create a derived configuration.
+        /// </summary>
+        /// <param name="configurationName"></param>
+        /// <param name="options"></param>
+        /// <param name="parentConfigurationName"></param>
+        /// <returns></returns>
+        public ModelConfiguration AddConfiguration(string configurationName, ModelConfigurationNewOptions options = 0, string parentConfigurationName = null)
+        {
+            // Get the configuration manager
+            var configurationManager = UnsafeObject.ConfigurationManager;
+
+            // Create the new configuration
+            var configuration = configurationManager.AddConfiguration2(configurationName, "", "", (int)options, parentConfigurationName, "", true);
+
+            // Wrap it
+            return new ModelConfiguration(configuration);
+        }
+
+        /// <summary>
+        /// Delete a configuration from the model. You cannot delete the active configuration.
+        /// </summary>
+        /// <param name="configurationName"></param>
+        /// <returns>True if successful</returns>
+        public bool DeleteConfiguration(string configurationName) => UnsafeObject.DeleteConfiguration2(configurationName);
+
+        #endregion
+
         #region Custom Properties
 
         /// <summary>

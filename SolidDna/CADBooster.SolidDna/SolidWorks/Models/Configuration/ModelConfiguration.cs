@@ -88,5 +88,18 @@ namespace CADBooster.SolidDna
         }
 
         #endregion
+
+        #region ToString
+
+        /// <summary>
+        /// Returns a user-friendly string with configuration properties.
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return $"Configuration name: {Name}. Type: {Type}. Is derived: {IsDerived}";
+        }
+
+        #endregion
     }
 }

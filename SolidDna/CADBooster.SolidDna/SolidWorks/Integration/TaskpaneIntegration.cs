@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Windows.Forms.Integration;
 
@@ -106,6 +105,10 @@ namespace CADBooster.SolidDna
                 ? await AddInIntegration.SolidWorks.CreateTaskpaneAsync(Icon, taskpaneTitle)
                 : await AddInIntegration.SolidWorks.CreateTaskpaneAsync2(IconPathFormat, taskpaneTitle);
 
+            // If creating the task pane failed for any reason, we don't try to continue because that forces a crash.
+            if (mTaskpaneView == null)
+                return;
+
             // Load our UI into the taskpane
             mHostControl = await mTaskpaneView.AddControlAsync<ITaskpaneControl>(mHostProgId, string.Empty);
 
@@ -145,13 +148,13 @@ namespace CADBooster.SolidDna
                 AppContext.SetSwitch("Switch.System.Windows.Input.Stylus.DisableStylusAndTouchSupport", true);
 
                 // Add and dock it to the parent control
-                if (mHostControl is Control)
+                if (mHostControl is Control control)
                 {
                     // Make sure parent is docked
-                    (mHostControl as Control).Dock = DockStyle.Fill;
+                    control.Dock = DockStyle.Fill;
 
                     // Add WPF host
-                    (mHostControl as Control).Controls.Add(mElementHost);
+                    control.Controls.Add(mElementHost);
                 }
 
             }

@@ -12,6 +12,11 @@
         /// </summary>
         FileUnexpectedError = 1000,
 
+        /// <summary>
+        /// There was an error while creating a new file
+        /// </summary>
+        FileCreateError = 1001,
+
         #endregion
 
         #region SolidWorks Application (9,000)
@@ -60,6 +65,11 @@
         /// There was an error when trying to get the SolidWorks version number
         /// </summary>
         SolidWorksApplicationVersionError = 9008,
+
+        /// <summary>
+        /// There was an unknown error while calling the listeners of the OnIdle event.
+        /// </summary>
+        SolidWorksApplicationIdleNotificationError = 9009,
 
         #endregion
 
@@ -132,7 +142,7 @@
         /// <summary>
         /// There was an error opening model
         /// </summary>
-        SolidWorksModelOpenError = 11009,
+        SolidWorksModelOpenFileError = 11009,
 
         /// <summary>
         /// There was an error pack and go-ing
@@ -142,12 +152,22 @@
         /// <summary>
         /// There was an error closing a model
         /// </summary>
-        SolidWorksModelCloseError = 11011,
+        SolidWorksModelCloseFileError = 11011,
         
         /// <summary>
         /// There was an error getting the custom property editor for a feature.
         /// </summary>
         SolidWorksModelFeatureGetCustomPropertyEditor = 11012,
+
+        /// <summary>
+        /// There was an error setting the assembly component to rigid or flexible.
+        /// </summary>
+        SolidWorksModelAssemblyComponentRigidFlexibleError = 11013,
+
+        /// <summary>
+        /// There was an error getting a configuration by its name. The configuration probably does not exist.
+        /// </summary>
+        SolidWorksModelGetConfigurationError = 11014,
 
         #endregion
 

@@ -86,8 +86,7 @@ namespace CADBooster.SolidDna
                 }
             },
                 SolidDnaErrorTypeCode.SolidWorksModel,
-                SolidDnaErrorCode.SolidWorksModelSelectedObjectCastError,
-                Localization.GetString("SolidWorksModelSelectedObjectCastError"));
+                SolidDnaErrorCode.SolidWorksModelSelectedObjectCastError);
         }
 
         /// <summary>
@@ -108,8 +107,7 @@ namespace CADBooster.SolidDna
                 }
             },
                 SolidDnaErrorTypeCode.SolidWorksModel,
-                SolidDnaErrorCode.SolidWorksModelSelectedObjectCastError,
-                Localization.GetString("SolidWorksModelSelectedObjectCastError"));
+                SolidDnaErrorCode.SolidWorksModelSelectedObjectCastError);
         }
 
         #endregion

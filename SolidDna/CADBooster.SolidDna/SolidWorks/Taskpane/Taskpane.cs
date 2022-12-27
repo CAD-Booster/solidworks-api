@@ -39,8 +39,7 @@ namespace CADBooster.SolidDna
                 return (T)BaseObject.AddControl(progId, licenseKey);
             },
                 SolidDnaErrorTypeCode.SolidWorksTaskpane,
-                SolidDnaErrorCode.SolidWorksTaskpaneAddControlError,
-                await Localization.GetStringAsync("ErrorSolidWorksTaskpaneAddControlError"));
+                SolidDnaErrorCode.SolidWorksTaskpaneAddControlError);
         }
 
 

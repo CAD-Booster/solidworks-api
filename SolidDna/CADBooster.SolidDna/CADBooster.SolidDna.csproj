@@ -1,9 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFramework>net472</TargetFramework>
+    <TargetFramework>net48</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>2.4.0.0</Version>
+    <Version>2.5.0.0</Version>
     <Authors>Luke Malpass, Peter Brinkhuis</Authors>
     <Company>CAD Booster B.V.</Company>
     <Description>The new SolidDNA SDK, making the SolidWorks API easier, well behaved and modern</Description>
@@ -11,30 +10,33 @@
     <PackageProjectUrl>https://github.com/CAD-Booster/solidworks-api</PackageProjectUrl>
     <RepositoryUrl>https://github.com/CAD-Booster/solidworks-api</RepositoryUrl>
     <PackageTags>soliddna solidworks cadbooster angelsix api</PackageTags>
-    <AssemblyVersion>2.4.0.0</AssemblyVersion>
+    <AssemblyVersion>2.5.0.0</AssemblyVersion>
     <Product>CADBooster.SolidDna</Product>
     <PackageId>CADBooster.SolidDna</PackageId>
     <AssemblyName>CADBooster.SolidDna</AssemblyName>
     <RootNamespace>CADBooster.SolidDna</RootNamespace>
     <PackageLicenseFile>license.txt</PackageLicenseFile>
-    <PackageReleaseNotes>Added support for multiple icon sizes in the task pane icon.
-Added support for a main icon for toolbars and Tools menus: set IconPathFormat instead of Icon.
-Fixed showing the whole icon sprite and wrong icon sizes in the Customize window.</PackageReleaseNotes>
+    <PackageReleaseNotes>Updated solidworks DLLs to SW2023.
+Updated target framework from 4.7.2 to 4.8.
+Fixed crash when task pane icon path does not exist.
+Added model events, solidworks closing event.
+Simplified error wrapping with fewer parameters. Only translate error strings when an actual error occurs.
+Removed HasBeenSaved file exists check.
+Added creating and deleting model configuration. Added configuration properties.
+Added getting default template paths. Added creating new models.
+Added (un)suppressing component, marking component as flexible, ModelType property.</PackageReleaseNotes>
     <SignAssembly>true</SignAssembly>
     <PackageIcon>icon.png</PackageIcon>
     <PackageIconUrl />
-    <FileVersion>2.4.0.0</FileVersion>
+    <FileVersion>2.5.0.0</FileVersion>
     <AssemblyOriginatorKeyFile>StrongNameKey.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DocumentationFile></DocumentationFile>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Release\net472\CADBooster.SolidDna.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\net48\CADBooster.SolidDna.xml</DocumentationFile>
   </PropertyGroup>
-
   <ItemGroup>
     <None Remove="Localization\Strings\Strings-en-US.xml" />
     <None Include="icon.png">
@@ -46,58 +48,26 @@ Fixed showing the whole icon sprite and wrong icon sizes in the Customize window
       <PackagePath></PackagePath>
     </None>
   </ItemGroup>
-
   <ItemGroup>
     <EmbeddedResource Include="Localization\Strings\Strings-en-US.xml" />
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
   </ItemGroup>
-
   <ItemGroup>
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="SolidWorks.Interop.sldworks">
-      <HintPath>..\..\References\2022\SolidWorks.Interop.sldworks.dll</HintPath>
-      <EmbedInteropTypes>false</EmbedInteropTypes>
-    </Reference>
-    <Reference Include="SolidWorks.Interop.sw3dprinter">
-      <HintPath>..\..\References\2022\SolidWorks.Interop.sw3dprinter.dll</HintPath>
-      <EmbedInteropTypes>false</EmbedInteropTypes>
-    </Reference>
-    <Reference Include="SolidWorks.Interop.swcommands">
-      <HintPath>..\..\References\2022\SolidWorks.Interop.swcommands.dll</HintPath>
-      <EmbedInteropTypes>false</EmbedInteropTypes>
-    </Reference>
-    <Reference Include="SolidWorks.Interop.swconst">
-      <HintPath>..\..\References\2022\SolidWorks.Interop.swconst.dll</HintPath>
-      <EmbedInteropTypes>false</EmbedInteropTypes>
-    </Reference>
-    <Reference Include="SolidWorks.Interop.swdimxpert">
-      <HintPath>..\..\References\2022\SolidWorks.Interop.swdimxpert.dll</HintPath>
-      <EmbedInteropTypes>false</EmbedInteropTypes>
-    </Reference>
-    <Reference Include="SolidWorks.Interop.swdocumentmgr">
-      <HintPath>..\..\References\2022\SolidWorks.Interop.swdocumentmgr.dll</HintPath>
-      <EmbedInteropTypes>false</EmbedInteropTypes>
-    </Reference>
-    <Reference Include="SolidWorks.Interop.swmotionstudy">
-      <HintPath>..\..\References\2022\SolidWorks.Interop.swmotionstudy.dll</HintPath>
-      <EmbedInteropTypes>false</EmbedInteropTypes>
-    </Reference>
-    <Reference Include="SolidWorks.Interop.swpublished">
-      <HintPath>..\..\References\2022\SolidWorks.Interop.swpublished.dll</HintPath>
-      <EmbedInteropTypes>false</EmbedInteropTypes>
-    </Reference>
-    <Reference Include="SolidWorks.Interop.SWRoutingLib">
-      <HintPath>..\..\References\2022\SolidWorks.Interop.SWRoutingLib.dll</HintPath>
-      <EmbedInteropTypes>false</EmbedInteropTypes>
-    </Reference>
+    <Reference Include="SolidWorks.Interop.sldworks" HintPath="..\..\References\2023\SolidWorks.Interop.sldworks.dll" EmbedInteropTypes="false" />
+    <Reference Include="SolidWorks.Interop.sw3dprinter" HintPath="..\..\References\2023\SolidWorks.Interop.sw3dprinter.dll" EmbedInteropTypes="false" />
+    <Reference Include="SolidWorks.Interop.swcommands" HintPath="..\..\References\2023\SolidWorks.Interop.swcommands.dll" EmbedInteropTypes="false" />
+    <Reference Include="SolidWorks.Interop.swconst" HintPath="..\..\References\2023\SolidWorks.Interop.swconst.dll" EmbedInteropTypes="false" />
+    <Reference Include="SolidWorks.Interop.swdimxpert" HintPath="..\..\References\2023\SolidWorks.Interop.swdimxpert.dll" EmbedInteropTypes="false" />
+    <Reference Include="SolidWorks.Interop.swdocumentmgr" HintPath="..\..\References\2023\SolidWorks.Interop.swdocumentmgr.dll" EmbedInteropTypes="false" />
+    <Reference Include="SolidWorks.Interop.swmotionstudy" HintPath="..\..\References\2023\SolidWorks.Interop.swmotionstudy.dll" EmbedInteropTypes="false" />
+    <Reference Include="SolidWorks.Interop.swpublished" HintPath="..\..\References\2023\SolidWorks.Interop.swpublished.dll" EmbedInteropTypes="false" />
+    <Reference Include="SolidWorks.Interop.SWRoutingLib" HintPath="..\..\References\2023\SolidWorks.Interop.SWRoutingLib.dll" EmbedInteropTypes="false" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="WindowsBase" />
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
-  
 </Project>

@@ -7,6 +7,9 @@
   <!-- #                Errors               # -->
   <!-- ####################################### -->
 
+  <!-- File -->
+  <String Name="FileCreateError">An error occurred while creating a new file</String>
+
   <!-- SolidWorks Application -->
   <String Name="SolidWorksApplicationFilePostOpenError">An error occurred during the post-file open event in the SolidWorks application</String>
   <String Name="SolidWorksApplicationFilePreOpenError">An error occurred during the pre-file open event in the SolidWorks application</String>
@@ -16,11 +19,11 @@
   <String Name="SolidWorksApplicationGetMaterialsFileFormatError">An error occurred attempting to read the SolidWorks Materials databases because the file was of an unexpected format</String>
   <String Name="SolidWorksApplicationFindMaterialsError">An error occurred attempting to find a material from a SolidWorks Materials database file</String>
   <String Name="SolidWorksApplicationVersionError">An error occurred attempting to get the SolidWorks version information</String>
-  <String Name="SolidWorksApplicationOnIdleNotificationError">An error occurred when calling listeners of the Idle event</String>
+  <String Name="SolidWorksApplicationIdleNotificationError">An error occurred when calling listeners of the Idle event</String>
 
   <!-- SolidWorks Taskpane -->
-  <String Name="ErrorSolidWorksTaskpaneCreateError">An error occurred creating the SolidWorks Taskpane</String>
-  <String Name="ErrorSolidWorksTaskpaneAddControlError">An error occurred adding a control to a SolidWorks Taskpane</String>
+  <String Name="SolidWorksTaskpaneCreateError">An error occurred creating the SolidWorks Taskpane</String>
+  <String Name="SolidWorksTaskpaneAddControlError">An error occurred adding a control to a SolidWorks Taskpane</String>
 
   <!-- SolidWorks Model -->
   <String Name="SolidWorksModelGetMaterialError">An error occurred trying to get the material from a SolidWorks model</String>
@@ -39,18 +42,18 @@
   <String Name="SolidWorksModelOpenFileError">An error occurred trying to open a model</String>
   <String Name="SolidWorksModelPackAndGoError">An error occurred during a Pack and Go operation</String>
   <String Name="SolidWorksModelCloseFileError">An error occurred trying to close a file</String>
+  <String Name="SolidWorksModelAssemblyComponentRigidFlexibleError">An error occurred trying to mark a sub-assembly component as rigid or flexible</String>
+  <String Name="SolidWorksModelGetConfigurationError">An error occurred trying to get a configuration by its name. The configuration probably does not exist.</String>
 
   <!-- Thread Helpers -->
-  <String Name="ErrorThreadInvokerNullError">Unable to find UI thread as Thread Invoker Enable was never called on a UI thread</String>
+  <String Name="ThreadInvokerNullError">Unable to find UI thread as Thread Invoker Enable was never called on a UI thread</String>
 
   <!-- SolidWorks Command Manager -->
-  <String Name="ErrorSolidWorksCommandGroupAddError">An error occurred adding a SolidWorks Command Group</String>
-  <String Name="ErrorSolidWorksCommandTabGetError">An error occurred adding a SolidWorks Command Group and trying to get the Command Tab</String>
-  <String Name="ErrorSolidWorksCommandGroupReCreateError">An error occurred activating a SolidWorks Command Group. It was already activated so must be removed before re-activating</String>
-  <String Name="ErrorSolidWorksCommandGroupIconListInvalidPathError">An error occurred setting a SolidWorks Command Group Icon list path. The string was an invalid format</String>
-  <String Name="ErrorSolidWorksCommandGroupActivateError">An error occurred activating a SolidWorks Command Group</String>
-  <String Name="ErrorSolidWorksCommandCreateTabError">An error occurred creating a SolidWorks Command Group Tab</String>
-  <String Name="ErrorSolidWorksCommandFlyoutReCreateError">An error occurred activating a SolidWorks Command Flyout. It was already activated so must be removed before re-activating</String>
+  <String Name="SolidWorksCommandGroupCreateError">An error occurred adding a SolidWorks Command Group</String>
+  <String Name="SolidWorksCommandGroupReActivateError">An error occurred activating a SolidWorks Command Group. It was already activated so must be removed before re-activating</String>
+  <String Name="SolidWorksCommandGroupInvalidPathFormatError">An error occurred setting a SolidWorks Command Group Icon list path. The string was an invalid format</String>
+  <String Name="SolidWorksCommandGroupActivateError">An error occurred activating a SolidWorks Command Group</String>
+  <String Name="SolidWorksCommandGroupCreateTabError">An error occurred creating a SolidWorks Command Group Tab</String>
 
   <!-- Export Data -->
   <String Name="SolidWorksExportDataError">An unknown error occurred in the Export Data class</String>

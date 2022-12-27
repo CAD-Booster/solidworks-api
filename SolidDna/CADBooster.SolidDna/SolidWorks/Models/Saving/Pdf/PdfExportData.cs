@@ -75,8 +75,7 @@ namespace CADBooster.SolidDna
                 mExportData = SolidWorksEnvironment.Application.GetPdfExportData();
             },
                 SolidDnaErrorTypeCode.ExportData,
-                SolidDnaErrorCode.SolidWorksExportDataGetPdfExportDataError,
-                Localization.GetString("SolidWorksExportDataGetPdfExportDataError"));
+                SolidDnaErrorCode.SolidWorksExportDataGetPdfExportDataError);
         }
 
         #endregion
@@ -98,8 +97,7 @@ namespace CADBooster.SolidDna
                 return mExportData.SetSheets((int)whichSheets, specificSheets.ToArray());
             },
                 SolidDnaErrorTypeCode.ExportData,
-                SolidDnaErrorCode.SolidWorksExportDataPdfSetSheetsError,
-                Localization.GetString("SolidWorksExportDataPdfSetSheetsError"));
+                SolidDnaErrorCode.SolidWorksExportDataPdfSetSheetsError);
         }
 
         #endregion

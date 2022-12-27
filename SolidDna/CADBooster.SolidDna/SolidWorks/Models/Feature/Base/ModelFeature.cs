@@ -988,8 +988,7 @@ namespace CADBooster.SolidDna
             throw new SolidDnaException(
                 SolidDnaErrors.CreateError(
                     SolidDnaErrorTypeCode.SolidWorksModel,
-                    SolidDnaErrorCode.SolidWorksModelFeatureGetCustomPropertyEditor,
-                    Localization.GetString("SolidWorksModelFeatureGetCustomPropertyEditor")));
+                    SolidDnaErrorCode.SolidWorksModelFeatureGetCustomPropertyEditor));
         }
 
         /// <summary>

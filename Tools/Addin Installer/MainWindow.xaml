@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:AngelSix.SolidWorksApi.AddinInstaller"
         mc:Ignorable="d"
         Title="SolidWorks Addin Installer - angelsix.com" 
-        SizeToContent="Height"
+        SizeToContent="Height" WindowStartupLocation="CenterScreen"
         Width="1200" 
         MinWidth="525"
         Icon="Resources/favicon.ico">

@@ -126,8 +126,7 @@ namespace CADBooster.SolidDna
                 }
             },
                 SolidDnaErrorTypeCode.SolidWorksCommandManager,
-                SolidDnaErrorCode.SolidWorksCommandGroupCreateError,
-                Localization.GetString("ErrorSolidWorksCommandGroupAddError"));
+                SolidDnaErrorCode.SolidWorksCommandGroupCreateError);
         }
 
         /// <summary>
@@ -148,8 +147,7 @@ namespace CADBooster.SolidDna
             if (pathFormat == null || !pathFormat.Contains("{0}"))
                 throw new SolidDnaException(SolidDnaErrors.CreateError(
                     SolidDnaErrorTypeCode.SolidWorksCommandManager,
-                    SolidDnaErrorCode.SolidWorksCommandGroupInvalidPathFormatError,
-                    Localization.GetString("ErrorSolidWorksCommandGroupIconListInvalidPathError")));
+                    SolidDnaErrorCode.SolidWorksCommandGroupInvalidPathFormatError));
 
             // Get icon paths
             var icons = SolidWorksApplication.GetIconPathsFromPathFormat(pathFormat);
@@ -244,8 +242,8 @@ namespace CADBooster.SolidDna
                 // Throw error
                 throw new SolidDnaException(SolidDnaErrors.CreateError(
                     SolidDnaErrorTypeCode.SolidWorksCommandManager,
-                    SolidDnaErrorCode.SolidWorksCommandGroupCreateError,
-                    Localization.GetString("ErrorSolidWorksCommandGroupAddError") + $". {errorEnumString}"));
+                    SolidDnaErrorCode.SolidWorksCommandGroupCreateError, 
+                    errorEnumString));
             }
 
             // Otherwise we got the command group
@@ -335,8 +333,7 @@ namespace CADBooster.SolidDna
                 // Throw error
                 throw new SolidDnaException(SolidDnaErrors.CreateError(
                     SolidDnaErrorTypeCode.SolidWorksCommandManager,
-                    SolidDnaErrorCode.SolidWorksCommandGroupCreateTabError,
-                    Localization.GetString("ErrorSolidWorksCommandCreateTabError")));
+                    SolidDnaErrorCode.SolidWorksCommandGroupCreateTabError));
 
             // Return tab
             return new CommandManagerTab(unsafeTab);

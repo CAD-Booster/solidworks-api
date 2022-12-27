@@ -114,6 +114,11 @@ namespace CADBooster.SolidDna
         /// </summary>
         public event Action Idle = () => { };
 
+        /// <summary>
+        /// Called when SolidWorks is about to close.
+        /// </summary>
+        public event Action SolidWorksClosing = () => { };
+
         #endregion
 
         #region Constructor
@@ -131,6 +136,7 @@ namespace CADBooster.SolidDna
 
             // Hook into main events
             BaseObject.ActiveModelDocChangeNotify += ActiveModelChanged;
+            BaseObject.DestroyNotify += OnSolidWorksClosing;
             BaseObject.FileOpenPreNotify += FileOpenPreNotify;
             BaseObject.FileOpenPostNotify += FileOpenPostNotify;
             BaseObject.FileNewNotify2 += FileNewPostNotify;
@@ -181,8 +187,7 @@ namespace CADBooster.SolidDna
                 return new SolidWorksVersion(revisionNumber, revisionString, buildNumber, hotfixString);
             },
                 SolidDnaErrorTypeCode.SolidWorksApplication,
-                SolidDnaErrorCode.SolidWorksApplicationVersionError,
-                Localization.GetString("SolidWorksApplicationVersionError"));
+                SolidDnaErrorCode.SolidWorksApplicationVersionError);
         }
 
         #endregion
@@ -190,7 +195,7 @@ namespace CADBooster.SolidDna
         #region SolidWorks Event Methods
 
         /// <summary>
-        ///  Called when SolidWorks is idle
+        /// Called when SolidWorks is idle
         /// </summary>
         /// <returns></returns>
         private int OnIdleNotify()
@@ -202,8 +207,20 @@ namespace CADBooster.SolidDna
                 Idle();
             },
                 SolidDnaErrorTypeCode.SolidWorksApplication,
-                SolidDnaErrorCode.SolidWorksApplicationError,
-                Localization.GetString("SolidWorksApplicationOnIdleNotificationError"));
+                SolidDnaErrorCode.SolidWorksApplicationIdleNotificationError);
+
+            // NOTE: 0 is OK, anything else is an error
+            return 0;
+        }
+
+        /// <summary>
+        /// Called when SolidWorks is about to close.
+        /// </summary>
+        /// <returns></returns>
+        private int OnSolidWorksClosing()
+        {
+            // Inform listeners
+            SolidWorksClosing();
 
             // NOTE: 0 is OK, anything else is an error
             return 0;
@@ -272,8 +289,7 @@ namespace CADBooster.SolidDna
 
             },
                 SolidDnaErrorTypeCode.SolidWorksApplication,
-                SolidDnaErrorCode.SolidWorksApplicationFilePostOpenError,
-                Localization.GetString("SolidWorksApplicationFilePostOpenError"));
+                SolidDnaErrorCode.SolidWorksApplicationFilePostOpenError);
 
             // NOTE: 0 is OK, anything else is an error
             return 0;
@@ -300,8 +316,7 @@ namespace CADBooster.SolidDna
                     mFileLoading = filename;
             },
                 SolidDnaErrorTypeCode.SolidWorksApplication,
-                SolidDnaErrorCode.SolidWorksApplicationFilePreOpenError,
-                Localization.GetString("SolidWorksApplicationFilePreOpenError"));
+                SolidDnaErrorCode.SolidWorksApplicationFilePreOpenError);
 
             // NOTE: 0 is OK, anything else is an error
             return 0;
@@ -343,8 +358,7 @@ namespace CADBooster.SolidDna
                 ReloadActiveModelInformation();
             },
                 SolidDnaErrorTypeCode.SolidWorksApplication,
-                SolidDnaErrorCode.SolidWorksApplicationActiveModelChangedError,
-                Localization.GetString("SolidWorksApplicationActiveModelChangedError"));
+                SolidDnaErrorCode.SolidWorksApplicationActiveModelChangedError);
 
             // NOTE: 0 is OK, anything else is an error
             return 0;
@@ -455,6 +469,94 @@ namespace CADBooster.SolidDna
 
         #endregion
 
+        #region Create a new file
+
+        /// <summary>
+        /// Create a new assembly. Throws if it fails.
+        /// </summary>
+        /// <param name="templatePath">Your preferred assembly template path. Pass null to use the default assembly template.</param>
+        /// <returns></returns>
+        public Model CreateAssembly(string templatePath = null)
+        {
+            // If the user did not pass a template path, we get the default template path from SolidWorks.
+            if (templatePath.IsNullOrEmpty())
+                templatePath = Preferences.DefaultAssemblyTemplate;
+            
+            return CreateFile(templatePath);
+        }
+
+        /// <summary>
+        /// Create a new drawing with a standard paper size. Throws if it fails.
+        /// </summary>
+        /// <param name="paperSize"></param>
+        /// <param name="templatePath">Your preferred drawing template path. Pass null to use the default drawing template.</param>
+        /// <returns></returns>
+        public Model CreateDrawing(swDwgPaperSizes_e paperSize, string templatePath = null)
+        {
+            // If the user did not pass a template path, we get the default template path from SolidWorks.
+            if (templatePath.IsNullOrEmpty())
+                templatePath = Preferences.DefaultDrawingTemplate;
+            
+            return CreateFile(templatePath, paperSize);
+        }
+
+        /// <summary>
+        /// Create a new drawing with a custom paper size. Throws if it fails.
+        /// </summary>
+        /// <param name="height"></param>
+        /// <param name="width"></param>
+        /// <param name="templatePath">Your preferred drawing template path. Pass null to use the default drawing template.</param>
+        /// <returns></returns>
+        public Model CreateDrawing(double width, double height, string templatePath = null)
+        {
+            // If the user did not pass a template path, we get the default template path from SolidWorks.
+            if (templatePath.IsNullOrEmpty())
+                templatePath = Preferences.DefaultDrawingTemplate;
+
+            return CreateFile(templatePath, swDwgPaperSizes_e.swDwgPapersUserDefined, width, height);
+        }
+
+        /// <summary>
+        /// Create a new part. Throws if it fails.
+        /// </summary>
+        /// <param name="templatePath">Your preferred part template path. Pass null to use the default part template.</param>
+        /// <returns></returns>
+        public Model CreatePart(string templatePath = null)
+        {
+            // If the user did not pass a template path, we get the default template path from SolidWorks.
+            if (templatePath.IsNullOrEmpty())
+                templatePath = Preferences.DefaultPartTemplate;
+
+            return CreateFile(templatePath);
+        }
+
+        /// <summary>
+        /// Create a new model. Throws if it fails.
+        /// </summary>
+        /// <param name="templatePath"></param>
+        /// <param name="paperSize"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <returns></returns>
+        private Model CreateFile(string templatePath, swDwgPaperSizes_e paperSize = swDwgPaperSizes_e.swDwgPaperA3size, double width = 0, double height = 0)
+        {
+            // Wrap any error
+            return SolidDnaErrors.Wrap(() =>
+            {
+                // Create the new file
+                var swModel = UnsafeObject.INewDocument2(templatePath, (int)paperSize, width, height);
+
+                // If the modelDoc is null, creating a new file failed
+                if (swModel == null)
+                    throw new Exception("Failed to create a new file");
+
+                // If we have a value, we wrap it in a Model
+                return new Model(swModel);
+            }, SolidDnaErrorTypeCode.File, SolidDnaErrorCode.FileCreateError);
+        }
+
+        #endregion
+
         #region Open/Close Models
 
         /// <summary>
@@ -507,8 +609,7 @@ namespace CADBooster.SolidDna
                 return new Model(modelCom);
             },
                 SolidDnaErrorTypeCode.SolidWorksApplication,
-                SolidDnaErrorCode.SolidWorksModelOpenError,
-                Localization.GetString("SolidWorksModelOpenFileError"));
+                SolidDnaErrorCode.SolidWorksModelOpenFileError);
         }
 
         /// <summary>
@@ -523,8 +624,7 @@ namespace CADBooster.SolidDna
                 BaseObject.CloseDoc(filePath);
             },
                 SolidDnaErrorTypeCode.SolidWorksApplication,
-                SolidDnaErrorCode.SolidWorksModelCloseError,
-                Localization.GetString("SolidWorksModelCloseFileError"));
+                SolidDnaErrorCode.SolidWorksModelCloseFileError);
         }
 
         #endregion
@@ -579,8 +679,7 @@ namespace CADBooster.SolidDna
                 return list.OrderBy(f => f.DisplayName).ToList();
             },
                 SolidDnaErrorTypeCode.SolidWorksApplication,
-                SolidDnaErrorCode.SolidWorksApplicationGetMaterialsError,
-                Localization.GetString("SolidWorksApplicationGetMaterialsError"));
+                SolidDnaErrorCode.SolidWorksApplicationGetMaterialsError);
         }
 
         /// <summary>
@@ -603,7 +702,7 @@ namespace CADBooster.SolidDna
             },
                 SolidDnaErrorTypeCode.SolidWorksApplication,
                 SolidDnaErrorCode.SolidWorksApplicationFindMaterialsError,
-                Localization.GetString("SolidWorksApplicationFindMaterialsError"));
+                nameof(SolidDnaErrorCode.SolidWorksApplicationFindMaterialsError));
         }
 
         #region Private Helpers
@@ -620,8 +719,7 @@ namespace CADBooster.SolidDna
                 throw new SolidDnaException(
                     SolidDnaErrors.CreateError(
                         SolidDnaErrorTypeCode.SolidWorksApplication,
-                        SolidDnaErrorCode.SolidWorksApplicationGetMaterialsFileNotFoundError,
-                        Localization.GetString("SolidWorksApplicationGetMaterialsFileNotFoundError")));
+                        SolidDnaErrorCode.SolidWorksApplicationGetMaterialsFileNotFoundError));
 
             try
             {
@@ -666,9 +764,8 @@ namespace CADBooster.SolidDna
                     throw new SolidDnaException(
                         SolidDnaErrors.CreateError(
                             SolidDnaErrorTypeCode.SolidWorksApplication,
-                            SolidDnaErrorCode.SolidWorksApplicationGetMaterialsFileFormatError,
-                            Localization.GetString("SolidWorksApplicationGetMaterialsFileFormatError"),
-                            ex));
+                            SolidDnaErrorCode.SolidWorksApplicationGetMaterialsFileFormatError),
+                            ex);
             }
         }
 
@@ -707,6 +804,21 @@ namespace CADBooster.SolidDna
         /// <param name="value">The new value of the preference</param>
         /// <returns></returns>
         public bool SetUserPreferencesInteger(swUserPreferenceIntegerValue_e preference, int value) => BaseObject.SetUserPreferenceIntegerValue((int)preference, value);
+
+        /// <summary>
+        /// Gets the specified user preference value
+        /// </summary>
+        /// <param name="preference">The preference to get</param>
+        /// <returns></returns>
+        public string GetUserPreferencesString(swUserPreferenceStringValue_e preference) => BaseObject.GetUserPreferenceStringValue((int)preference);
+
+        /// <summary>
+        /// Sets the specified user preference value
+        /// </summary>
+        /// <param name="preference">The preference to set</param>
+        /// <param name="value">The new value of the preference</param>
+        /// <returns></returns>
+        public bool SetUserPreferencesString(swUserPreferenceStringValue_e preference, string value) => BaseObject.SetUserPreferenceStringValue((int)preference, value);
 
         /// <summary>
         /// Gets the specified user preference value
@@ -752,8 +864,7 @@ namespace CADBooster.SolidDna
                 return new Taskpane(comTaskpane);
             },
                 SolidDnaErrorTypeCode.SolidWorksTaskpane,
-                SolidDnaErrorCode.SolidWorksTaskpaneCreateError,
-                await Localization.GetStringAsync("ErrorSolidWorksTaskpaneCreateError"));
+                SolidDnaErrorCode.SolidWorksTaskpaneCreateError);
         }
 
         /// <summary>
@@ -782,8 +893,7 @@ namespace CADBooster.SolidDna
                     return new Taskpane(comTaskpane);
                 },
                 SolidDnaErrorTypeCode.SolidWorksTaskpane,
-                SolidDnaErrorCode.SolidWorksTaskpaneCreateError,
-                await Localization.GetStringAsync("ErrorSolidWorksTaskpaneCreateError"));
+                SolidDnaErrorCode.SolidWorksTaskpaneCreateError);
         }
 
         /// <summary>
@@ -798,10 +908,9 @@ namespace CADBooster.SolidDna
             {
                 // Replace "{0}" in the string with the icon size
                 var path = string.Format(iconPathFormat, iconSize);
-                if (File.Exists(path))
-                {
-                    iconPaths.Add(iconSize, path);
-                }
+                
+                // Don't check if the path exists because SolidWorks does that for us. If all files don't exist and we return an empty array, the task pane is not created.
+                iconPaths.Add(iconSize, path);
             }
 
             // Get icon paths from the dictionary

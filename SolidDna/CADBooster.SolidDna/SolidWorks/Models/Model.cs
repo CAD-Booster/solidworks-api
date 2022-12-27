@@ -13,13 +13,6 @@ namespace CADBooster.SolidDna
     /// </summary>
     public class Model : SharedSolidDnaObject<ModelDoc2>
     {
-        #region Private Members
-
-        private static readonly int SolidWorksVersionYear = SolidWorksEnvironment.Application.SolidWorksVersion.Version;
-        private bool? _fileExists;
-
-        #endregion
-
         #region Public Properties
 
         /// <summary>
@@ -30,23 +23,8 @@ namespace CADBooster.SolidDna
         /// <summary>
         /// Indicates if this file has been saved (so exists on disk).
         /// If not, it's a new model currently only in-memory and will not have a file path.
-        /// SolidWorks 2020 started setting a path for a file that is loaded with 3D Interconnect, so the path is no longer empty.
-        /// That is why we have to check if the file actually exists.
         /// </summary>
-        public bool HasBeenSaved {
-            get
-            {
-                if (SolidWorksVersionYear < 2020)
-                    return !string.IsNullOrEmpty(FilePath);
-                
-                // Get if the file exists if it hasn't been initialized yet. Is set to null in ReloadModelData.
-                // You can't delete a file while it is open, so this should work reliably.
-                if (_fileExists == null)
-                    _fileExists = File.Exists(FilePath);
-
-                return !string.IsNullOrEmpty(FilePath) && _fileExists == true;
-            }
-        } 
+        public bool HasBeenSaved => !string.IsNullOrEmpty(FilePath);
 
         /// <summary>
         /// Indicates if this file needs saving (has file changes).
@@ -108,6 +86,11 @@ namespace CADBooster.SolidDna
         #region Public Events
 
         /// <summary>
+        /// Called when selected objects are about to be deleted.
+        /// </summary>
+        public event Action DeletingSelection = () => { };
+
+        /// <summary>
         /// Called after the a drawing sheet was added
         /// </summary>
         public event Action<string> DrawingSheetAdded = (sheetName) => { };
@@ -126,6 +109,31 @@ namespace CADBooster.SolidDna
         /// Called after the a drawing sheet was deleted
         /// </summary>
         public event Action<string> DrawingSheetDeleted = (sheetName) => { };
+
+        /// <summary>
+        /// Called after a file is dropped into the current part/assembly.
+        /// </summary>
+        public event Action<string> FileDropped = (filePath) => { };
+
+        /// <summary>
+        /// Called when a file is about to be dropped into the current part/assembly.
+        /// </summary>
+        public event Action<string> FileDropping = (filePath) => { };
+
+        /// <summary>
+        /// Called after an item is added to the feature tree.
+        /// </summary>
+        public event Action<swNotifyEntityType_e, string> ItemAdded = (entityType, itemName) => { };
+
+        /// <summary>
+        /// Called after an item is deleted from the feature tree.
+        /// </summary>
+        public event Action<swNotifyEntityType_e, string> ItemDeleted = (entityType, itemName) => { };
+
+        /// <summary>
+        /// Called when an item is about to be deleted from the feature tree.
+        /// </summary>
+        public event Action<swNotifyEntityType_e, string> ItemDeleting = (entityType, itemName) => { };
 
         /// <summary>
         /// Called as the model is about to be closed
@@ -153,6 +161,12 @@ namespace CADBooster.SolidDna
         /// Called when the user cancels the save action and <see cref="ModelSaved"/> will not be fired.
         /// </summary>
         public event Action ModelSaveCanceled = () => { };
+
+        /// <summary>
+        /// Called before a saved model is saved again (with the same file name).
+        /// Allows you to make changes that need to be included in the save. 
+        /// </summary>
+        public event Action<string> ModelSaving = (fileName) => { };
 
         /// <summary>
         /// Called before a model is saved with a new file name.
@@ -247,8 +261,15 @@ namespace CADBooster.SolidDna
                 // Hook into the save and destroy events to keep data fresh
                 case ModelType.Assembly:
                     AsAssembly().ActiveConfigChangePostNotify += ActiveConfigChangePostNotify;
+                    AsAssembly().AddItemNotify += AddItemNotify;
+                    AsAssembly().DeleteItemNotify += DeleteItemPostNotify;
+                    AsAssembly().DeleteItemPreNotify += DeleteItemPreNotify;
+                    AsAssembly().DeleteSelectionPreNotify += DeletingSelectionPreNotify;
                     AsAssembly().DestroyNotify += FileDestroyedNotify;
+                    AsAssembly().FileDropNotify += FileDroppedPostNotify;
+                    AsAssembly().FileDropPreNotify += FileDroppedPreNotify;
                     AsAssembly().FileSaveAsNotify2 += FileSaveAsPreNotify;
+                    AsAssembly().FileSaveNotify += FileSavePreNotify;
                     AsAssembly().FileSavePostCancelNotify += FileSaveCanceled;
                     AsAssembly().FileSavePostNotify += FileSavePostNotify;
                     AsAssembly().ModifyNotify += FileModified;
@@ -258,8 +279,15 @@ namespace CADBooster.SolidDna
                     break;
                 case ModelType.Part:
                     AsPart().ActiveConfigChangePostNotify += ActiveConfigChangePostNotify;
+                    AsPart().AddItemNotify += AddItemNotify;
+                    AsPart().DeleteItemNotify += DeleteItemPostNotify;
+                    AsPart().DeleteItemPreNotify += DeleteItemPreNotify;
+                    AsPart().DeleteSelectionPreNotify += DeletingSelectionPreNotify;
                     AsPart().DestroyNotify += FileDestroyedNotify;
+                    AsPart().FileDropPostNotify += FileDroppedPostNotify;
+                    AsPart().FileDropPreNotify += FileDroppedPreNotify;
                     AsPart().FileSaveAsNotify2 += FileSaveAsPreNotify;
+                    AsPart().FileSaveNotify += FileSavePreNotify;
                     AsPart().FileSavePostCancelNotify += FileSaveCanceled;
                     AsPart().FileSavePostNotify += FileSavePostNotify;
                     AsPart().ModifyNotify += FileModified;
@@ -271,9 +299,12 @@ namespace CADBooster.SolidDna
                     AsDrawing().ActivateSheetPostNotify += SheetActivatePostNotify;
                     AsDrawing().ActivateSheetPreNotify += SheetActivatePreNotify;
                     AsDrawing().AddItemNotify += DrawingItemAddNotify;
-                    AsDrawing().DeleteItemNotify += DrawingDeleteItemNotify;
+                    AsDrawing().DeleteItemNotify += DeleteDrawingItemPostNotify;
+                    AsDrawing().DeleteItemPreNotify += DeleteItemPreNotify;
+                    AsDrawing().DeleteSelectionPreNotify += DeletingSelectionPreNotify;
                     AsDrawing().DestroyNotify += FileDestroyedNotify;
                     AsDrawing().FileSaveAsNotify2 += FileSaveAsPreNotify;
+                    AsDrawing().FileSaveNotify += FileSavePreNotify;
                     AsDrawing().FileSavePostCancelNotify += FileSaveCanceled;
                     AsDrawing().FileSavePostNotify += FileSavePostNotify;
                     AsDrawing().ModifyNotify += FileModified;
@@ -353,8 +384,7 @@ namespace CADBooster.SolidDna
                 return outputFolder;
             },
                 SolidDnaErrorTypeCode.SolidWorksModel,
-                SolidDnaErrorCode.SolidWorksModelPackAndGoError,
-                Localization.GetString("SolidWorksModelPackAndGoError"));
+                SolidDnaErrorCode.SolidWorksModelPackAndGoError);
 
         }
 
@@ -384,8 +414,15 @@ namespace CADBooster.SolidDna
                 // Hook into the save and destroy events to keep data fresh
                 case ModelType.Assembly:
                     AsAssembly().ActiveConfigChangePostNotify -= ActiveConfigChangePostNotify;
+                    AsAssembly().AddItemNotify -= AddItemNotify;
+                    AsAssembly().DeleteItemNotify -= DeleteItemPostNotify;
+                    AsAssembly().DeleteItemPreNotify -= DeleteItemPreNotify;
+                    AsAssembly().DeleteSelectionPreNotify -= DeletingSelectionPreNotify;
                     AsAssembly().DestroyNotify -= FileDestroyedNotify;
+                    AsAssembly().FileDropNotify -= FileDroppedPostNotify;
+                    AsAssembly().FileDropPreNotify -= FileDroppedPreNotify;
                     AsAssembly().FileSaveAsNotify2 -= FileSaveAsPreNotify;
+                    AsAssembly().FileSaveNotify -= FileSavePreNotify;
                     AsAssembly().FileSavePostCancelNotify -= FileSaveCanceled;
                     AsAssembly().FileSavePostNotify -= FileSavePostNotify;
                     AsAssembly().ModifyNotify -= FileModified;
@@ -395,8 +432,15 @@ namespace CADBooster.SolidDna
                     break;
                 case ModelType.Part:
                     AsPart().ActiveConfigChangePostNotify -= ActiveConfigChangePostNotify;
+                    AsPart().AddItemNotify -= AddItemNotify;
+                    AsPart().DeleteItemNotify -= DeleteItemPostNotify;
+                    AsPart().DeleteItemPreNotify -= DeleteItemPreNotify;
+                    AsPart().DeleteSelectionPreNotify -= DeletingSelectionPreNotify;
                     AsPart().DestroyNotify -= FileDestroyedNotify;
+                    AsPart().FileDropPostNotify -= FileDroppedPostNotify;
+                    AsPart().FileDropPreNotify -= FileDroppedPreNotify;
                     AsPart().FileSaveAsNotify2 -= FileSaveAsPreNotify;
+                    AsPart().FileSaveNotify -= FileSavePreNotify;
                     AsPart().FileSavePostCancelNotify -= FileSaveCanceled;
                     AsPart().FileSavePostNotify -= FileSavePostNotify;
                     AsPart().ModifyNotify -= FileModified;
@@ -408,9 +452,12 @@ namespace CADBooster.SolidDna
                     AsDrawing().ActivateSheetPostNotify -= SheetActivatePostNotify;
                     AsDrawing().ActivateSheetPreNotify -= SheetActivatePreNotify;
                     AsDrawing().AddItemNotify -= DrawingItemAddNotify;
-                    AsDrawing().DeleteItemNotify -= DrawingDeleteItemNotify;
+                    AsDrawing().DeleteItemPreNotify -= DeleteItemPreNotify;
+                    AsDrawing().DeleteItemNotify -= DeleteDrawingItemPostNotify;
+                    AsDrawing().DeleteSelectionPreNotify -= DeletingSelectionPreNotify;
                     AsDrawing().DestroyNotify -= FileDestroyedNotify;
                     AsDrawing().FileSaveAsNotify2 -= FileSaveAsPreNotify;
+                    AsDrawing().FileSaveNotify -= FileSavePreNotify;
                     AsDrawing().FileSavePostCancelNotify -= FileSaveCanceled;
                     AsDrawing().FileSavePostNotify -= FileSavePostNotify;
                     AsDrawing().ModifyNotify -= FileModified;
@@ -442,6 +489,22 @@ namespace CADBooster.SolidDna
         }
 
         /// <summary>
+        /// Called after an item is added to the feature tree.
+        /// The event des not fire for items that do not appear in the feature tree.
+        /// </summary>
+        /// <param name="entityType"></param>
+        /// <param name="itemName"></param>
+        /// <returns></returns>
+        protected int AddItemNotify(int entityType, string itemName)
+        {
+            // Inform listeners
+            ItemAdded((swNotifyEntityType_e) entityType, itemName);
+            
+            // NOTE: 0 is success, anything else is an error
+            return 0;
+        }
+
+        /// <summary>
         /// Called after an assembly or part was rebuilt or if the rollback bar position changed.
         /// </summary>
         /// <param name="firstFeatureBelowRollbackBar"></param>
@@ -456,6 +519,49 @@ namespace CADBooster.SolidDna
         }
 
         /// <summary>
+        /// Called after an item is deleted from the feature tree.
+        /// </summary>
+        /// <param name="entityType"></param>
+        /// <param name="itemName"></param>
+        /// <returns></returns>
+        private int DeleteItemPostNotify(int entityType, string itemName)
+        {
+            // Inform listeners
+            ItemDeleted((swNotifyEntityType_e) entityType, itemName);
+            
+            // NOTE: 0 is success, anything else is an error
+            return 0;
+        }
+
+        /// <summary>
+        /// Called before an item is deleted from the feature tree.
+        /// </summary>
+        /// <param name="entityType"></param>
+        /// <param name="itemName"></param>
+        /// <returns></returns>
+        private int DeleteItemPreNotify(int entityType, string itemName)
+        {
+            // Inform listeners
+            ItemDeleting((swNotifyEntityType_e) entityType, itemName);
+
+            // NOTE: 0 is success, anything else is an error
+            return 0;
+        }
+
+        /// <summary>
+        /// Called before the selected items are deleted.
+        /// </summary>
+        /// <returns></returns>
+        private int DeletingSelectionPreNotify()
+        {
+            // Inform listeners
+            DeletingSelection();
+            
+            // NOTE: 0 is success, anything else is an error
+            return 0;
+        }
+
+        /// <summary>
         /// Called when a drawing item is added to the feature tree
         /// </summary>
         /// <param name="entityType">Type of entity that is changed</param>
@@ -463,6 +569,9 @@ namespace CADBooster.SolidDna
         /// <returns></returns>
         protected int DrawingItemAddNotify(int entityType, string itemName)
         {
+            // Inform listeners
+            AddItemNotify(entityType, itemName);
+
             // Check if a sheet is added.
             // SolidWorks always activates the new sheet, but the sheet activate events aren't fired.
             if (EntityIsDrawingSheet(entityType))
@@ -476,13 +585,16 @@ namespace CADBooster.SolidDna
         }
 
         /// <summary>
-        /// Called when a drawing item is removed from the feature tree
+        /// Called after a drawing item is removed from the feature tree.
         /// </summary>
         /// <param name="entityType">Type of entity that is changed</param>
         /// <param name="itemName">Name of entity that is changed</param>
         /// <returns></returns>
-        protected int DrawingDeleteItemNotify(int entityType, string itemName)
+        protected int DeleteDrawingItemPostNotify(int entityType, string itemName)
         {
+            // Inform listeners
+            AddItemNotify(entityType, itemName);
+
             // Check if the removed items is a sheet
             if (EntityIsDrawingSheet(entityType))
             {
@@ -502,6 +614,36 @@ namespace CADBooster.SolidDna
         {
             // Inform listeners
             ModelRebuilt();
+
+            // NOTE: 0 is success, anything else is an error
+            return 0;
+        }
+
+        /// <summary>
+        /// Called after a file was dropped into the current part/assembly.
+        /// Not available for drawings.
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <returns></returns>
+        private int FileDroppedPostNotify(string filename)
+        {
+            // Inform listeners
+            FileDropped(filename);
+
+            // NOTE: 0 is success, anything else is an error
+            return 0;
+        }
+
+        /// <summary>
+        /// Called when a file is about to dropped into the current part/assembly.
+        /// Not available for drawings.
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <returns></returns>
+        private int FileDroppedPreNotify(string filename)
+        {
+            // Inform listeners
+            FileDropping(filename);
 
             // NOTE: 0 is success, anything else is an error
             return 0;
@@ -543,10 +685,6 @@ namespace CADBooster.SolidDna
             // Were we saved or is this a new file?
             var wasNewFile = !HasBeenSaved;
 
-            // Reset it so we will check again when we request HasBeenSaved
-            // Do this before calling ModelSaved or ReloadModelData because attached event handlers can use HasBeenSaved.
-            _fileExists = null;
-
             // Update filepath
             FilePath = BaseObject.GetPathName();
 
@@ -574,6 +712,21 @@ namespace CADBooster.SolidDna
                 SolidWorksEnvironment.Application.Idle += refreshEvent;
             }
 
+            // NOTE: 0 is success, anything else is an error
+            return 0;
+        }
+
+        /// <summary>
+        /// Called when a saved model is about to be saved again.
+        /// If a model has not been saved yet, <see cref="FileSaveAsPreNotify"/> is called instead.
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
+        private int FileSavePreNotify(string fileName)
+        {
+            // Inform listeners
+            ModelSaving(fileName);
+            
             // NOTE: 0 is success, anything else is an error
             return 0;
         }
@@ -707,6 +860,64 @@ namespace CADBooster.SolidDna
         /// Check <see cref="IsAssembly"/> before calling into this.
         /// </summary>
         public AssemblyDocument Assembly { get; private set; }
+
+        #endregion
+
+        #region Configurations
+
+        /// <summary>
+        /// Make another configuration the active configuration.
+        /// </summary>
+        /// <param name="configurationName"></param>
+        /// <returns>True if successful</returns>
+        public bool ActivateConfiguration(string configurationName) => UnsafeObject.ShowConfiguration2(configurationName);
+
+        /// <summary>
+        /// Add a configuration to the model. Pass a parent name to create a derived configuration.
+        /// </summary>
+        /// <param name="configurationName"></param>
+        /// <param name="options"></param>
+        /// <param name="parentConfigurationName"></param>
+        /// <returns></returns>
+        public ModelConfiguration AddConfiguration(string configurationName, NewConfigurationOptions options = 0, string parentConfigurationName = null)
+        {
+            // Get the configuration manager
+            var configurationManager = UnsafeObject.ConfigurationManager;
+
+            // Create the new configuration
+            var configuration = configurationManager.AddConfiguration2(configurationName, "", "", (int)options, parentConfigurationName, "", true);
+
+            // Wrap it
+            return new ModelConfiguration(configuration);
+        }
+
+        /// <summary>
+        /// Delete a configuration from the model. You cannot delete the active configuration.
+        /// </summary>
+        /// <param name="configurationName"></param>
+        /// <returns>True if successful</returns>
+        public bool DeleteConfiguration(string configurationName) => UnsafeObject.DeleteConfiguration2(configurationName);
+
+        /// <summary>
+        /// Get a configuration by its name. Throws when it fails.
+        /// </summary>
+        /// <param name="configurationName"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public ModelConfiguration GetConfiguration(string configurationName)
+        {
+            return SolidDnaErrors.Wrap(() =>
+            {
+                // Get the SolidWorks configuration object
+                var configuration = UnsafeObject.IGetConfigurationByName(configurationName);
+
+                // If we receive a configuration, we wrap it and return it. If not, the configuration probably does not exist in this model.
+                return configuration == null
+                    ? throw new Exception("No configuration found with this name")
+                    : new ModelConfiguration(configuration);
+
+            }, SolidDnaErrorTypeCode.SolidWorksModel, SolidDnaErrorCode.SolidWorksModelGetConfigurationError);
+        }
 
         #endregion
 
@@ -868,8 +1079,7 @@ namespace CADBooster.SolidDna
                 };
             },
                 SolidDnaErrorTypeCode.SolidWorksModel,
-                SolidDnaErrorCode.SolidWorksModelGetMaterialError,
-                Localization.GetString("SolidWorksModelGetMaterialError"));
+                SolidDnaErrorCode.SolidWorksModelGetMaterialError);
         }
 
         /// <summary>
@@ -895,8 +1105,7 @@ namespace CADBooster.SolidDna
                     AsPart().SetMaterialPropertyName2(configuration, material.Database, material.Name);
             },
                 SolidDnaErrorTypeCode.SolidWorksModel,
-                SolidDnaErrorCode.SolidWorksModelSetMaterialError,
-                Localization.GetString("SolidWorksModelSetMaterialError"));
+                SolidDnaErrorCode.SolidWorksModelSetMaterialError);
         }
 
         #endregion
@@ -1142,8 +1351,7 @@ namespace CADBooster.SolidDna
                 return results;
             },
                 SolidDnaErrorTypeCode.SolidWorksModel,
-                SolidDnaErrorCode.SolidWorksModelSaveError,
-                Localization.GetString("SolidWorksModelSaveError"));
+                SolidDnaErrorCode.SolidWorksModelSaveError);
         }
 
         /// <summary>
@@ -1196,8 +1404,7 @@ namespace CADBooster.SolidDna
                 return results;
             },
                 SolidDnaErrorTypeCode.SolidWorksModel,
-                SolidDnaErrorCode.SolidWorksModelSaveAsError,
-                Localization.GetString("SolidWorksModelSaveAsError"));
+                SolidDnaErrorCode.SolidWorksModelSaveAsError);
         }
 
         #endregion

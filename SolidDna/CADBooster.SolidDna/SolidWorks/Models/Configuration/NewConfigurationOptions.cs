@@ -8,7 +8,7 @@ namespace CADBooster.SolidDna
     /// Copy of <see cref="swConfigurationOptions2_e"/>.
     /// </summary>
     [Flags]
-    public enum ModelConfigurationNewOptions
+    public enum NewConfigurationOptions
     {
         /// <summary>
         /// Use an alternate name 

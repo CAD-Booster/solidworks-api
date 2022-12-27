@@ -879,7 +879,7 @@ namespace CADBooster.SolidDna
         /// <param name="options"></param>
         /// <param name="parentConfigurationName"></param>
         /// <returns></returns>
-        public ModelConfiguration AddConfiguration(string configurationName, ModelConfigurationNewOptions options = 0, string parentConfigurationName = null)
+        public ModelConfiguration AddConfiguration(string configurationName, NewConfigurationOptions options = 0, string parentConfigurationName = null)
         {
             // Get the configuration manager
             var configurationManager = UnsafeObject.ConfigurationManager;

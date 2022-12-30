@@ -101,7 +101,7 @@ namespace CADBooster.SolidDna
                 case "MateWidth":
                     return VersionYear < 2018 ? ModelFeatureType.Mate : ModelFeatureType.WidthMateData;
 
-                case "PosGroupFolder":
+                case "PosGroup":
                     return ModelFeatureType.MateReference;
 
                 case "Reference": // removed from the 2018 and later help page
@@ -374,6 +374,7 @@ namespace CADBooster.SolidDna
                 case "FtrFolder":
                 case "InsertedFeatureFolder":
                 case "MateReferenceGroupFolder":
+                case "PosGroupFolder":
                 case "ProfileFtrFolder":
                 case "RefAxisFtrFolder":
                 case "RefPlaneFtrFolder":

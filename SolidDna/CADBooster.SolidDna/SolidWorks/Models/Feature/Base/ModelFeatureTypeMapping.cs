@@ -172,6 +172,7 @@ namespace CADBooster.SolidDna
                     return ModelFeatureType.DeleteFaceData;
 
                 case "DerivedCirPattern":
+                case "DerivedHolePattern":
                 case "DerivedLPattern":
                     return ModelFeatureType.DerivedPatternData;
 

@@ -67,9 +67,19 @@ namespace CADBooster.SolidDna
         public string FilePath => BaseObject.GetPathName();
 
         /// <summary>
+        /// True if this component is an assembly
+        /// </summary>
+        public bool IsAssembly => ModelType == ComponentTypes.Assembly;
+
+        /// <summary>
         /// Check if this sub-assembly is flexible.
         /// </summary>
         public bool IsFlexible => BaseObject.Solving == (int)swComponentSolvingOption_e.swComponentFlexibleSolving;
+
+        /// <summary>
+        /// True if this component is a part
+        /// </summary>
+        public bool IsPart => ModelType == ComponentTypes.Part;
 
         /// <summary>
         /// Check if the Component is the root component.

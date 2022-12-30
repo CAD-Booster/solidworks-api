@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using SolidWorks.Interop.sldworks;
 
 namespace CADBooster.SolidDna
@@ -952,6 +953,41 @@ namespace CADBooster.SolidDna
         #endregion
 
         #region Public Methods
+
+        /// <summary>
+        /// Get a list of all features that are required to create this feature.
+        /// </summary>
+        /// <param name="feature"></param>
+        /// <returns></returns>
+        public static List<ModelFeature> GetParents(ModelFeature feature)
+        {
+            // Get an array of parent objects
+            var parents = (object[])feature.UnsafeObject.GetParents();
+
+            // Return an empty list if there are no parents
+            // Convert the objects to features, then to ModelFeatures
+            return parents == null
+                ? new List<ModelFeature>()
+                : parents.Cast<Feature>().Select(x => new ModelFeature(x)).ToList();
+        }
+
+        /// <summary>
+        /// Get a list of all child features.
+        /// </summary>
+        /// <param name="feature"></param>
+        /// <returns></returns>
+        public static List<ModelFeature> GetChildren(ModelFeature feature)
+        {
+            // Get an array of child objects
+            var children = (object[])feature.UnsafeObject.GetChildren();
+
+            // Return an empty list if there are no children
+            // Convert the objects to features, then to ModelFeatures
+            return children == null
+                ? new List<ModelFeature>()
+                : children.Cast<Feature>().Select(x => new ModelFeature(x)).ToList();
+        }
+
 
         /// <summary>
         /// Sets the suppression state of this feature

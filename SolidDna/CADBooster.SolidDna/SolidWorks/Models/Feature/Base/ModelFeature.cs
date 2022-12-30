@@ -959,10 +959,10 @@ namespace CADBooster.SolidDna
         /// </summary>
         /// <param name="feature"></param>
         /// <returns></returns>
-        public static List<ModelFeature> GetParents(ModelFeature feature)
+        public List<ModelFeature> GetParents()
         {
             // Get an array of parent objects
-            var parents = (object[])feature.UnsafeObject.GetParents();
+            var parents = (object[])UnsafeObject.GetParents();
 
             // Return an empty list if there are no parents
             // Convert the objects to features, then to ModelFeatures
@@ -976,10 +976,10 @@ namespace CADBooster.SolidDna
         /// </summary>
         /// <param name="feature"></param>
         /// <returns></returns>
-        public static List<ModelFeature> GetChildren(ModelFeature feature)
+        public List<ModelFeature> GetChildren()
         {
             // Get an array of child objects
-            var children = (object[])feature.UnsafeObject.GetChildren();
+            var children = (object[])UnsafeObject.GetChildren();
 
             // Return an empty list if there are no children
             // Convert the objects to features, then to ModelFeatures
@@ -987,7 +987,6 @@ namespace CADBooster.SolidDna
                 ? new List<ModelFeature>()
                 : children.Cast<Feature>().Select(x => new ModelFeature(x)).ToList();
         }
-
 
         /// <summary>
         /// Sets the suppression state of this feature

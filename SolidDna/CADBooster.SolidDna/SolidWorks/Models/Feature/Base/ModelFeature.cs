@@ -121,6 +121,11 @@ namespace CADBooster.SolidDna
         public bool IsCommentFolder => FeatureType == ModelFeatureType.CommentFolder;
 
         /// <summary>
+        /// Checks if this feature's specific type is a Component
+        /// </summary>
+        public bool IsComponent => FeatureType == ModelFeatureType.Component;
+
+        /// <summary>
         /// Checks if this feature's specific type is a Cosmetic Weld Bead Folder 
         /// </summary>
         public bool IsCosmeticWeldBeadFolder => FeatureType == ModelFeatureType.CosmeticWeldBeadFolder;

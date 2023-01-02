@@ -1032,18 +1032,36 @@ namespace CADBooster.SolidDna
         }
 
         /// <summary>
-        /// Sets a custom property to the given value.
+        /// Gets all of the custom properties in this feature.
         /// Only works for Cut List Folders and the Weldment feature.
         /// </summary>
-        /// <param name="name">The name of the property</param>
-        /// <param name="value">The value of the property</param>
-        public void SetCustomProperty(string name, string value)
+        /// <param name="action">The custom properties list to be worked on inside the action. NOTE: Do not store references to them outside of this action</param>
+        /// <returns></returns>
+        public void CustomProperties(Action<List<CustomProperty>> action)
         {
             // Get the custom property editor
             using (var editor = GetCustomPropertyEditor())
             {
-                // Set the property
-                editor.SetCustomProperty(name, value);
+                // Get the properties
+                var properties = editor.GetCustomProperties();
+
+                // Let the action use them
+                action(properties);
+            }
+        }
+
+        /// <summary>
+        /// Deletes a custom property by the given name
+        /// </summary>
+        /// <param name="name">The name of the custom property</param>
+        /// <returns></returns>
+        public void DeleteCustomProperty(string name)
+        {
+            // Get the custom property editor
+            using (var editor = GetCustomPropertyEditor())
+            {
+                // Get the property
+                editor.DeleteCustomProperty(name);
             }
         }
 
@@ -1065,21 +1083,18 @@ namespace CADBooster.SolidDna
         }
 
         /// <summary>
-        /// Gets all of the custom properties in this feature.
+        /// Sets a custom property to the given value.
         /// Only works for Cut List Folders and the Weldment feature.
         /// </summary>
-        /// <param name="action">The custom properties list to be worked on inside the action. NOTE: Do not store references to them outside of this action</param>
-        /// <returns></returns>
-        public void CustomProperties(Action<List<CustomProperty>> action)
+        /// <param name="name">The name of the property</param>
+        /// <param name="value">The value of the property</param>
+        public void SetCustomProperty(string name, string value)
         {
             // Get the custom property editor
             using (var editor = GetCustomPropertyEditor())
             {
-                // Get the properties
-                var properties = editor.GetCustomProperties();
-
-                // Let the action use them
-                action(properties);
+                // Set the property
+                editor.SetCustomProperty(name, value);
             }
         }
 

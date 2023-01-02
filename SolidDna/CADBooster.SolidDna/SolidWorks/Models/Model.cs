@@ -924,60 +924,6 @@ namespace CADBooster.SolidDna
         #region Custom Properties
 
         /// <summary>
-        /// Sets a custom property to the given value.
-        /// If a configuration is specified then the configuration-specific property is set
-        /// </summary>
-        /// <param name="name">The name of the property</param>
-        /// <param name="value">The value of the property</param>
-        /// <param name="configuration">The configuration to set the properties from, otherwise set custom property</param>
-        public void SetCustomProperty(string name, string value, string configuration = null)
-        {
-            // Get the custom property editor
-            using (var editor = Extension.CustomPropertyEditor(configuration))
-            {
-                // Set the property
-                editor.SetCustomProperty(name, value);
-            }
-        }
-
-        /// <summary>
-        /// Gets a custom property by the given name
-        /// </summary>
-        /// <param name="name">The name of the custom property</param>
-        /// <param name="configuration">The configuration to get the properties from, otherwise get custom property</param>
-        ///<param name="resolved">True to get the resolved value of the property, false to get the actual text</param>
-        /// <returns></returns>
-        public string GetCustomProperty(string name, string configuration = null, bool resolved = false)
-        {
-            // Get the custom property editor
-            using (var editor = Extension.CustomPropertyEditor(configuration))
-            {
-                // Get the property
-                return editor.GetCustomProperty(name, resolve: resolved);
-            }
-        }
-
-        /// <summary>
-        /// Gets all of the custom properties in this model.
-        /// Simply set the Value of the custom property to edit it
-        /// </summary>
-        /// <param name="action">The custom properties list to be worked on inside the action. NOTE: Do not store references to them outside of this action</param>
-        /// <param name="configuration">Specify a configuration to get configuration-specific properties</param>
-        /// <returns></returns>
-        public void CustomProperties(Action<List<CustomProperty>> action, string configuration = null)
-        {
-            // Get the custom property editor
-            using (var editor = Extension.CustomPropertyEditor(configuration))
-            {
-                // Get the properties
-                var properties = editor.GetCustomProperties();
-
-                // Let the action use them
-                action(properties);
-            }
-        }
-
-        /// <summary>
         /// Gets all of the custom properties in this model including any configuration specific properties
         /// </summary>
         /// <returns>Custom property and the configuration name it belongs to (or null if none)</returns>
@@ -1009,6 +955,76 @@ namespace CADBooster.SolidDna
                         // Return result
                         yield return (configuration, property);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Gets all of the custom properties in this model.
+        /// Simply set the Value of the custom property to edit it
+        /// </summary>
+        /// <param name="action">The custom properties list to be worked on inside the action. NOTE: Do not store references to them outside of this action</param>
+        /// <param name="configuration">Specify a configuration to get configuration-specific properties</param>
+        /// <returns></returns>
+        public void CustomProperties(Action<List<CustomProperty>> action, string configuration = null)
+        {
+            // Get the custom property editor
+            using (var editor = Extension.CustomPropertyEditor(configuration))
+            {
+                // Get the properties
+                var properties = editor.GetCustomProperties();
+
+                // Let the action use them
+                action(properties);
+            }
+        }
+
+        /// <summary>
+        /// Deletes a custom property by the given name
+        /// </summary>
+        /// <param name="name">The name of the custom property</param>
+        /// <param name="configuration">The configuration to get the properties from, otherwise get custom property</param>
+        /// <returns></returns>
+        public void DeleteCustomProperty(string name, string configuration = null)
+        {
+            // Get the custom property editor
+            using (var editor = Extension.CustomPropertyEditor(configuration))
+            {
+                // Get the property
+                editor.DeleteCustomProperty(name);
+            }
+        }
+
+        /// <summary>
+        /// Gets a custom property by the given name
+        /// </summary>
+        /// <param name="name">The name of the custom property</param>
+        /// <param name="configuration">The configuration to get the properties from, otherwise get custom property</param>
+        ///<param name="resolved">True to get the resolved value of the property, false to get the actual text</param>
+        /// <returns></returns>
+        public string GetCustomProperty(string name, string configuration = null, bool resolved = false)
+        {
+            // Get the custom property editor
+            using (var editor = Extension.CustomPropertyEditor(configuration))
+            {
+                // Get the property
+                return editor.GetCustomProperty(name, resolve: resolved);
+            }
+        }
+
+        /// <summary>
+        /// Sets a custom property to the given value.
+        /// If a configuration is specified then the configuration-specific property is set
+        /// </summary>
+        /// <param name="name">The name of the property</param>
+        /// <param name="value">The value of the property</param>
+        /// <param name="configuration">The configuration to set the properties from, otherwise set custom property</param>
+        public void SetCustomProperty(string name, string value, string configuration = null)
+        {
+            // Get the custom property editor
+            using (var editor = Extension.CustomPropertyEditor(configuration))
+            {
+                // Set the property
+                editor.SetCustomProperty(name, value);
             }
         }
 

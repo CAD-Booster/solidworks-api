@@ -105,6 +105,7 @@ namespace CADBooster.SolidDna
                     return ModelFeatureType.MateReference;
 
                 case "Reference": // removed from the 2018 and later help page
+                case "ReferencePattern": // a patterned component, not in the docs
                     return ModelFeatureType.Component;
 
                 case "SmartComponentFeature":

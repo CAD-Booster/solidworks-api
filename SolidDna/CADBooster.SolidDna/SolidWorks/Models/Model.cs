@@ -1425,6 +1425,33 @@ namespace CADBooster.SolidDna
 
         #endregion
 
+        #region Undo
+
+        /// <summary>
+        /// Start a new Undo step. When you finish recording a step by calling <see cref="FinishRecordingUndoStep"/>, you choose whether to show it in the Undo/Redo list or whether to hide it from the user.
+        /// Hidden steps are ignored by SolidWorks and cannot be undone.
+        /// If you start recording multiple times before finishing a recording, the first start call is used.
+        /// </summary>
+        public void StartRecordingUndoStep()
+        {
+            Extension.UnsafeObject.StartRecordingUndoObject();
+        }
+
+        /// <summary>
+        /// Finish recording an undo step and (when set to visible) add it to the Undo list.
+        /// When you finish a recording before starting one, it fails and returns false.
+        /// </summary>
+        /// <param name="stepName"></param>
+        /// <param name="visibility"></param>
+        /// <returns>True when successful.</returns>
+        public bool FinishRecordingUndoStep(string stepName, ModelUndoStepVisibility visibility)
+        {
+            var makeHidden = visibility == ModelUndoStepVisibility.Hidden;
+            return Extension.UnsafeObject.FinishRecordingUndoObject2(stepName, makeHidden);
+        }
+
+        #endregion
+
         #region ToString
 
         /// <summary>

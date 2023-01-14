@@ -40,12 +40,46 @@ namespace CADBooster.SolidDna
         #endregion
 
         #region Feature Methods
-
         /// <summary>
-        /// Gets the <see cref="ModelFeature"/> of the item in the feature tree based on its name
+        /// Gets the <see cref="ModelFeature"/> of the item in the feature tree based on its name. Returns the actual model feature.
         /// </summary>
         /// <param name="featureName">Name of the feature</param>
-        /// <param name="action">The action to perform on each feature</param>
+        /// <returns>The <see cref="ModelFeature"/> for the named feature</returns>
+        public ModelFeature GetFeatureByName(string featureName)
+        {
+            // Wrap any error
+            return SolidDnaErrors.Wrap(() => new ModelFeature((Feature)mBaseObject.FeatureByName(featureName)),
+                SolidDnaErrorTypeCode.SolidWorksModel,
+                SolidDnaErrorCode.SolidWorksModelAssemblyGetFeatureByNameError);
+        }
+
+        /// <summary>
+        /// Gets the <see cref="ModelFeature"/> of the item in the feature tree based on its name and perform a function on it.
+        /// </summary>
+        /// <param name="featureName">Name of the feature</param>
+        /// <param name="function">The function to perform on this feature</param>
+        /// <returns>The <see cref="ModelFeature"/> for the named feature</returns>
+        public T GetFeatureByName<T>(string featureName, Func<ModelFeature, T> function)
+        {
+            // Wrap any error
+            return SolidDnaErrors.Wrap(() =>
+            {
+                // Create feature
+                using (var modelFeature = new ModelFeature((Feature)mBaseObject.FeatureByName(featureName)))
+                {
+                    // Run function
+                    return (T)function.Invoke(modelFeature);
+                }
+            },
+                SolidDnaErrorTypeCode.SolidWorksModel,
+                SolidDnaErrorCode.SolidWorksModelAssemblyGetFeatureByNameError);
+        }
+
+        /// <summary>
+        /// Gets the <see cref="ModelFeature"/> of the item in the feature tree based on its name and perform an action on it.
+        /// </summary>
+        /// <param name="featureName">Name of the feature</param>
+        /// <param name="action">The action to perform on this feature</param>
         /// <returns>The <see cref="ModelFeature"/> for the named feature</returns>
         public void GetFeatureByName(string featureName, Action<ModelFeature> action)
         {
@@ -53,14 +87,14 @@ namespace CADBooster.SolidDna
             SolidDnaErrors.Wrap(() =>
             {
                 // Create feature
-                using (var model = new ModelFeature((Feature)mBaseObject.FeatureByName(featureName)))
+                using (var modelFeature = new ModelFeature((Feature)mBaseObject.FeatureByName(featureName)))
                 {
                     // Run action
-                    action(model);
+                    action(modelFeature);
                 }
             },
                 SolidDnaErrorTypeCode.SolidWorksModel,
-                SolidDnaErrorCode.SolidWorksModelPartGetFeatureByNameError);
+                SolidDnaErrorCode.SolidWorksModelAssemblyGetFeatureByNameError);
         }
 
         #endregion

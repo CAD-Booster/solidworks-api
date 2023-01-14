@@ -101,9 +101,12 @@ namespace CADBooster.SolidDna
                 case "MateWidth":
                     return VersionYear < 2018 ? ModelFeatureType.Mate : ModelFeatureType.WidthMateData;
 
-                case "Reference": // removed from the 2018 and later help page
-                case "PosGroupFolder":
+                case "PosGroup":
                     return ModelFeatureType.MateReference;
+
+                case "Reference": // removed from the 2018 and later help page
+                case "ReferencePattern": // a patterned component, not in the docs
+                    return ModelFeatureType.Component;
 
                 case "SmartComponentFeature":
                     return ModelFeatureType.SmartComponentFeatureData;
@@ -170,6 +173,7 @@ namespace CADBooster.SolidDna
                     return ModelFeatureType.DeleteFaceData;
 
                 case "DerivedCirPattern":
+                case "DerivedHolePattern":
                 case "DerivedLPattern":
                     return ModelFeatureType.DerivedPatternData;
 
@@ -372,6 +376,7 @@ namespace CADBooster.SolidDna
                 case "FtrFolder":
                 case "InsertedFeatureFolder":
                 case "MateReferenceGroupFolder":
+                case "PosGroupFolder":
                 case "ProfileFtrFolder":
                 case "RefAxisFtrFolder":
                 case "RefPlaneFtrFolder":

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using SolidWorks.Interop.sldworks;
 
 namespace CADBooster.SolidDna
@@ -119,6 +120,11 @@ namespace CADBooster.SolidDna
         /// Checks if this feature's specific type is a Comment Folder
         /// </summary>
         public bool IsCommentFolder => FeatureType == ModelFeatureType.CommentFolder;
+
+        /// <summary>
+        /// Checks if this feature's specific type is a Component
+        /// </summary>
+        public bool IsComponent => FeatureType == ModelFeatureType.Component;
 
         /// <summary>
         /// Checks if this feature's specific type is a Cosmetic Weld Bead Folder 
@@ -949,6 +955,40 @@ namespace CADBooster.SolidDna
         #region Public Methods
 
         /// <summary>
+        /// Get a list of all features that are required to create this feature.
+        /// </summary>
+        /// <param name="feature"></param>
+        /// <returns></returns>
+        public List<ModelFeature> GetParents()
+        {
+            // Get an array of parent objects
+            var parents = (object[])UnsafeObject.GetParents();
+
+            // Return an empty list if there are no parents
+            // Convert the objects to features, then to ModelFeatures
+            return parents == null
+                ? new List<ModelFeature>()
+                : parents.Cast<Feature>().Select(x => new ModelFeature(x)).ToList();
+        }
+
+        /// <summary>
+        /// Get a list of all child features.
+        /// </summary>
+        /// <param name="feature"></param>
+        /// <returns></returns>
+        public List<ModelFeature> GetChildren()
+        {
+            // Get an array of child objects
+            var children = (object[])UnsafeObject.GetChildren();
+
+            // Return an empty list if there are no children
+            // Convert the objects to features, then to ModelFeatures
+            return children == null
+                ? new List<ModelFeature>()
+                : children.Cast<Feature>().Select(x => new ModelFeature(x)).ToList();
+        }
+
+        /// <summary>
         /// Sets the suppression state of this feature
         /// </summary>
         /// <remarks>SolidWorks does not allow suppressing features while a PropertyManager page is open.</remarks>
@@ -992,18 +1032,36 @@ namespace CADBooster.SolidDna
         }
 
         /// <summary>
-        /// Sets a custom property to the given value.
+        /// Gets all of the custom properties in this feature.
         /// Only works for Cut List Folders and the Weldment feature.
         /// </summary>
-        /// <param name="name">The name of the property</param>
-        /// <param name="value">The value of the property</param>
-        public void SetCustomProperty(string name, string value)
+        /// <param name="action">The custom properties list to be worked on inside the action. NOTE: Do not store references to them outside of this action</param>
+        /// <returns></returns>
+        public void CustomProperties(Action<List<CustomProperty>> action)
         {
             // Get the custom property editor
             using (var editor = GetCustomPropertyEditor())
             {
-                // Set the property
-                editor.SetCustomProperty(name, value);
+                // Get the properties
+                var properties = editor.GetCustomProperties();
+
+                // Let the action use them
+                action(properties);
+            }
+        }
+
+        /// <summary>
+        /// Deletes a custom property by the given name
+        /// </summary>
+        /// <param name="name">The name of the custom property</param>
+        /// <returns></returns>
+        public void DeleteCustomProperty(string name)
+        {
+            // Get the custom property editor
+            using (var editor = GetCustomPropertyEditor())
+            {
+                // Get the property
+                editor.DeleteCustomProperty(name);
             }
         }
 
@@ -1025,21 +1083,18 @@ namespace CADBooster.SolidDna
         }
 
         /// <summary>
-        /// Gets all of the custom properties in this feature.
+        /// Sets a custom property to the given value.
         /// Only works for Cut List Folders and the Weldment feature.
         /// </summary>
-        /// <param name="action">The custom properties list to be worked on inside the action. NOTE: Do not store references to them outside of this action</param>
-        /// <returns></returns>
-        public void CustomProperties(Action<List<CustomProperty>> action)
+        /// <param name="name">The name of the property</param>
+        /// <param name="value">The value of the property</param>
+        public void SetCustomProperty(string name, string value)
         {
             // Get the custom property editor
             using (var editor = GetCustomPropertyEditor())
             {
-                // Get the properties
-                var properties = editor.GetCustomProperties();
-
-                // Let the action use them
-                action(properties);
+                // Set the property
+                editor.SetCustomProperty(name, value);
             }
         }
 

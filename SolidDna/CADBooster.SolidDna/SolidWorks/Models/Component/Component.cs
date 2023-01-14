@@ -67,9 +67,19 @@ namespace CADBooster.SolidDna
         public string FilePath => BaseObject.GetPathName();
 
         /// <summary>
+        /// True if this component is an assembly
+        /// </summary>
+        public bool IsAssembly => ModelType == ComponentTypes.Assembly;
+
+        /// <summary>
         /// Check if this sub-assembly is flexible.
         /// </summary>
         public bool IsFlexible => BaseObject.Solving == (int)swComponentSolvingOption_e.swComponentFlexibleSolving;
+
+        /// <summary>
+        /// True if this component is a part
+        /// </summary>
+        public bool IsPart => ModelType == ComponentTypes.Part;
 
         /// <summary>
         /// Check if the Component is the root component.
@@ -77,6 +87,11 @@ namespace CADBooster.SolidDna
         /// Not all methods return useful results when the component is the root.
         /// </summary>
         public bool IsRoot => BaseObject.IsRoot();
+
+        /// <summary>
+        /// Check if the component is suppressed in the current assembly configuration. Call <see cref="Suppress"/> or <see cref="Unsuppress"/> to change the state of this component.
+        /// </summary>
+        public bool IsSuppressed => BaseObject.IsSuppressed();
 
         /// <summary>
         /// Check if the component is a virtual component.

@@ -24,6 +24,11 @@
         Feature,
 
         /// <summary>
+        /// The feature is a <see cref="SolidDna.Component"/>
+        /// </summary>
+        Component,
+
+        /// <summary>
         /// The feature is <see cref="FeatureMate"/>
         /// </summary>
         Mate,

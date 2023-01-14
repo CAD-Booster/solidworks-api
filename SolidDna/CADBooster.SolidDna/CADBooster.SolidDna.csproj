@@ -2,33 +2,31 @@
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>2.5.0.0</Version>
+    <Version>2.6.0.0</Version>
     <Authors>Luke Malpass, Peter Brinkhuis</Authors>
     <Company>CAD Booster B.V.</Company>
     <Description>The new SolidDNA SDK, making the SolidWorks API easier, well behaved and modern</Description>
-    <Copyright>Copyright © 2016-2022</Copyright>
+    <Copyright>Copyright © 2016-2023</Copyright>
     <PackageProjectUrl>https://github.com/CAD-Booster/solidworks-api</PackageProjectUrl>
     <RepositoryUrl>https://github.com/CAD-Booster/solidworks-api</RepositoryUrl>
     <PackageTags>soliddna solidworks cadbooster angelsix api</PackageTags>
-    <AssemblyVersion>2.5.0.0</AssemblyVersion>
+    <AssemblyVersion>2.6.0.0</AssemblyVersion>
     <Product>CADBooster.SolidDna</Product>
     <PackageId>CADBooster.SolidDna</PackageId>
     <AssemblyName>CADBooster.SolidDna</AssemblyName>
     <RootNamespace>CADBooster.SolidDna</RootNamespace>
     <PackageLicenseFile>license.txt</PackageLicenseFile>
-    <PackageReleaseNotes>Updated solidworks DLLs to SW2023.
-Updated target framework from 4.7.2 to 4.8.
-Fixed crash when task pane icon path does not exist.
-Added model events, solidworks closing event.
-Simplified error wrapping with fewer parameters. Only translate error strings when an actual error occurs.
-Removed HasBeenSaved file exists check.
-Added creating and deleting model configuration. Added configuration properties.
-Added getting default template paths. Added creating new models.
-Added (un)suppressing component, marking component as flexible, ModelType property.</PackageReleaseNotes>
+    <PackageReleaseNotes>Fixed feature type for Component, Mate reference folder, Mate reference, Derived hole pattern and Component pattern.
+Added children and parents of a ModelFeature.
+Added GetFeatureByName overloads and added all methods for drawings.
+Added Component properties.
+Adde deleting a custom property from a feature.
+Added recording Undo/Redo steps.
+Updated readmes.</PackageReleaseNotes>
     <SignAssembly>true</SignAssembly>
     <PackageIcon>icon.png</PackageIcon>
     <PackageIconUrl />
-    <FileVersion>2.5.0.0</FileVersion>
+    <FileVersion>2.6.0.0</FileVersion>
     <AssemblyOriginatorKeyFile>StrongNameKey.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

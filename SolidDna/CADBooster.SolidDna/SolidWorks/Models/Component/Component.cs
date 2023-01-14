@@ -89,6 +89,11 @@ namespace CADBooster.SolidDna
         public bool IsRoot => BaseObject.IsRoot();
 
         /// <summary>
+        /// Check if the component is suppressed in the current assembly configuration. Call <see cref="Suppress"/> or <see cref="Unsuppress"/> to change the state of this component.
+        /// </summary>
+        public bool IsSuppressed => BaseObject.IsSuppressed();
+
+        /// <summary>
         /// Check if the component is a virtual component.
         /// Virtual components are saved within the assembly, not to a separate file.
         /// </summary>

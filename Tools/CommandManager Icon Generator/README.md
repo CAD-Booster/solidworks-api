@@ -7,7 +7,9 @@ That task is painstaking doing it manually, so this tool simply accepts a list o
 SolidWorks Command Manager tabs (for toolbars and Tools menus) need a list of images, called Sprites. Each image must contain all of the icons for that menu group in a particular size. An example:
 
 ![icon sprite, each icon being 20x20 pixels](icons20.png)
+
 ![icon sprite, each icon being 32x32 pixels](icons32.png)
+
 ![icon sprite, each icon being 40x40 pixels](icons40.png)
 
 This tool creates six PNG images, one for each icon size supported by SOLIDWORKS:

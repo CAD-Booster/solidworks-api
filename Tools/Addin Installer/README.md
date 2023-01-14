@@ -3,6 +3,8 @@ This tool helps you to install and uninstall SolidWorks add-ins using RegAsm. Us
 
 NOTE: This application is designed to run on x64 machines and x64 installs of SolidWorks by default
 
+![SolidWorks Add-in Installer Screenshot](Screenshot.png)
+
 # How to register an add-in when building an installer
 Do not use this tool or RegAsm in an installer when you roll out an add-in product. In that case, you need to register your add-in by adding Windows Registry keys yourself. Every installer tool has its own way of adding registry keys.
 

@@ -7,6 +7,7 @@ We'd love your help to keep expanding and improving this project.
 # Getting Started
 
 ## NuGet Package
+![Nuget](https://img.shields.io/nuget/v/CADBooster.SolidDna)
 [CADBooster.SolidDna on NuGet](https://www.nuget.org/packages/CADBooster.SolidDna)
 
 ## AngelSix videos

@@ -35,7 +35,7 @@ namespace CADBooster.SolidDna
         /// The file path of the current file that is loading. 
         /// Used to ignore active document changed events during opening of a file
         /// </summary>
-        protected string mFileLoading;
+        protected string mPathToFirstLoadingFile;
 
         /// <summary>
         /// The currently active document
@@ -267,24 +267,24 @@ namespace CADBooster.SolidDna
         /// <summary>
         /// Called after a file has finished opening
         /// </summary>
-        /// <param name="filename">The filename to the file being opened</param>
+        /// <param name="filePath">The path to the file being opened</param>
         /// <returns></returns>
-        private int FileOpenPostNotify(string filename)
+        private int FileOpenPostNotify(string filePath)
         {
             // Wrap any error
             SolidDnaErrors.Wrap(() =>
             {
                 // If this is the file we were opening...
-                if (string.Equals(filename, mFileLoading, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(filePath, mPathToFirstLoadingFile, StringComparison.OrdinalIgnoreCase))
                 {
                     // File has been loaded, so clear loading flag
-                    mFileLoading = null;
+                    mPathToFirstLoadingFile = null;
 
                     // And update all properties and models
                     ReloadActiveModelInformation();
 
                     // Inform listeners
-                    FileOpened(filename, mActiveModel);
+                    FileOpened(filePath, mActiveModel);
                 }
 
             },
@@ -298,9 +298,9 @@ namespace CADBooster.SolidDna
         /// <summary>
         /// Called before a file has started opening
         /// </summary>
-        /// <param name="filename">The filename to the file being opened</param>
+        /// <param name="filePath">The path to the file being opened</param>
         /// <returns></returns>
-        private int FileOpenPreNotify(string filename)
+        private int FileOpenPreNotify(string filePath)
         {
             // Don't handle the ActiveModelDocChangeNotify event for file open events
             // - wait until the file is open instead
@@ -312,8 +312,8 @@ namespace CADBooster.SolidDna
             // Wrap any error
             SolidDnaErrors.Wrap(() =>
             {
-                if (mFileLoading == null)
-                    mFileLoading = filename;
+                if (mPathToFirstLoadingFile == null)
+                    mPathToFirstLoadingFile = filePath;
             },
                 SolidDnaErrorTypeCode.SolidWorksApplication,
                 SolidDnaErrorCode.SolidWorksApplicationFilePreOpenError);
@@ -336,7 +336,7 @@ namespace CADBooster.SolidDna
             SolidDnaErrors.Wrap(() =>
             {
                 // If we are currently loading a file...
-                if (mFileLoading != null)
+                if (mPathToFirstLoadingFile != null)
                 {
                     // Check the active document
                     using (var activeDoc = new Model(BaseObject.IActiveDoc2))
@@ -348,7 +348,7 @@ namespace CADBooster.SolidDna
                         else
                         {
                             // If this is the same file that is currently being loaded, ignore this event
-                            if (string.Equals(mFileLoading, activeDoc.FilePath, StringComparison.OrdinalIgnoreCase))
+                            if (string.Equals(mPathToFirstLoadingFile, activeDoc.FilePath, StringComparison.OrdinalIgnoreCase))
                                 return;
                         }
                     }

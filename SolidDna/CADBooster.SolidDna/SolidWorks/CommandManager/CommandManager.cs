@@ -49,7 +49,7 @@ namespace CADBooster.SolidDna
         /// <param name="items">The command items to add</param>
         /// <param name="flyoutItems">The flyout command items that contain a list of other commands</param>
         /// <param name="iconListsPath">The icon list absolute path based on a string format of the absolute path to the icon list images, replacing {0} with the size. 
-        ///     For example C:\Folder\myiconlist{0}.png</param>
+        ///     For example C:\Folder\icons{0}.png</param>
         /// <param name="tooltip">Tool tip for the CommandGroup</param>
         /// <param name="hint">Text displayed in SOLIDWORKS status bar when a user's mouse pointer is over the CommandGroup</param>
         /// <param name="position">Position of the CommandGroup in the CommandManager for all document templates.
@@ -131,24 +131,14 @@ namespace CADBooster.SolidDna
         /// <param name="title">Name of the flyout to create</param>
         /// <param name="items">The command items to add</param>
         /// <param name="pathFormat">The icon list absolute path based on a string format of the absolute path to the icon list images, replacing {0} with the size. 
-        ///     For example C:\Folder\myiconlist{0}.png</param>
+        ///     For example C:\Folder\icons{0}.png</param>
         /// <param name="tooltip">Tool tip for the new flyout</param>
         /// <param name="hint">Text displayed in SOLIDWORKS status bar when a user's mouse pointer is over the flyout</param>
         /// <returns></returns>
         public CommandManagerFlyout CreateFlyoutGroup(string title, List<CommandManagerItem> items, string pathFormat, string tooltip = "", string hint = "")
         {
-            #region Icons 
-
-            // Make sure the path format contains "{0}"
-            if (pathFormat == null || !pathFormat.Contains("{0}"))
-                throw new SolidDnaException(SolidDnaErrors.CreateError(
-                    SolidDnaErrorTypeCode.SolidWorksCommandManager,
-                    SolidDnaErrorCode.SolidWorksCommandGroupInvalidPathFormatError));
-
             // Get icon paths
-            var icons = SolidWorksApplication.GetIconPathsFromPathFormat(pathFormat);
-
-            #endregion
+            var icons = Icons.GetPathArrayFromPathFormat(pathFormat);
 
             // Create unique callback Id
             var callbackId = Guid.NewGuid().ToString("N");
@@ -198,7 +188,7 @@ namespace CADBooster.SolidDna
         /// <param name="addDropdownBoxForDrawings">If true, adds a command box to the toolbar for drawings that has a dropdown of all commands that are part of this group. The tooltip of the command group is used as the name.</param>
         /// <param name="documentTypes">The document types where this menu/toolbar is visible.</param>
         /// <param name="iconListsPath">The icon list absolute path based on a string format of the absolute path to the icon list images, replacing {0} with the size. 
-        ///     For example C:\Folder\myiconlist{0}.png</param>
+        ///     For example C:\Folder\icons{0}.png</param>
         /// <param name="mainIconPath">The icon absolute path base on a string format of the absolute path to the main icon images, replacing {0} with the size.
         /// The main icon is visible in the Customize window. If you don't set a main icon, SolidWorks uses the first icon in <paramref name="iconListsPath"/>.</param>
         /// <returns></returns>

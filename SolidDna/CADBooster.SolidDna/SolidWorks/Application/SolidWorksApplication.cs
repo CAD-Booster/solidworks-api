@@ -14,16 +14,6 @@ namespace CADBooster.SolidDna
     /// </summary>
     public partial class SolidWorksApplication : SharedSolidDnaObject<SldWorks>
     {
-        #region Public members
-
-        /// <summary>
-        /// List of icon sizes used by SOLIDWORKS for the task pane and command manager.
-        /// Icons are square, so these values are both width and height.
-        /// </summary>
-        public static readonly int[] mIconSizes = { 20, 32, 40, 64, 96, 128 };
-
-        #endregion
-
         #region Protected Members
 
         /// <summary>
@@ -871,7 +861,7 @@ namespace CADBooster.SolidDna
         /// Attempts to create a task pane. Uses a list of PNG icon sizes: 20, 32, 40, 64, 96 and 128 pixels square.
         /// </summary>
         /// <param name="iconPathFormat">The absolute path to all icons, based on a string format of the absolute path. Replaces "{0}" in the string with the icons sizes. 
-        /// For example C:\Folder\myiconlist{0}.png
+        /// For example C:\Folder\icons{0}.png
         /// </param>
         /// <param name="toolTip">The title text to show at the top of the taskpane</param>
         public async Task<Taskpane> CreateTaskpaneAsync2(string iconPathFormat, string toolTip)
@@ -880,7 +870,7 @@ namespace CADBooster.SolidDna
             return SolidDnaErrors.Wrap<Taskpane>(() =>
                 {
                     // Get up to six icon paths
-                    var icons = GetIconPathsFromPathFormat(iconPathFormat);
+                    var icons = Icons.GetPathArrayFromPathFormat(iconPathFormat);
 
                     // Attempt to create the taskpane
                     var comTaskpane = BaseObject.CreateTaskpaneView3(icons, toolTip);
@@ -894,27 +884,6 @@ namespace CADBooster.SolidDna
                 },
                 SolidDnaErrorTypeCode.SolidWorksTaskpane,
                 SolidDnaErrorCode.SolidWorksTaskpaneCreateError);
-        }
-
-        /// <summary>
-        /// Convert a single string with a format for an absolute path to an array of existing paths.
-        /// </summary>
-        /// <param name="iconPathFormat"></param>
-        /// <returns></returns>
-        internal static string[] GetIconPathsFromPathFormat(string iconPathFormat)
-        {
-            var iconPaths = new Dictionary<int, string>();
-            foreach (var iconSize in mIconSizes)
-            {
-                // Replace "{0}" in the string with the icon size
-                var path = string.Format(iconPathFormat, iconSize);
-                
-                // Don't check if the path exists because SolidWorks does that for us. If all files don't exist and we return an empty array, the task pane is not created.
-                iconPaths.Add(iconSize, path);
-            }
-
-            // Get icon paths from the dictionary
-            return iconPaths.Values.ToArray();
         }
 
         #endregion

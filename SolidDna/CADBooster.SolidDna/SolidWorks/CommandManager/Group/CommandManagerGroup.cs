@@ -2,7 +2,6 @@
 using SolidWorks.Interop.swconst;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 
 namespace CADBooster.SolidDna
@@ -23,13 +22,13 @@ namespace CADBooster.SolidDna
         /// A dictionary with all icon sizes and their paths.
         /// Entries are only added when path exists.
         /// </summary>
-        private readonly Dictionary<int, string> mIconListPaths = new Dictionary<int, string>();
+        private readonly Dictionary<int, string> mIconListPaths;
 
         /// <summary>
         /// A dictionary for the main group icon, with all icon sizes and their paths.
         /// Entries are only added when path exists.
         /// </summary>
-        private readonly Dictionary<int, string> mMainIconPaths = new Dictionary<int, string>();
+        private readonly Dictionary<int, string> mMainIconPaths;
 
         /// <summary>
         /// A list of all tabs that have been created
@@ -196,59 +195,13 @@ namespace CADBooster.SolidDna
             AddDropdownBoxForDrawings = addDropdownBoxForDrawings;
 
             // Set icon list
-            AddFormattedIconsToDictionary(iconListsPath, mIconListPaths);
+            mIconListPaths = Icons.GetFormattedPathDictionary(iconListsPath);
 
             // Set the main icon list
-            AddFormattedIconsToDictionary(mainIconPath, mMainIconPaths);
+            mMainIconPaths = Icons.GetFormattedPathDictionary(mainIconPath);
 
             // Listen out for callbacks
             PlugInIntegration.CallbackFired += PlugInIntegration_CallbackFired;
-        }
-
-        #endregion
-
-        #region Icon List Methods
-
-        /// <summary>
-        /// Get an array of full paths to a bmp or png's that contains the icon list 
-        /// from first in the list being the smallest, to last being the largest
-        /// NOTE: Supported sizes for each icon in an array is 20x20, 32x32, 40x40, 64x64, 96x96 and 128x128
-        /// </summary>
-        private string[] GetIconListPaths(bool isMainIcon)
-        {
-            return isMainIcon ? mMainIconPaths.Values.ToArray() : mIconListPaths.Values.ToArray();
-        }
-
-        /// <summary>
-        /// Sets all icon lists based on a string format of the absolute path to the icon list images, replacing {0} with the size.
-        /// For example C:\Folder\icons{0}.png would look for all sizes such as
-        /// C:\Folder\icons.png
-        /// C:\Folder\icons.png
-        /// C:\Folder\icons.png
-        /// ... and so on
-        /// </summary>
-        /// <param name="pathFormat">The absolute path, with {0} used to replace with the icon size</param>
-        /// <param name="dictionary">The icon path dictionary to add finished paths and their icon size to</param>
-        private static void AddFormattedIconsToDictionary(string pathFormat, Dictionary<int, string> dictionary)
-        {
-            // Make sure we have something
-            if (pathFormat.IsNullOrWhiteSpace())
-                return;
-
-            // Make sure the path format contains "{0}"
-            if (!pathFormat.Contains("{0}"))
-                throw new SolidDnaException(SolidDnaErrors.CreateError(
-                    SolidDnaErrorTypeCode.SolidWorksCommandManager,
-                    SolidDnaErrorCode.SolidWorksCommandGroupInvalidPathFormatError));
-
-
-            // Fill the dictionary with all paths that exist
-            foreach (var iconSize in SolidWorksApplication.mIconSizes)
-            {
-                var path = string.Format(pathFormat, iconSize);
-                if (File.Exists(path))
-                    dictionary.Add(iconSize, path);
-            }
         }
 
         #endregion
@@ -348,14 +301,14 @@ namespace CADBooster.SolidDna
             if (SolidWorksEnvironment.Application.SolidWorksVersion.Version >= 2016)
             {
                 // The list of icons for the toolbar or menu. There should be a sprite (a combination of all icons) for each icon size.
-                BaseObject.IconList = GetIconListPaths(false);
+                BaseObject.IconList = Icons.GetArrayFromDictionary(mIconListPaths);
 
                 // The icon that is visible in the Customize window 
-                BaseObject.MainIconList = GetIconListPaths(true);
+                BaseObject.MainIconList = Icons.GetArrayFromDictionary(mMainIconPaths);
             }
             else
             {
-                var icons = GetIconListPaths(false);
+                var icons = Icons.GetArrayFromDictionary(mIconListPaths);
                 if (icons.Length <= 0) return;
 
                 // Largest icon for this one

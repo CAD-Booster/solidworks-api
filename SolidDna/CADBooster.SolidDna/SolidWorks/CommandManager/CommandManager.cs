@@ -295,7 +295,7 @@ namespace CADBooster.SolidDna
         #region Command Tabs
 
         /// <summary>
-        /// Get's the command tab for this 
+        /// Gets the command tab for this 
         /// </summary>
         /// <param name="type">The type of document to get the tab for. Use only Part, Assembly or Drawing one at a time, otherwise the first found tab gets returned</param>
         /// <param name="title">The title of the command tab to get</param>

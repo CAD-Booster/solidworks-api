@@ -144,6 +144,8 @@ namespace CADBooster.SolidDna
         /// <param name="addDropdownBoxForAssemblies">If true, adds a command box to the toolbar for assemblies that has a dropdown of all commands that are part of this group. The tooltip of the command group is used as the name.</param>
         /// <param name="addDropdownBoxForDrawings">If true, adds a command box to the toolbar for drawings that has a dropdown of all commands that are part of this group. The tooltip of the command group is used as the name.</param>
         /// <param name="documentTypes">The document types where this menu/toolbar is visible</param>
+        /// <param name="iconListsPath">Absolute path to all icon sprites with including {0} for the image size</param>
+        /// <param name="mainIconPath">Absolute path to all main icons with including {0} for the image size</param>
         public CommandManagerGroup(
             ICommandGroup commandGroup, 
             List<CommandManagerItem> items, 
@@ -154,10 +156,12 @@ namespace CADBooster.SolidDna
             string tooltip,
             bool hasMenu, 
             bool hasToolbar,
-            bool addDropdownBoxForParts = false,
-            bool addDropdownBoxForAssemblies = false,
-            bool addDropdownBoxForDrawings = false, 
-            ModelTemplateType documentTypes = ModelTemplateType.Part | ModelTemplateType.Assembly | ModelTemplateType.Drawing) : base(commandGroup)
+            bool addDropdownBoxForParts,
+            bool addDropdownBoxForAssemblies,
+            bool addDropdownBoxForDrawings, 
+            ModelTemplateType documentTypes,
+            string iconListsPath,
+            string mainIconPath) : base(commandGroup)
         {
             // Store user Id, used to remove the command group
             UserId = userId;
@@ -177,8 +181,6 @@ namespace CADBooster.SolidDna
             // Set tooltip
             Tooltip = tooltip;
 
-            // Set defaults
-
             // Show for certain types of documents, or when no document is active.
             MenuVisibleInDocumentTypes = documentTypes;
 
@@ -193,6 +195,12 @@ namespace CADBooster.SolidDna
             AddDropdownBoxForAssemblies = addDropdownBoxForAssemblies;
             AddDropdownBoxForDrawings = addDropdownBoxForDrawings;
 
+            // Set icon list
+            AddFormattedIconsToDictionary(iconListsPath, mIconListPaths);
+
+            // Set the main icon list
+            AddFormattedIconsToDictionary(mainIconPath, mMainIconPaths);
+
             // Listen out for callbacks
             PlugInIntegration.CallbackFired += PlugInIntegration_CallbackFired;
         }
@@ -202,7 +210,7 @@ namespace CADBooster.SolidDna
         #region Icon List Methods
 
         /// <summary>
-        /// The list of full paths to a bmp or png's that contains the icon list 
+        /// Get an array of full paths to a bmp or png's that contains the icon list 
         /// from first in the list being the smallest, to last being the largest
         /// NOTE: Supported sizes for each icon in an array is 20x20, 32x32, 40x40, 64x64, 96x96 and 128x128
         /// </summary>
@@ -213,15 +221,15 @@ namespace CADBooster.SolidDna
 
         /// <summary>
         /// Sets all icon lists based on a string format of the absolute path to the icon list images, replacing {0} with the size.
-        /// For example C:\Folder\myiconlist{0}.png would look for all sizes such as
-        /// C:\Folder\myiconlist20.png
-        /// C:\Folder\myiconlist32.png
-        /// C:\Folder\myiconlist40.png
+        /// For example C:\Folder\icons{0}.png would look for all sizes such as
+        /// C:\Folder\icons.png
+        /// C:\Folder\icons.png
+        /// C:\Folder\icons.png
         /// ... and so on
         /// </summary>
         /// <param name="pathFormat">The absolute path, with {0} used to replace with the icon size</param>
-        /// <param name="isMainIcon">Whether we are setting the main group icon or the normal list of item icons.</param>
-        public void SetIconLists(string pathFormat, bool isMainIcon)
+        /// <param name="dictionary">The icon path dictionary to add finished paths and their icon size to</param>
+        private static void AddFormattedIconsToDictionary(string pathFormat, Dictionary<int, string> dictionary)
         {
             // Make sure we have something
             if (pathFormat.IsNullOrWhiteSpace())
@@ -239,12 +247,7 @@ namespace CADBooster.SolidDna
             {
                 var path = string.Format(pathFormat, iconSize);
                 if (File.Exists(path))
-                {
-                    if (isMainIcon)
-                        mMainIconPaths.Add(iconSize, path);
-                    else
-                        mIconListPaths.Add(iconSize, path);
-                }
+                    dictionary.Add(iconSize, path);
             }
         }
 

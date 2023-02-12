@@ -56,7 +56,8 @@ namespace CADBooster.SolidDna
         /// NOTE: Specify 0 to add the CommandGroup to the beginning of the CommandManager, or specify -1 to add it to the end of the CommandManager.
         /// NOTE: You can also use ICommandGroup::MenuPosition to control the position of the CommandGroup in specific document templates.</param>
         /// <param name="ignorePreviousVersion">True to remove all previously saved customization and toolbar information before creating a new CommandGroup, false to not.
-        /// Call CommandManager.GetGroupDataFromRegistry before calling this method to determine how to set IgnorePreviousVersion. Set IgnorePreviousVersion to true to prevent SOLIDWORKS from saving the current toolbar setting to the registry, even if there is no previous version.</param>
+        /// Call CommandManager.GetGroupDataFromRegistry before calling this method to determine how to set IgnorePreviousVersion.
+        /// Set IgnorePreviousVersion to true to prevent SOLIDWORKS from saving the current toolbar setting to the registry, even if there is no previous version.</param>
         /// <param name="hasMenu">Whether the CommandGroup should appear in the Tools dropdown menu.</param>
         /// <param name="hasToolbar">Whether the CommandGroup should appear in the Command Manager and as a separate toolbar.</param>
         /// <param name="addDropdownBoxForParts">If true, adds a command box to the toolbar for parts that has a dropdown of all commands that are part of this group. The tooltip of the command group is used as the name.</param>
@@ -64,8 +65,7 @@ namespace CADBooster.SolidDna
         /// <param name="addDropdownBoxForDrawings">If true, adds a command box to the toolbar for drawings that has a dropdown of all commands that are part of this group. The tooltip of the command group is used as the name.</param>
         /// <param name="documentTypes">The document types where this menu/toolbar is visible.</param>
         /// <param name="mainIconPath">The icon absolute path base on a string format of the absolute path to the main icon images, replacing {0} with the size.
-        /// The main icon is visible in the Customize window. If you don't set a main icon, SolidWorks uses the first icon in <paramref name="iconListsPath"/>.
-        /// </param>
+        /// The main icon is visible in the Customize window. If you don't set a main icon, SolidWorks uses the first icon in <paramref name="iconListsPath"/>.</param>
         /// <returns></returns>
         public CommandManagerGroup CreateCommandGroupAndTabs(
             string title,
@@ -104,16 +104,12 @@ namespace CADBooster.SolidDna
                         addDropdownBoxForParts,
                         addDropdownBoxForAssemblies,
                         addDropdownBoxForDrawings,
-                        documentTypes);
+                        documentTypes,
+                        iconListsPath,
+                        mainIconPath);
 
                     // Track all flyouts
                     mCommandFlyouts = flyoutItems;
-
-                    // Set icon list
-                    group.SetIconLists(iconListsPath, false);
-
-                    // Set the main icon list
-                    group.SetIconLists(mainIconPath, true);
 
                     // Create the group
                     group.Create(this);
@@ -201,6 +197,10 @@ namespace CADBooster.SolidDna
         /// <param name="addDropdownBoxForAssemblies">If true, adds a command box to the toolbar for assemblies that has a dropdown of all commands that are part of this group. The tooltip of the command group is used as the name.</param>
         /// <param name="addDropdownBoxForDrawings">If true, adds a command box to the toolbar for drawings that has a dropdown of all commands that are part of this group. The tooltip of the command group is used as the name.</param>
         /// <param name="documentTypes">The document types where this menu/toolbar is visible.</param>
+        /// <param name="iconListsPath">The icon list absolute path based on a string format of the absolute path to the icon list images, replacing {0} with the size. 
+        ///     For example C:\Folder\myiconlist{0}.png</param>
+        /// <param name="mainIconPath">The icon absolute path base on a string format of the absolute path to the main icon images, replacing {0} with the size.
+        /// The main icon is visible in the Customize window. If you don't set a main icon, SolidWorks uses the first icon in <paramref name="iconListsPath"/>.</param>
         /// <returns></returns>
         private CommandManagerGroup CreateCommandGroup(
             string title,
@@ -215,7 +215,9 @@ namespace CADBooster.SolidDna
             bool addDropdownBoxForParts = false,
             bool addDropdownBoxForAssemblies = false,
             bool addDropdownBoxForDrawings = false, 
-            ModelTemplateType documentTypes = ModelTemplateType.Part | ModelTemplateType.Assembly | ModelTemplateType.Drawing)
+            ModelTemplateType documentTypes = ModelTemplateType.Part | ModelTemplateType.Assembly | ModelTemplateType.Drawing,
+            string iconListsPath = "",
+            string mainIconPath = "")
         {
             // NOTE: We may need to look carefully at this Id if things get removed and re-added based on this SolidWorks note:
             //     
@@ -260,7 +262,9 @@ namespace CADBooster.SolidDna
                 addDropdownBoxForParts,
                 addDropdownBoxForAssemblies,
                 addDropdownBoxForDrawings,
-                documentTypes);
+                documentTypes,
+                iconListsPath,
+                mainIconPath);
 
             // Return it
             return group;

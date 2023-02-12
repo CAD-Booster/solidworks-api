@@ -1,5 +1,6 @@
 ﻿using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swconst;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -370,73 +371,14 @@ namespace CADBooster.SolidDna
 
             #region Command Tab
 
-            // Add to parts tab
-            var items = Items?.Where(f => f.AddToTab && f.TabView != CommandManagerItemTabView.None && f.VisibleForParts).ToList();
-            var flyouts = Flyouts?.Where(f => f.TabView != CommandManagerItemTabView.None && f.VisibleForParts).ToList();
+            // Add items that are visible for parts
+            AddItemsToTabForModelType(manager, ModelType.Part, AddDropdownBoxForParts);
 
-            // Add items
-            AddItemsToTab(ModelType.Part, manager, items, flyouts);
+            // Add items that are visible for assemblies
+            AddItemsToTabForModelType(manager, ModelType.Assembly, AddDropdownBoxForAssemblies);
 
-            // Add dropdown box?
-            if (AddDropdownBoxForParts)
-                AddItemsToTab(
-                    ModelType.Part,
-                    manager,
-                    new List<CommandManagerItem>
-                    {
-                        new CommandManagerItem {
-                            // Use this groups toolbar ID
-                            CommandId = BaseObject.ToolbarId,
-                            // Default style to text below for now
-                            TabView = CommandManagerItemTabView.IconWithTextBelow
-                        }
-                    },
-                    null);
-
-            // Add to assembly tab
-            items = Items?.Where(f => f.AddToTab && f.TabView != CommandManagerItemTabView.None && f.VisibleForAssemblies).ToList();
-            flyouts = Flyouts?.Where(f => f.TabView != CommandManagerItemTabView.None && f.VisibleForAssemblies).ToList();
-
-            // Add items
-            AddItemsToTab(ModelType.Assembly, manager, items, flyouts);
-
-            // Add dropdown box?
-            if (AddDropdownBoxForAssemblies)
-                AddItemsToTab(
-                    ModelType.Assembly,
-                    manager,
-                    new List<CommandManagerItem>
-                    {
-                        new CommandManagerItem {
-                            // Use this groups toolbar ID
-                            CommandId = BaseObject.ToolbarId,
-                            // Default style to text below for now
-                            TabView = CommandManagerItemTabView.IconWithTextBelow
-                        }
-                    },
-                    null);
-            // Add to drawing tab
-            items = Items?.Where(f => f.AddToTab && f.TabView != CommandManagerItemTabView.None && f.VisibleForDrawings).ToList();
-            flyouts = Flyouts?.Where(f => f.TabView != CommandManagerItemTabView.None && f.VisibleForDrawings).ToList();
-
-            // Add items
-            AddItemsToTab(ModelType.Drawing, manager, items, flyouts);
-
-            // Add dropdown box?
-            if (AddDropdownBoxForDrawings)
-                AddItemsToTab(
-                    ModelType.Drawing,
-                    manager,
-                    new List<CommandManagerItem>
-                    {
-                        new CommandManagerItem {
-                            // Use this groups toolbar ID
-                            CommandId = BaseObject.ToolbarId,
-                            // Default style to text below for now
-                            TabView = CommandManagerItemTabView.IconWithTextBelow
-                        }
-                    },
-                    null);
+            // Add items that are visible for drawings
+            AddItemsToTabForModelType(manager, ModelType.Drawing, AddDropdownBoxForDrawings);
 
             #endregion
 
@@ -448,14 +390,93 @@ namespace CADBooster.SolidDna
         }
 
         /// <summary>
+        /// Add all items and flyouts that are visible for the given model type to a tab.
+        /// </summary>
+        /// <param name="manager"></param>
+        /// <param name="modelType"></param>
+        /// <param name="addDropDown"></param>
+        private void AddItemsToTabForModelType(CommandManager manager, ModelType modelType, bool addDropDown)
+        {
+            // Get items for this model type
+            var items = GetItemsForModelType(Items, modelType);
+
+            // Get flyouts for this model type
+            var flyouts = GetFlyoutsForModelType(Flyouts, modelType);
+
+            // Add items to a tab
+            AddItemsToTab(modelType, manager, items, flyouts);
+
+            // Add dropdown box?
+            if (addDropDown)
+            {
+                var commandManagerItems = new List<CommandManagerItem>
+                {
+                    new CommandManagerItem
+                    {
+                        // Use this groups toolbar ID
+                        CommandId = BaseObject.ToolbarId,
+                        // Default style to text below for now
+                        TabView = CommandManagerItemTabView.IconWithTextBelow
+                    }
+                };
+
+                AddItemsToTab(modelType, manager, commandManagerItems, null);
+            }
+        }
+
+        /// <summary>
+        /// Get the command manager items for a model type.
+        /// </summary>
+        /// <param name="items"></param>
+        /// <param name="modelType"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        private static List<CommandManagerItem> GetItemsForModelType(List<CommandManagerItem> items, ModelType modelType)
+        {
+            // Get the items that should be added to the tab
+            var itemsForAllModelTypes = items?.Where(f => f.AddToTab && f.TabView != CommandManagerItemTabView.None);
+
+            // Return the items for this model type
+            switch (modelType)
+            {
+                case ModelType.Part: return itemsForAllModelTypes?.Where(f => f.VisibleForParts).ToList();
+                case ModelType.Assembly: return itemsForAllModelTypes?.Where(f => f.VisibleForAssemblies).ToList();
+                case ModelType.Drawing: return itemsForAllModelTypes?.Where(f => f.VisibleForDrawings).ToList();
+                default: throw new ArgumentException("Invalid model type for command manager items");
+            }
+        }
+
+        /// <summary>
+        /// Get the command manager flyouts for a model type.
+        /// </summary>
+        /// <param name="flyouts"></param>
+        /// <param name="modelType"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        private static List<CommandManagerFlyout> GetFlyoutsForModelType(List<CommandManagerFlyout> flyouts, ModelType modelType)
+        {
+            // Get the flyouts that should be added to the tab
+            var flyoutsForAllModelTypes = flyouts?.Where(f => f.TabView != CommandManagerItemTabView.None);
+
+            // Return the flyouts for this model type
+            switch (modelType)
+            {
+                case ModelType.Part: return flyoutsForAllModelTypes?.Where(f => f.VisibleForParts).ToList();
+                case ModelType.Assembly: return flyoutsForAllModelTypes?.Where(f => f.VisibleForAssemblies).ToList();
+                case ModelType.Drawing: return flyoutsForAllModelTypes?.Where(f => f.VisibleForDrawings).ToList();
+                default: throw new ArgumentException("Invalid model type for command manager flyouts");
+            }
+        }
+
+        /// <summary>
         /// Adds all <see cref="Items"/> to the command tab of the given title and model type
         /// </summary>
         /// <param name="type">The tab for this type of model</param>
         /// <param name="manager">The command manager</param>
         /// <param name="items">Items to add</param>
-        /// <param name="flyoutItems">Flyout Items to add</param>
+        /// <param name="flyouts">Flyout Items to add</param>
         /// <param name="title">The title of the tab</param>
-        public void AddItemsToTab(ModelType type, CommandManager manager, List<CommandManagerItem> items, List<CommandManagerFlyout> flyoutItems, string title = "")
+        public void AddItemsToTab(ModelType type, CommandManager manager, List<CommandManagerItem> items, List<CommandManagerFlyout> flyouts, string title = "")
         {
             // Use default title if not specified
             if (string.IsNullOrEmpty(title))
@@ -490,7 +511,7 @@ namespace CADBooster.SolidDna
                 styles.Add((int)item.TabView);
             });
 
-            flyoutItems?.ForEach(item =>
+            flyouts?.ForEach(item =>
             {
                 // Add command Id
                 ids.Add(item.CommandId);
@@ -528,7 +549,7 @@ namespace CADBooster.SolidDna
                 // Returns the newly created tab box that contains the current items and all items on the right of it.
                 var newTabBox = tab.UnsafeObject.AddSeparator(tabBox, item.CommandId);
 
-                // Stop if the don't receive a new tab box.
+                // Stop if the don't receive a new tab box. This can happen if not all items are visible in all model types.
                 if (newTabBox == null)
                     break;
                 

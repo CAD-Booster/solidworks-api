@@ -206,19 +206,9 @@ namespace CADBooster.SolidDna
         /// from first in the list being the smallest, to last being the largest
         /// NOTE: Supported sizes for each icon in an array is 20x20, 32x32, 40x40, 64x64, 96x96 and 128x128
         /// </summary>
-        public string[] GetIconListPaths()
+        private string[] GetIconListPaths(bool isMainIcon)
         {
-            return mIconListPaths.Values.ToArray();
-        }
-
-        /// <summary>
-        /// The list of full paths to a bmp or png's that contains the icon.
-        /// from first in the list being the smallest, to last being the largest
-        /// NOTE: Supported sizes for the icon is 20x20, 32x32, 40x40, 64x64, 96x96 and 128x128
-        /// </summary>
-        public string[] GetMainIconListPaths()
-        {
-            return mMainIconPaths.Values.ToArray();
+            return isMainIcon ? mMainIconPaths.Values.ToArray() : mIconListPaths.Values.ToArray();
         }
 
         /// <summary>
@@ -234,7 +224,7 @@ namespace CADBooster.SolidDna
         public void SetIconLists(string pathFormat, bool isMainIcon)
         {
             // Make sure we have something
-            if (string.IsNullOrWhiteSpace(pathFormat))
+            if (pathFormat.IsNullOrWhiteSpace())
                 return;
 
             // Make sure the path format contains "{0}"
@@ -311,57 +301,11 @@ namespace CADBooster.SolidDna
                     SolidDnaErrorTypeCode.SolidWorksCommandManager,
                     SolidDnaErrorCode.SolidWorksCommandGroupReActivateError));
 
-            #region Set Icons
-
-            //
-            // Set the icons
-            //
-            // NOTE: The order in which you specify the icons must be the same for this property and MainIconList.
-            //
-            //       For example, if you specify an array of paths to 
-            //       20 x 20 pixels, 32 x 32 pixels, and 40 x 40 pixels icons for this property, 
-            //       then you must specify an array of paths to 
-            //       20 x 20 pixels, 32 x 32 pixels, and 40 x 40 pixels icons for MainIconList.
-            //
-
-            // Set all icon lists 
-            var icons = GetIconListPaths();
-
-            // If we set all properties, the wrong image sizes appear in the Customize window. So we check the SolidWorks version first.
-            if (SolidWorksEnvironment.Application.SolidWorksVersion.Version >= 2016)
-            {
-                // 2016+ support
-
-                // The list of icons for the toolbar or menu. There should be a sprite (a combination of all icons) for each icon size.
-                BaseObject.IconList = icons;
-
-                // The icon that is visible in the Customize window 
-                BaseObject.MainIconList = GetMainIconListPaths();
-            }
-            else
-            {
-                // <2016 support
-                if (icons.Length > 0)
-                {
-                    // Largest icon for this one
-                    BaseObject.LargeIconList = icons.Last();
-
-                    // The list of icons
-                    BaseObject.MainIconList = icons;
-
-                    // Use largest icon still (otherwise command groups are always small icons)
-                    BaseObject.SmallIconList = icons.Last();
-                }
-            }
-
-            #endregion
-
-            #region Add Items
+            // Set all relevant icon properties, depending on the solidworks version
+            SetIcons();
 
             // Add items
             Items?.ForEach(AddCommandItem);
-
-            #endregion
 
             // Activate the command group
             mCreated = BaseObject.Activate();
@@ -387,6 +331,39 @@ namespace CADBooster.SolidDna
                 throw new SolidDnaException(SolidDnaErrors.CreateError(
                     SolidDnaErrorTypeCode.SolidWorksCommandManager,
                     SolidDnaErrorCode.SolidWorksCommandGroupActivateError));
+        }
+
+        /// <summary>
+        /// Set the icon list properties on the base object.
+        /// NOTE: The order in which you specify the icons must be the same for this property and MainIconList.
+        /// For example, if you specify an array of paths to 20 x 20 pixels, 32 x 32 pixels, and 40 x 40 pixels icons for this property, 
+        /// then you must specify an array of paths to 20 x 20 pixels, 32 x 32 pixels, and 40 x 40 pixels icons for MainIconList.
+        /// </summary>
+        private void SetIcons()
+        {
+            // If we set all properties, the wrong image sizes appear in the Customize window. So we check the SolidWorks version first.
+            if (SolidWorksEnvironment.Application.SolidWorksVersion.Version >= 2016)
+            {
+                // The list of icons for the toolbar or menu. There should be a sprite (a combination of all icons) for each icon size.
+                BaseObject.IconList = GetIconListPaths(false);
+
+                // The icon that is visible in the Customize window 
+                BaseObject.MainIconList = GetIconListPaths(true);
+            }
+            else
+            {
+                var icons = GetIconListPaths(false);
+                if (icons.Length <= 0) return;
+
+                // Largest icon for this one
+                BaseObject.LargeIconList = icons.Last();
+
+                // The list of icons
+                BaseObject.MainIconList = icons;
+
+                // Use largest icon still (otherwise command groups are always small icons)
+                BaseObject.SmallIconList = icons.Last();
+            }
         }
 
         /// <summary>

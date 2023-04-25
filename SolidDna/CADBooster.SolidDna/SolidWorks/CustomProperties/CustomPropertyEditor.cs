@@ -63,7 +63,7 @@ namespace CADBooster.SolidDna
             // TODO: Add error checking and exception catching
 
             // NOTE: We use Add here to create a property if one doesn't exist
-            //       I feel this is the expected behaviour of Set/
+            //       I feel this is the expected behaviour of Set.
             //       We replace the value if it does exist (we used to delete and add the property)
             //       to not change the order of existing custom properties
             //

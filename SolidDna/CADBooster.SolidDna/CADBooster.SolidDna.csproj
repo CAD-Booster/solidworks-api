@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>2.6.0.0</Version>
+    <Version>2.7.0.0</Version>
     <Authors>Luke Malpass, Peter Brinkhuis</Authors>
     <Company>CAD Booster B.V.</Company>
     <Description>The new SolidDNA SDK, making the SolidWorks API easier, well behaved and modern</Description>
@@ -10,23 +10,18 @@
     <PackageProjectUrl>https://github.com/CAD-Booster/solidworks-api</PackageProjectUrl>
     <RepositoryUrl>https://github.com/CAD-Booster/solidworks-api</RepositoryUrl>
     <PackageTags>soliddna solidworks cadbooster angelsix api</PackageTags>
-    <AssemblyVersion>2.6.0.0</AssemblyVersion>
+    <AssemblyVersion>2.7.0.0</AssemblyVersion>
     <Product>CADBooster.SolidDna</Product>
     <PackageId>CADBooster.SolidDna</PackageId>
     <AssemblyName>CADBooster.SolidDna</AssemblyName>
     <RootNamespace>CADBooster.SolidDna</RootNamespace>
     <PackageLicenseFile>license.txt</PackageLicenseFile>
-    <PackageReleaseNotes>Fixed feature type for Component, Mate reference folder, Mate reference, Derived hole pattern and Component pattern.
-Added children and parents of a ModelFeature.
-Added GetFeatureByName overloads and added all methods for drawings.
-Added Component properties.
-Adde deleting a custom property from a feature.
-Added recording Undo/Redo steps.
-Updated readmes.</PackageReleaseNotes>
+    <PackageReleaseNotes>Changed setting existing custom properties so instead of delete+add, it changes the existing value.
+Internal cleanups and comment improvements</PackageReleaseNotes>
     <SignAssembly>true</SignAssembly>
     <PackageIcon>icon.png</PackageIcon>
     <PackageIconUrl />
-    <FileVersion>2.6.0.0</FileVersion>
+    <FileVersion>2.7.0.0</FileVersion>
     <AssemblyOriginatorKeyFile>StrongNameKey.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

@@ -56,7 +56,7 @@ namespace CADBooster.SolidDna
 
         /// <summary>
         /// The absolute path to a list of icons, based on a string format of the absolute path to the icon list images, replacing {0} with the size. 
-        /// For example C:\Folder\myiconlist{0}.png
+        /// For example C:\Folder\icons{0}.png
         /// Works best with PNG files with transparency. Is supported by SolidWorks 2017 and newer.
         /// </summary>
         public string IconPathFormat { get; set; }

@@ -1,7 +1,7 @@
 ﻿using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swconst;
+using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 
 namespace CADBooster.SolidDna
@@ -22,13 +22,13 @@ namespace CADBooster.SolidDna
         /// A dictionary with all icon sizes and their paths.
         /// Entries are only added when path exists.
         /// </summary>
-        private readonly Dictionary<int, string> mIconListPaths = new Dictionary<int, string>();
+        private readonly Dictionary<int, string> mIconListPaths;
 
         /// <summary>
         /// A dictionary for the main group icon, with all icon sizes and their paths.
         /// Entries are only added when path exists.
         /// </summary>
-        private readonly Dictionary<int, string> mMainIconPaths = new Dictionary<int, string>();
+        private readonly Dictionary<int, string> mMainIconPaths;
 
         /// <summary>
         /// A list of all tabs that have been created
@@ -143,6 +143,8 @@ namespace CADBooster.SolidDna
         /// <param name="addDropdownBoxForAssemblies">If true, adds a command box to the toolbar for assemblies that has a dropdown of all commands that are part of this group. The tooltip of the command group is used as the name.</param>
         /// <param name="addDropdownBoxForDrawings">If true, adds a command box to the toolbar for drawings that has a dropdown of all commands that are part of this group. The tooltip of the command group is used as the name.</param>
         /// <param name="documentTypes">The document types where this menu/toolbar is visible</param>
+        /// <param name="iconListsPath">Absolute path to all icon sprites with including {0} for the image size</param>
+        /// <param name="mainIconPath">Absolute path to all main icons with including {0} for the image size</param>
         public CommandManagerGroup(
             ICommandGroup commandGroup, 
             List<CommandManagerItem> items, 
@@ -153,10 +155,12 @@ namespace CADBooster.SolidDna
             string tooltip,
             bool hasMenu, 
             bool hasToolbar,
-            bool addDropdownBoxForParts = false,
-            bool addDropdownBoxForAssemblies = false,
-            bool addDropdownBoxForDrawings = false, 
-            ModelTemplateType documentTypes = ModelTemplateType.Part | ModelTemplateType.Assembly | ModelTemplateType.Drawing) : base(commandGroup)
+            bool addDropdownBoxForParts,
+            bool addDropdownBoxForAssemblies,
+            bool addDropdownBoxForDrawings, 
+            ModelTemplateType documentTypes,
+            string iconListsPath,
+            string mainIconPath) : base(commandGroup)
         {
             // Store user Id, used to remove the command group
             UserId = userId;
@@ -176,8 +180,6 @@ namespace CADBooster.SolidDna
             // Set tooltip
             Tooltip = tooltip;
 
-            // Set defaults
-
             // Show for certain types of documents, or when no document is active.
             MenuVisibleInDocumentTypes = documentTypes;
 
@@ -192,69 +194,14 @@ namespace CADBooster.SolidDna
             AddDropdownBoxForAssemblies = addDropdownBoxForAssemblies;
             AddDropdownBoxForDrawings = addDropdownBoxForDrawings;
 
+            // Set icon list
+            mIconListPaths = Icons.GetFormattedPathDictionary(iconListsPath);
+
+            // Set the main icon list
+            mMainIconPaths = Icons.GetFormattedPathDictionary(mainIconPath);
+
             // Listen out for callbacks
             PlugInIntegration.CallbackFired += PlugInIntegration_CallbackFired;
-        }
-
-        #endregion
-
-        #region Icon List Methods
-
-        /// <summary>
-        /// The list of full paths to a bmp or png's that contains the icon list 
-        /// from first in the list being the smallest, to last being the largest
-        /// NOTE: Supported sizes for each icon in an array is 20x20, 32x32, 40x40, 64x64, 96x96 and 128x128
-        /// </summary>
-        public string[] GetIconListPaths()
-        {
-            return mIconListPaths.Values.ToArray();
-        }
-
-        /// <summary>
-        /// The list of full paths to a bmp or png's that contains the icon.
-        /// from first in the list being the smallest, to last being the largest
-        /// NOTE: Supported sizes for the icon is 20x20, 32x32, 40x40, 64x64, 96x96 and 128x128
-        /// </summary>
-        public string[] GetMainIconListPaths()
-        {
-            return mMainIconPaths.Values.ToArray();
-        }
-
-        /// <summary>
-        /// Sets all icon lists based on a string format of the absolute path to the icon list images, replacing {0} with the size.
-        /// For example C:\Folder\myiconlist{0}.png would look for all sizes such as
-        /// C:\Folder\myiconlist20.png
-        /// C:\Folder\myiconlist32.png
-        /// C:\Folder\myiconlist40.png
-        /// ... and so on
-        /// </summary>
-        /// <param name="pathFormat">The absolute path, with {0} used to replace with the icon size</param>
-        /// <param name="isMainIcon">Whether we are setting the main group icon or the normal list of item icons.</param>
-        public void SetIconLists(string pathFormat, bool isMainIcon)
-        {
-            // Make sure we have something
-            if (string.IsNullOrWhiteSpace(pathFormat))
-                return;
-
-            // Make sure the path format contains "{0}"
-            if (!pathFormat.Contains("{0}"))
-                throw new SolidDnaException(SolidDnaErrors.CreateError(
-                    SolidDnaErrorTypeCode.SolidWorksCommandManager,
-                    SolidDnaErrorCode.SolidWorksCommandGroupInvalidPathFormatError));
-
-
-            // Fill the dictionary with all paths that exist
-            foreach (var iconSize in SolidWorksApplication.mIconSizes)
-            {
-                var path = string.Format(pathFormat, iconSize);
-                if (File.Exists(path))
-                {
-                    if (isMainIcon)
-                        mMainIconPaths.Add(iconSize, path);
-                    else
-                        mIconListPaths.Add(iconSize, path);
-                }
-            }
         }
 
         #endregion
@@ -310,57 +257,11 @@ namespace CADBooster.SolidDna
                     SolidDnaErrorTypeCode.SolidWorksCommandManager,
                     SolidDnaErrorCode.SolidWorksCommandGroupReActivateError));
 
-            #region Set Icons
-
-            //
-            // Set the icons
-            //
-            // NOTE: The order in which you specify the icons must be the same for this property and MainIconList.
-            //
-            //       For example, if you specify an array of paths to 
-            //       20 x 20 pixels, 32 x 32 pixels, and 40 x 40 pixels icons for this property, 
-            //       then you must specify an array of paths to 
-            //       20 x 20 pixels, 32 x 32 pixels, and 40 x 40 pixels icons for MainIconList.
-            //
-
-            // Set all icon lists 
-            var icons = GetIconListPaths();
-
-            // If we set all properties, the wrong image sizes appear in the Customize window. So we check the SolidWorks version first.
-            if (SolidWorksEnvironment.Application.SolidWorksVersion.Version >= 2016)
-            {
-                // 2016+ support
-
-                // The list of icons for the toolbar or menu. There should be a sprite (a combination of all icons) for each icon size.
-                BaseObject.IconList = icons;
-
-                // The icon that is visible in the Customize window 
-                BaseObject.MainIconList = GetMainIconListPaths();
-            }
-            else
-            {
-                // <2016 support
-                if (icons.Length > 0)
-                {
-                    // Largest icon for this one
-                    BaseObject.LargeIconList = icons.Last();
-
-                    // The list of icons
-                    BaseObject.MainIconList = icons;
-
-                    // Use largest icon still (otherwise command groups are always small icons)
-                    BaseObject.SmallIconList = icons.Last();
-                }
-            }
-
-            #endregion
-
-            #region Add Items
+            // Set all relevant icon properties, depending on the solidworks version
+            SetIcons();
 
             // Add items
             Items?.ForEach(AddCommandItem);
-
-            #endregion
 
             // Activate the command group
             mCreated = BaseObject.Activate();
@@ -370,73 +271,14 @@ namespace CADBooster.SolidDna
 
             #region Command Tab
 
-            // Add to parts tab
-            var items = Items?.Where(f => f.AddToTab && f.TabView != CommandManagerItemTabView.None && f.VisibleForParts).ToList();
-            var flyouts = Flyouts?.Where(f => f.TabView != CommandManagerItemTabView.None && f.VisibleForParts).ToList();
+            // Add items that are visible for parts
+            AddItemsToTabForModelType(manager, ModelType.Part, AddDropdownBoxForParts);
 
-            // Add items
-            AddItemsToTab(ModelType.Part, manager, items, flyouts);
+            // Add items that are visible for assemblies
+            AddItemsToTabForModelType(manager, ModelType.Assembly, AddDropdownBoxForAssemblies);
 
-            // Add dropdown box?
-            if (AddDropdownBoxForParts)
-                AddItemsToTab(
-                    ModelType.Part,
-                    manager,
-                    new List<CommandManagerItem>
-                    {
-                        new CommandManagerItem {
-                            // Use this groups toolbar ID
-                            CommandId = BaseObject.ToolbarId,
-                            // Default style to text below for now
-                            TabView = CommandManagerItemTabView.IconWithTextBelow
-                        }
-                    },
-                    null);
-
-            // Add to assembly tab
-            items = Items?.Where(f => f.AddToTab && f.TabView != CommandManagerItemTabView.None && f.VisibleForAssemblies).ToList();
-            flyouts = Flyouts?.Where(f => f.TabView != CommandManagerItemTabView.None && f.VisibleForAssemblies).ToList();
-
-            // Add items
-            AddItemsToTab(ModelType.Assembly, manager, items, flyouts);
-
-            // Add dropdown box?
-            if (AddDropdownBoxForAssemblies)
-                AddItemsToTab(
-                    ModelType.Assembly,
-                    manager,
-                    new List<CommandManagerItem>
-                    {
-                        new CommandManagerItem {
-                            // Use this groups toolbar ID
-                            CommandId = BaseObject.ToolbarId,
-                            // Default style to text below for now
-                            TabView = CommandManagerItemTabView.IconWithTextBelow
-                        }
-                    },
-                    null);
-            // Add to drawing tab
-            items = Items?.Where(f => f.AddToTab && f.TabView != CommandManagerItemTabView.None && f.VisibleForDrawings).ToList();
-            flyouts = Flyouts?.Where(f => f.TabView != CommandManagerItemTabView.None && f.VisibleForDrawings).ToList();
-
-            // Add items
-            AddItemsToTab(ModelType.Drawing, manager, items, flyouts);
-
-            // Add dropdown box?
-            if (AddDropdownBoxForDrawings)
-                AddItemsToTab(
-                    ModelType.Drawing,
-                    manager,
-                    new List<CommandManagerItem>
-                    {
-                        new CommandManagerItem {
-                            // Use this groups toolbar ID
-                            CommandId = BaseObject.ToolbarId,
-                            // Default style to text below for now
-                            TabView = CommandManagerItemTabView.IconWithTextBelow
-                        }
-                    },
-                    null);
+            // Add items that are visible for drawings
+            AddItemsToTabForModelType(manager, ModelType.Drawing, AddDropdownBoxForDrawings);
 
             #endregion
 
@@ -448,14 +290,126 @@ namespace CADBooster.SolidDna
         }
 
         /// <summary>
+        /// Set the icon list properties on the base object.
+        /// NOTE: The order in which you specify the icons must be the same for this property and MainIconList.
+        /// For example, if you specify an array of paths to 20 x 20 pixels, 32 x 32 pixels, and 40 x 40 pixels icons for this property, 
+        /// then you must specify an array of paths to 20 x 20 pixels, 32 x 32 pixels, and 40 x 40 pixels icons for MainIconList.
+        /// </summary>
+        private void SetIcons()
+        {
+            // If we set all properties, the wrong image sizes appear in the Customize window. So we check the SolidWorks version first.
+            if (SolidWorksEnvironment.Application.SolidWorksVersion.Version >= 2016)
+            {
+                // The list of icons for the toolbar or menu. There should be a sprite (a combination of all icons) for each icon size.
+                BaseObject.IconList = Icons.GetArrayFromDictionary(mIconListPaths);
+
+                // The icon that is visible in the Customize window 
+                BaseObject.MainIconList = Icons.GetArrayFromDictionary(mMainIconPaths);
+            }
+            else
+            {
+                var icons = Icons.GetArrayFromDictionary(mIconListPaths);
+                if (icons.Length <= 0) return;
+
+                // Largest icon for this one
+                BaseObject.LargeIconList = icons.Last();
+
+                // The list of icons
+                BaseObject.MainIconList = icons;
+
+                // Use largest icon still (otherwise command groups are always small icons)
+                BaseObject.SmallIconList = icons.Last();
+            }
+        }
+
+        /// <summary>
+        /// Add all items and flyouts that are visible for the given model type to a tab.
+        /// </summary>
+        /// <param name="manager"></param>
+        /// <param name="modelType"></param>
+        /// <param name="addDropDown"></param>
+        private void AddItemsToTabForModelType(CommandManager manager, ModelType modelType, bool addDropDown)
+        {
+            // Get items for this model type
+            var items = GetItemsForModelType(Items, modelType);
+
+            // Get flyouts for this model type
+            var flyouts = GetFlyoutsForModelType(Flyouts, modelType);
+
+            // Add items to a tab
+            AddItemsToTab(modelType, manager, items, flyouts);
+
+            // Add dropdown box?
+            if (addDropDown)
+            {
+                var commandManagerItems = new List<CommandManagerItem>
+                {
+                    new CommandManagerItem
+                    {
+                        // Use this groups toolbar ID
+                        CommandId = BaseObject.ToolbarId,
+                        // Default style to text below for now
+                        TabView = CommandManagerItemTabView.IconWithTextBelow
+                    }
+                };
+
+                AddItemsToTab(modelType, manager, commandManagerItems, null);
+            }
+        }
+
+        /// <summary>
+        /// Get the command manager items for a model type.
+        /// </summary>
+        /// <param name="items"></param>
+        /// <param name="modelType"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        private static List<CommandManagerItem> GetItemsForModelType(List<CommandManagerItem> items, ModelType modelType)
+        {
+            // Get the items that should be added to the tab
+            var itemsForAllModelTypes = items?.Where(f => f.AddToTab && f.TabView != CommandManagerItemTabView.None);
+
+            // Return the items for this model type
+            switch (modelType)
+            {
+                case ModelType.Part: return itemsForAllModelTypes?.Where(f => f.VisibleForParts).ToList();
+                case ModelType.Assembly: return itemsForAllModelTypes?.Where(f => f.VisibleForAssemblies).ToList();
+                case ModelType.Drawing: return itemsForAllModelTypes?.Where(f => f.VisibleForDrawings).ToList();
+                default: throw new ArgumentException("Invalid model type for command manager items");
+            }
+        }
+
+        /// <summary>
+        /// Get the command manager flyouts for a model type.
+        /// </summary>
+        /// <param name="flyouts"></param>
+        /// <param name="modelType"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        private static List<CommandManagerFlyout> GetFlyoutsForModelType(List<CommandManagerFlyout> flyouts, ModelType modelType)
+        {
+            // Get the flyouts that should be added to the tab
+            var flyoutsForAllModelTypes = flyouts?.Where(f => f.TabView != CommandManagerItemTabView.None);
+
+            // Return the flyouts for this model type
+            switch (modelType)
+            {
+                case ModelType.Part: return flyoutsForAllModelTypes?.Where(f => f.VisibleForParts).ToList();
+                case ModelType.Assembly: return flyoutsForAllModelTypes?.Where(f => f.VisibleForAssemblies).ToList();
+                case ModelType.Drawing: return flyoutsForAllModelTypes?.Where(f => f.VisibleForDrawings).ToList();
+                default: throw new ArgumentException("Invalid model type for command manager flyouts");
+            }
+        }
+
+        /// <summary>
         /// Adds all <see cref="Items"/> to the command tab of the given title and model type
         /// </summary>
         /// <param name="type">The tab for this type of model</param>
         /// <param name="manager">The command manager</param>
         /// <param name="items">Items to add</param>
-        /// <param name="flyoutItems">Flyout Items to add</param>
+        /// <param name="flyouts">Flyout Items to add</param>
         /// <param name="title">The title of the tab</param>
-        public void AddItemsToTab(ModelType type, CommandManager manager, List<CommandManagerItem> items, List<CommandManagerFlyout> flyoutItems, string title = "")
+        public void AddItemsToTab(ModelType type, CommandManager manager, List<CommandManagerItem> items, List<CommandManagerFlyout> flyouts, string title = "")
         {
             // Use default title if not specified
             if (string.IsNullOrEmpty(title))
@@ -490,7 +444,7 @@ namespace CADBooster.SolidDna
                 styles.Add((int)item.TabView);
             });
 
-            flyoutItems?.ForEach(item =>
+            flyouts?.ForEach(item =>
             {
                 // Add command Id
                 ids.Add(item.CommandId);
@@ -528,7 +482,7 @@ namespace CADBooster.SolidDna
                 // Returns the newly created tab box that contains the current items and all items on the right of it.
                 var newTabBox = tab.UnsafeObject.AddSeparator(tabBox, item.CommandId);
 
-                // Stop if the don't receive a new tab box.
+                // Stop if the don't receive a new tab box. This can happen if not all items are visible in all model types.
                 if (newTabBox == null)
                     break;
                 

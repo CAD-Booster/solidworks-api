@@ -1,6 +1,6 @@
 ﻿using SolidWorks.Interop.swconst;
 
-namespace CADBooster.SolidDna.SolidWorks.Models.Configuration
+namespace CADBooster.SolidDna
 {
     /// <summary>
     /// Types of configurations. Copy of <see cref="swConfigurationType_e"/>

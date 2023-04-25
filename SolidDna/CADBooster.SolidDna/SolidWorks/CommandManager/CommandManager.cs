@@ -49,14 +49,15 @@ namespace CADBooster.SolidDna
         /// <param name="items">The command items to add</param>
         /// <param name="flyoutItems">The flyout command items that contain a list of other commands</param>
         /// <param name="iconListsPath">The icon list absolute path based on a string format of the absolute path to the icon list images, replacing {0} with the size. 
-        ///     For example C:\Folder\myiconlist{0}.png</param>
+        ///     For example C:\Folder\icons{0}.png</param>
         /// <param name="tooltip">Tool tip for the CommandGroup</param>
         /// <param name="hint">Text displayed in SOLIDWORKS status bar when a user's mouse pointer is over the CommandGroup</param>
         /// <param name="position">Position of the CommandGroup in the CommandManager for all document templates.
         /// NOTE: Specify 0 to add the CommandGroup to the beginning of the CommandManager, or specify -1 to add it to the end of the CommandManager.
         /// NOTE: You can also use ICommandGroup::MenuPosition to control the position of the CommandGroup in specific document templates.</param>
         /// <param name="ignorePreviousVersion">True to remove all previously saved customization and toolbar information before creating a new CommandGroup, false to not.
-        /// Call CommandManager.GetGroupDataFromRegistry before calling this method to determine how to set IgnorePreviousVersion. Set IgnorePreviousVersion to true to prevent SOLIDWORKS from saving the current toolbar setting to the registry, even if there is no previous version.</param>
+        /// Call CommandManager.GetGroupDataFromRegistry before calling this method to determine how to set IgnorePreviousVersion.
+        /// Set IgnorePreviousVersion to true to prevent SOLIDWORKS from saving the current toolbar setting to the registry, even if there is no previous version.</param>
         /// <param name="hasMenu">Whether the CommandGroup should appear in the Tools dropdown menu.</param>
         /// <param name="hasToolbar">Whether the CommandGroup should appear in the Command Manager and as a separate toolbar.</param>
         /// <param name="addDropdownBoxForParts">If true, adds a command box to the toolbar for parts that has a dropdown of all commands that are part of this group. The tooltip of the command group is used as the name.</param>
@@ -64,8 +65,7 @@ namespace CADBooster.SolidDna
         /// <param name="addDropdownBoxForDrawings">If true, adds a command box to the toolbar for drawings that has a dropdown of all commands that are part of this group. The tooltip of the command group is used as the name.</param>
         /// <param name="documentTypes">The document types where this menu/toolbar is visible.</param>
         /// <param name="mainIconPath">The icon absolute path base on a string format of the absolute path to the main icon images, replacing {0} with the size.
-        /// The main icon is visible in the Customize window. If you don't set a main icon, SolidWorks uses the first icon in <paramref name="iconListsPath"/>.
-        /// </param>
+        /// The main icon is visible in the Customize window. If you don't set a main icon, SolidWorks uses the first icon in <paramref name="iconListsPath"/>.</param>
         /// <returns></returns>
         public CommandManagerGroup CreateCommandGroupAndTabs(
             string title,
@@ -104,16 +104,12 @@ namespace CADBooster.SolidDna
                         addDropdownBoxForParts,
                         addDropdownBoxForAssemblies,
                         addDropdownBoxForDrawings,
-                        documentTypes);
+                        documentTypes,
+                        iconListsPath,
+                        mainIconPath);
 
                     // Track all flyouts
                     mCommandFlyouts = flyoutItems;
-
-                    // Set icon list
-                    group.SetIconLists(iconListsPath, false);
-
-                    // Set the main icon list
-                    group.SetIconLists(mainIconPath, true);
 
                     // Create the group
                     group.Create(this);
@@ -135,24 +131,14 @@ namespace CADBooster.SolidDna
         /// <param name="title">Name of the flyout to create</param>
         /// <param name="items">The command items to add</param>
         /// <param name="pathFormat">The icon list absolute path based on a string format of the absolute path to the icon list images, replacing {0} with the size. 
-        ///     For example C:\Folder\myiconlist{0}.png</param>
+        ///     For example C:\Folder\icons{0}.png</param>
         /// <param name="tooltip">Tool tip for the new flyout</param>
         /// <param name="hint">Text displayed in SOLIDWORKS status bar when a user's mouse pointer is over the flyout</param>
         /// <returns></returns>
         public CommandManagerFlyout CreateFlyoutGroup(string title, List<CommandManagerItem> items, string pathFormat, string tooltip = "", string hint = "")
         {
-            #region Icons 
-
-            // Make sure the path format contains "{0}"
-            if (pathFormat == null || !pathFormat.Contains("{0}"))
-                throw new SolidDnaException(SolidDnaErrors.CreateError(
-                    SolidDnaErrorTypeCode.SolidWorksCommandManager,
-                    SolidDnaErrorCode.SolidWorksCommandGroupInvalidPathFormatError));
-
             // Get icon paths
-            var icons = SolidWorksApplication.GetIconPathsFromPathFormat(pathFormat);
-
-            #endregion
+            var icons = Icons.GetPathArrayFromPathFormat(pathFormat);
 
             // Create unique callback Id
             var callbackId = Guid.NewGuid().ToString("N");
@@ -201,6 +187,10 @@ namespace CADBooster.SolidDna
         /// <param name="addDropdownBoxForAssemblies">If true, adds a command box to the toolbar for assemblies that has a dropdown of all commands that are part of this group. The tooltip of the command group is used as the name.</param>
         /// <param name="addDropdownBoxForDrawings">If true, adds a command box to the toolbar for drawings that has a dropdown of all commands that are part of this group. The tooltip of the command group is used as the name.</param>
         /// <param name="documentTypes">The document types where this menu/toolbar is visible.</param>
+        /// <param name="iconListsPath">The icon list absolute path based on a string format of the absolute path to the icon list images, replacing {0} with the size. 
+        ///     For example C:\Folder\icons{0}.png</param>
+        /// <param name="mainIconPath">The icon absolute path base on a string format of the absolute path to the main icon images, replacing {0} with the size.
+        /// The main icon is visible in the Customize window. If you don't set a main icon, SolidWorks uses the first icon in <paramref name="iconListsPath"/>.</param>
         /// <returns></returns>
         private CommandManagerGroup CreateCommandGroup(
             string title,
@@ -215,7 +205,9 @@ namespace CADBooster.SolidDna
             bool addDropdownBoxForParts = false,
             bool addDropdownBoxForAssemblies = false,
             bool addDropdownBoxForDrawings = false, 
-            ModelTemplateType documentTypes = ModelTemplateType.Part | ModelTemplateType.Assembly | ModelTemplateType.Drawing)
+            ModelTemplateType documentTypes = ModelTemplateType.Part | ModelTemplateType.Assembly | ModelTemplateType.Drawing,
+            string iconListsPath = "",
+            string mainIconPath = "")
         {
             // NOTE: We may need to look carefully at this Id if things get removed and re-added based on this SolidWorks note:
             //     
@@ -260,7 +252,9 @@ namespace CADBooster.SolidDna
                 addDropdownBoxForParts,
                 addDropdownBoxForAssemblies,
                 addDropdownBoxForDrawings,
-                documentTypes);
+                documentTypes,
+                iconListsPath,
+                mainIconPath);
 
             // Return it
             return group;
@@ -295,7 +289,7 @@ namespace CADBooster.SolidDna
         #region Command Tabs
 
         /// <summary>
-        /// Get's the command tab for this 
+        /// Gets the command tab for this 
         /// </summary>
         /// <param name="type">The type of document to get the tab for. Use only Part, Assembly or Drawing one at a time, otherwise the first found tab gets returned</param>
         /// <param name="title">The title of the command tab to get</param>

@@ -1,5 +1,4 @@
-﻿using CADBooster.SolidDna.SolidWorks.Models.Configuration;
-using SolidWorks.Interop.sldworks;
+﻿using SolidWorks.Interop.sldworks;
 using System.Collections.Generic;
 using System.Linq;
 

@@ -63,14 +63,16 @@ namespace CADBooster.SolidDna
             // TODO: Add error checking and exception catching
 
             // NOTE: We use Add here to create a property if one doesn't exist
-            //       I feel this is the expected behaviour of Set
+            //       I feel this is the expected behaviour of Set/
+            //       We replace the value if it does exist (we used to delete and add the property)
+            //       to not change the order of existing custom properties
             //
             //       To mimic the Set behaviour of the SolidWorks API
             //       Simply do CustomPropertyExists() to check first if it exists
             //
 
             // Set new one
-            BaseObject.Add3(name, (int)type, value, (int)swCustomPropertyAddOption_e.swCustomPropertyDeleteAndAdd);
+            BaseObject.Add3(name, (int)type, value, (int)swCustomPropertyAddOption_e.swCustomPropertyReplaceValue);
         }
 
         /// <summary>

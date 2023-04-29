@@ -1257,24 +1257,31 @@ namespace CADBooster.SolidDna
         {
             // While that component is not null...
             if (startComponent != null)
+            {
                 // Inform callback of the feature
                 yield return (startComponent, componentDepth);
-
+            }
+            
             // Loop each child
-            if (startComponent.Children != null)
-                foreach (Component2 childComponent in startComponent.Children)
+            if (startComponent?.Children != null)
+            {
+                foreach (var childComponent in startComponent.Children)
                 {
                     // Get the current component
-                    using (var currentComponent = new Component(childComponent))
+                    using (var currentComponent = childComponent)
                     {
                         // If we have a component
                         if (currentComponent != null)
+                        {
                             // Recurse into it
                             foreach (var component in RecurseComponents(currentComponent, componentDepth + 1))
                                 // Return component
                                 yield return component;
+                        }
+
                     }
                 }
+            }
         }
 
         #endregion

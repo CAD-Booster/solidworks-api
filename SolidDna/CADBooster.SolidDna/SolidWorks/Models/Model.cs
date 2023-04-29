@@ -1249,7 +1249,7 @@ namespace CADBooster.SolidDna
         #region Private Component Helpers
 
         /// <summary>
-        /// Recurses components and sub-components and provides a callback action to process and work with each components
+        /// Re-curses components and sub-components and provides a callback action to process and work with each components.
         /// </summary>
         /// <param name="startComponent">The components to start at</param>
         /// <param name="componentDepth">The current depth of the sub-components based on the original calling components</param>
@@ -1262,12 +1262,13 @@ namespace CADBooster.SolidDna
                 yield return (startComponent, componentDepth);
             }
             
-            // Loop each child
+            // Loop each child when available
             if (startComponent?.Children != null)
             {
+                // Loop through each child
                 foreach (var childComponent in startComponent.Children)
                 {
-                    // Get the current component
+                    // Get the current child component
                     using (var currentComponent = childComponent)
                     {
                         // If we have a component
@@ -1278,7 +1279,6 @@ namespace CADBooster.SolidDna
                                 // Return component
                                 yield return component;
                         }
-
                     }
                 }
             }

@@ -22,9 +22,11 @@
         public string Description { get; set; }
 
         /// <summary>
-        /// The full path of the database that contains this material
+        /// The full path of the database that contains this material.
+        /// If <see cref="DatabaseFileFound"/> is false, then this will be the filename without a file extension of the missing database file.
+        /// If true, then this will be the full path to the database file.
         /// </summary>
-        public string Database { get; set; }
+        public string DatabasePathOrFilename { get; set; }
 
         /// <summary>
         /// The name and classification of the material
@@ -34,10 +36,10 @@
         /// <summary>
         /// Indicates if this material information was found in a known database file
         /// 
-        /// If false, then the <see cref="Database"/> will be just a filename with no extension
+        /// If false, then the <see cref="DatabasePathOrFilename"/> will be just a filename with no extension
         /// of the missing database file.
         /// 
-        /// If true then <see cref="Database"/> will be the full file path to the database file
+        /// If true then <see cref="DatabasePathOrFilename"/> will be the full file path to the database file
         /// </summary>
         public bool DatabaseFileFound { get; set; }
 
@@ -47,7 +49,7 @@
         /// <returns></returns>
         public override string ToString()
         {
-            return $"{Name} ({Classification}) [{Database}]";
+            return $"{Name} ({Classification}) [{DatabasePathOrFilename}]";
         }
     }
 }

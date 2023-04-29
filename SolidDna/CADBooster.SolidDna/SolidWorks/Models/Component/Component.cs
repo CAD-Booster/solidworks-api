@@ -118,7 +118,8 @@ namespace CADBooster.SolidDna
             : ComponentTypes.Assembly;
 
         /// <summary>
-        /// Get the name of the component
+        /// Get the name of the component including the instance number.
+        /// If this component is in a sub-assembly, the name starts with the name of the sub-assembly component.
         /// </summary>
         public string Name => BaseObject.Name2;
 

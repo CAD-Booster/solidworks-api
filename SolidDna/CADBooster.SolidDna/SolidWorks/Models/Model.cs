@@ -1075,13 +1075,13 @@ namespace CADBooster.SolidDna
                 var materialName = ids[1];
 
                 // See if we have a database file with the same name
-                var fullPath = SolidWorksEnvironment.Application.GetMaterials()?.FirstOrDefault(f => string.Equals(databaseName, Path.GetFileNameWithoutExtension(f.Database), StringComparison.InvariantCultureIgnoreCase));
+                var fullPath = SolidWorksEnvironment.Application.GetMaterials()?.FirstOrDefault(f => string.Equals(databaseName, Path.GetFileNameWithoutExtension(f.DatabasePathOrFilename), StringComparison.InvariantCultureIgnoreCase));
                 var found = fullPath != null;
 
                 // Now we have the file, try and find the material from it
                 if (found)
                 {
-                    var foundMaterial = SolidWorksEnvironment.Application.FindMaterial(fullPath.Database, materialName);
+                    var foundMaterial = SolidWorksEnvironment.Application.FindMaterial(fullPath.DatabasePathOrFilename, materialName);
                     if (foundMaterial != null)
                         return foundMaterial;
                 }
@@ -1090,7 +1090,7 @@ namespace CADBooster.SolidDna
                 // So fill in as much information as we have
                 return new Material
                 {
-                    Database = databaseName,
+                    DatabasePathOrFilename = databaseName,
                     Name = materialName
                 };
             },
@@ -1118,7 +1118,7 @@ namespace CADBooster.SolidDna
                     AsPart().SetMaterialPropertyName2(string.Empty, string.Empty, string.Empty);
                 // Otherwise set the material
                 else
-                    AsPart().SetMaterialPropertyName2(configuration, material.Database, material.Name);
+                    AsPart().SetMaterialPropertyName2(configuration, material.DatabasePathOrFilename, material.Name);
             },
                 SolidDnaErrorTypeCode.SolidWorksModel,
                 SolidDnaErrorCode.SolidWorksModelSetMaterialError);

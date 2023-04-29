@@ -14,16 +14,6 @@ namespace CADBooster.SolidDna
     /// </summary>
     public partial class SolidWorksApplication : SharedSolidDnaObject<SldWorks>
     {
-        #region Public members
-
-        /// <summary>
-        /// List of icon sizes used by SOLIDWORKS for the task pane and command manager.
-        /// Icons are square, so these values are both width and height.
-        /// </summary>
-        public static readonly int[] mIconSizes = { 20, 32, 40, 64, 96, 128 };
-
-        #endregion
-
         #region Protected Members
 
         /// <summary>
@@ -35,7 +25,7 @@ namespace CADBooster.SolidDna
         /// The file path of the current file that is loading. 
         /// Used to ignore active document changed events during opening of a file
         /// </summary>
-        protected string mFileLoading;
+        protected string mPathToFirstLoadingFile;
 
         /// <summary>
         /// The currently active document
@@ -267,24 +257,24 @@ namespace CADBooster.SolidDna
         /// <summary>
         /// Called after a file has finished opening
         /// </summary>
-        /// <param name="filename">The filename to the file being opened</param>
+        /// <param name="filePath">The path to the file being opened</param>
         /// <returns></returns>
-        private int FileOpenPostNotify(string filename)
+        private int FileOpenPostNotify(string filePath)
         {
             // Wrap any error
             SolidDnaErrors.Wrap(() =>
             {
                 // If this is the file we were opening...
-                if (string.Equals(filename, mFileLoading, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(filePath, mPathToFirstLoadingFile, StringComparison.OrdinalIgnoreCase))
                 {
                     // File has been loaded, so clear loading flag
-                    mFileLoading = null;
+                    mPathToFirstLoadingFile = null;
 
                     // And update all properties and models
                     ReloadActiveModelInformation();
 
                     // Inform listeners
-                    FileOpened(filename, mActiveModel);
+                    FileOpened(filePath, mActiveModel);
                 }
 
             },
@@ -298,9 +288,9 @@ namespace CADBooster.SolidDna
         /// <summary>
         /// Called before a file has started opening
         /// </summary>
-        /// <param name="filename">The filename to the file being opened</param>
+        /// <param name="filePath">The path to the file being opened</param>
         /// <returns></returns>
-        private int FileOpenPreNotify(string filename)
+        private int FileOpenPreNotify(string filePath)
         {
             // Don't handle the ActiveModelDocChangeNotify event for file open events
             // - wait until the file is open instead
@@ -312,8 +302,8 @@ namespace CADBooster.SolidDna
             // Wrap any error
             SolidDnaErrors.Wrap(() =>
             {
-                if (mFileLoading == null)
-                    mFileLoading = filename;
+                if (mPathToFirstLoadingFile == null)
+                    mPathToFirstLoadingFile = filePath;
             },
                 SolidDnaErrorTypeCode.SolidWorksApplication,
                 SolidDnaErrorCode.SolidWorksApplicationFilePreOpenError);
@@ -336,7 +326,7 @@ namespace CADBooster.SolidDna
             SolidDnaErrors.Wrap(() =>
             {
                 // If we are currently loading a file...
-                if (mFileLoading != null)
+                if (mPathToFirstLoadingFile != null)
                 {
                     // Check the active document
                     using (var activeDoc = new Model(BaseObject.IActiveDoc2))
@@ -348,7 +338,7 @@ namespace CADBooster.SolidDna
                         else
                         {
                             // If this is the same file that is currently being loaded, ignore this event
-                            if (string.Equals(mFileLoading, activeDoc.FilePath, StringComparison.OrdinalIgnoreCase))
+                            if (string.Equals(mPathToFirstLoadingFile, activeDoc.FilePath, StringComparison.OrdinalIgnoreCase))
                                 return;
                         }
                     }
@@ -651,8 +641,8 @@ namespace CADBooster.SolidDna
         /// <summary>
         /// Gets a list of all materials in SolidWorks
         /// </summary>
-        /// <param name="database">If specified, limits the results to the specified database full path</param>
-        public List<Material> GetMaterials(string database = null)
+        /// <param name="databasePath">If specified, limits the results to the specified database full path</param>
+        public List<Material> GetMaterials(string databasePath = null)
         {
             // Wrap any error
             return SolidDnaErrors.Wrap(() =>
@@ -661,18 +651,18 @@ namespace CADBooster.SolidDna
                 var list = new List<Material>();
 
                 // If we are using a specified database, use that
-                if (database != null)
-                    ReadMaterials(database, ref list);
+                if (databasePath != null)
+                    ReadMaterials(databasePath, ref list);
                 else
                 {
                     // Otherwise, get all known ones
                     // Get the list of material databases (full paths to SLDMAT files)
-                    var databases = (string[])BaseObject.GetMaterialDatabases();
+                    var databasePaths = (string[])BaseObject.GetMaterialDatabases();
 
                     // Get materials from each
-                    if (databases != null)
-                        foreach (var d in databases)
-                            ReadMaterials(d, ref list);
+                    if (databasePaths != null)
+                        foreach (var path in databasePaths)
+                            ReadMaterials(path, ref list);
                 }
 
                 // Order the list
@@ -686,16 +676,16 @@ namespace CADBooster.SolidDna
         /// Attempts to find the material from a SolidWorks material database file (SLDMAT)
         /// If found, returns the full information about the material
         /// </summary>
-        /// <param name="database">The full path to the database</param>
+        /// <param name="databasePath">The full path to the database</param>
         /// <param name="materialName">The material name to find</param>
         /// <returns></returns>
-        public Material FindMaterial(string database, string materialName)
+        public Material FindMaterial(string databasePath, string materialName)
         {
             // Wrap any error
             return SolidDnaErrors.Wrap(() =>
             {
                 // Get all materials from the database
-                var materials = GetMaterials(database);
+                var materials = GetMaterials(databasePath);
 
                 // Return if found the material with the same name
                 return materials?.FirstOrDefault(f => string.Equals(f.Name, materialName, StringComparison.InvariantCultureIgnoreCase));
@@ -710,12 +700,12 @@ namespace CADBooster.SolidDna
         /// <summary>
         /// Reads the material database and adds the materials to the given list
         /// </summary>
-        /// <param name="database">The database to read</param>
+        /// <param name="databasePath">The database to read</param>
         /// <param name="list">The list to add materials to</param>
-        private static void ReadMaterials(string database, ref List<Material> list)
+        private static void ReadMaterials(string databasePath, ref List<Material> list)
         {
             // First make sure the file exists
-            if (!File.Exists(database))
+            if (!File.Exists(databasePath))
                 throw new SolidDnaException(
                     SolidDnaErrors.CreateError(
                         SolidDnaErrorTypeCode.SolidWorksApplication,
@@ -724,7 +714,7 @@ namespace CADBooster.SolidDna
             try
             {
                 // File should be an XML document, so attempt to read that
-                using (var stream = File.Open(database, FileMode.Open, FileAccess.Read, FileShare.Read))
+                using (var stream = File.Open(databasePath, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
                     // Try and parse the Xml
                     var xmlDoc = XDocument.Load(stream);
@@ -743,7 +733,7 @@ namespace CADBooster.SolidDna
                             // Add them to the list
                             materials.Add(new Material
                             {
-                                Database = database,
+                                DatabasePathOrFilename = databasePath,
                                 DatabaseFileFound = true,
                                 Classification = classification,
                                 Name = material.Attribute("name")?.Value,
@@ -760,7 +750,7 @@ namespace CADBooster.SolidDna
             catch (Exception ex)
             {
                 // If we crashed for any reason during parsing, wrap in SolidDna exception
-                if (!File.Exists(database))
+                if (!File.Exists(databasePath))
                     throw new SolidDnaException(
                         SolidDnaErrors.CreateError(
                             SolidDnaErrorTypeCode.SolidWorksApplication,
@@ -871,7 +861,7 @@ namespace CADBooster.SolidDna
         /// Attempts to create a task pane. Uses a list of PNG icon sizes: 20, 32, 40, 64, 96 and 128 pixels square.
         /// </summary>
         /// <param name="iconPathFormat">The absolute path to all icons, based on a string format of the absolute path. Replaces "{0}" in the string with the icons sizes. 
-        /// For example C:\Folder\myiconlist{0}.png
+        /// For example C:\Folder\icons{0}.png
         /// </param>
         /// <param name="toolTip">The title text to show at the top of the taskpane</param>
         public async Task<Taskpane> CreateTaskpaneAsync2(string iconPathFormat, string toolTip)
@@ -880,7 +870,7 @@ namespace CADBooster.SolidDna
             return SolidDnaErrors.Wrap<Taskpane>(() =>
                 {
                     // Get up to six icon paths
-                    var icons = GetIconPathsFromPathFormat(iconPathFormat);
+                    var icons = Icons.GetPathArrayFromPathFormat(iconPathFormat);
 
                     // Attempt to create the taskpane
                     var comTaskpane = BaseObject.CreateTaskpaneView3(icons, toolTip);
@@ -894,27 +884,6 @@ namespace CADBooster.SolidDna
                 },
                 SolidDnaErrorTypeCode.SolidWorksTaskpane,
                 SolidDnaErrorCode.SolidWorksTaskpaneCreateError);
-        }
-
-        /// <summary>
-        /// Convert a single string with a format for an absolute path to an array of existing paths.
-        /// </summary>
-        /// <param name="iconPathFormat"></param>
-        /// <returns></returns>
-        internal static string[] GetIconPathsFromPathFormat(string iconPathFormat)
-        {
-            var iconPaths = new Dictionary<int, string>();
-            foreach (var iconSize in mIconSizes)
-            {
-                // Replace "{0}" in the string with the icon size
-                var path = string.Format(iconPathFormat, iconSize);
-                
-                // Don't check if the path exists because SolidWorks does that for us. If all files don't exist and we return an empty array, the task pane is not created.
-                iconPaths.Add(iconSize, path);
-            }
-
-            // Get icon paths from the dictionary
-            return iconPaths.Values.ToArray();
         }
 
         #endregion

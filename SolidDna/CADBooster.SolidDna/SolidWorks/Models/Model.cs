@@ -1304,16 +1304,16 @@ namespace CADBooster.SolidDna
 
             // Add all dependencies (Format {"Name1", "Path1+Name1", "Name2", "Path2+Name2", ...})
             // Take every other element, starting at second one
-            foreach (var dependant in modelDependencies.Where((f, i) => (i + 1) % 2 == 0))
-                dependencies.Add(dependant);
+            foreach (var dependent in modelDependencies.Where((f, i) => (i + 1) % 2 == 0))
+                dependencies.Add(dependent);
 
-            // Find any drawings that exist...
-            foreach (var drawing in dependencies.Where(f => !f.ToLower().EndsWith(".slddrw") && File.Exists(Path.ChangeExtension(f, ".slddrw")))
-                // Clone list so we can add new items to same list
-                .ToList())
+            if (includeDrawings)
             {
-                // Add them to list
-                dependencies.Add(drawing);
+                // Find any drawings that exist. Clone list so we can add new items to same list
+                var drawings = dependencies.Where(f => !f.ToLower().EndsWith(".slddrw") && File.Exists(Path.ChangeExtension(f, ".slddrw"))).ToList();
+                
+                // Add all drawings to the list of dependencies
+                dependencies.AddRange(drawings);
             }
 
             // Return the list (filtering our duplicates)

@@ -863,6 +863,26 @@ namespace CADBooster.SolidDna
 
         #endregion
 
+        #region Closing
+
+        /// <summary>
+        /// Close this model. Releases the COM object so SolidWorks uses less memory.
+        /// </summary>
+        public void Close()
+        {
+            // Wrap any error
+            SolidDnaErrors.Wrap(() =>
+                {
+                    var path = FilePath;
+                    Dispose();
+                    SolidWorksEnvironment.Application.CloseFile(path);
+                },
+                SolidDnaErrorTypeCode.SolidWorksModel,
+                SolidDnaErrorCode.SolidWorksModelCloseFileError);
+        }
+
+        #endregion
+
         #region Configurations
 
         /// <summary>

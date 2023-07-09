@@ -863,6 +863,26 @@ namespace CADBooster.SolidDna
 
         #endregion
 
+        #region Closing
+
+        /// <summary>
+        /// Close this model. Releases the COM object so SolidWorks uses less memory.
+        /// </summary>
+        public void Close()
+        {
+            // Wrap any error
+            SolidDnaErrors.Wrap(() =>
+                {
+                    var path = FilePath;
+                    Dispose();
+                    SolidWorksEnvironment.Application.CloseFile(path);
+                },
+                SolidDnaErrorTypeCode.SolidWorksModel,
+                SolidDnaErrorCode.SolidWorksModelCloseFileError);
+        }
+
+        #endregion
+
         #region Configurations
 
         /// <summary>
@@ -1246,8 +1266,6 @@ namespace CADBooster.SolidDna
             return RecurseComponents(component);
         }
 
-        #region Private Component Helpers
-
         /// <summary>
         /// Recurses components and sub-components and provides a callback action to process and work with each components
         /// </summary>
@@ -1257,27 +1275,27 @@ namespace CADBooster.SolidDna
         {
             // While that component is not null...
             if (startComponent != null)
+            {
                 // Inform callback of the feature
                 yield return (startComponent, componentDepth);
-
-            // Loop each child
-            if (startComponent.Children != null)
-                foreach (Component2 childComponent in startComponent.Children)
+            }
+            
+            // Loop each child when available
+            if (startComponent != null)
+            {
+                // Loop through each child
+                foreach (var childComponent in startComponent.Children)
                 {
-                    // Get the current component
-                    using (var currentComponent = new Component(childComponent))
+                    if (childComponent != null)
                     {
-                        // If we have a component
-                        if (currentComponent != null)
-                            // Recurse into it
-                            foreach (var component in RecurseComponents(currentComponent, componentDepth + 1))
-                                // Return component
-                                yield return component;
+                        // Recurse into it
+                        foreach (var component in RecurseComponents(childComponent, componentDepth + 1))
+                            // Return component
+                            yield return component;
                     }
                 }
+            }
         }
-
-        #endregion
 
         #endregion
 
@@ -1304,16 +1322,16 @@ namespace CADBooster.SolidDna
 
             // Add all dependencies (Format {"Name1", "Path1+Name1", "Name2", "Path2+Name2", ...})
             // Take every other element, starting at second one
-            foreach (var dependant in modelDependencies.Where((f, i) => (i + 1) % 2 == 0))
-                dependencies.Add(dependant);
+            foreach (var dependent in modelDependencies.Where((f, i) => (i + 1) % 2 == 0))
+                dependencies.Add(dependent);
 
-            // Find any drawings that exist...
-            foreach (var drawing in dependencies.Where(f => !f.ToLower().EndsWith(".slddrw") && File.Exists(Path.ChangeExtension(f, ".slddrw")))
-                // Clone list so we can add new items to same list
-                .ToList())
+            if (includeDrawings)
             {
-                // Add them to list
-                dependencies.Add(drawing);
+                // Find any drawings that exist. Clone list so we can add new items to same list
+                var drawings = dependencies.Where(f => !f.ToLower().EndsWith(".slddrw") && File.Exists(Path.ChangeExtension(f, ".slddrw"))).ToList();
+                
+                // Add all drawings to the list of dependencies
+                dependencies.AddRange(drawings);
             }
 
             // Return the list (filtering our duplicates)

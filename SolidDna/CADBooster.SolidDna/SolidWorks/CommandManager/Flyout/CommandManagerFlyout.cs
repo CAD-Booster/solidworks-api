@@ -133,13 +133,14 @@ namespace CADBooster.SolidDna
         /// Adds a command item to the group
         /// </summary>
         /// <param name="item">The item to add</param>
-        public void AddCommandItem(CommandManagerItem item)
+        private void AddCommandItem(CommandManagerItem item)
         {
-            // Add the item
-            var id = BaseObject.AddCommandItem(item.Name, item.Hint, item.ImageIndex, $"Callback({item.CallbackId})", null);
+            // Add the item and receive the actual position.
+            var actualPosition = BaseObject.AddCommandItem(item.Name, item.Hint, item.ImageIndex, $"Callback({item.CallbackId})", null);
 
-            // Set the Id we got
-            item.UniqueId = id;
+            // Store the actual ID / position we receive. 
+            // Starts at zero for each command manager tab / ribbon. Todo is this true just like it is for CommandManagerGroup?
+            item.Position = actualPosition;
         }
 
         /// <summary>

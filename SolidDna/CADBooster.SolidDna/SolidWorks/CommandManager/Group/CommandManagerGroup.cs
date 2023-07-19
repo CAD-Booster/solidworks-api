@@ -202,12 +202,12 @@ namespace CADBooster.SolidDna
         /// <param name="item">The item to add</param>
         private void AddCommandItem(CommandManagerItem item)
         {
-            // Add the item
-            var id = BaseObject.AddCommandItem2(item.Name, item.Position, item.Hint, item.Tooltip, item.ImageIndex, $"Callback({item.CallbackId})", null, UserId,
-                (int)item.ItemType);
+            // Add the item. We pass a preferred position for each item and receive the actual position back.
+            var actualPosition = BaseObject.AddCommandItem2(item.Name, item.Position, item.Hint, item.Tooltip, item.ImageIndex, $"Callback({item.CallbackId})", null, UserId, (int)item.ItemType);
 
-            // Set the Id we got
-            item.UniqueId = id;
+            // Store the actual ID / position we receive. If we have multiple items and, for example, set each position at the default -1, we receive sequential numbers, starting at 0.
+            // Starts at zero for each command manager tab / ribbon.
+            item.Position = actualPosition;
         }
 
         /// <summary>
@@ -231,7 +231,7 @@ namespace CADBooster.SolidDna
             mCreated = BaseObject.Activate();
 
             // Get command Ids
-            Items?.ForEach(item => item.CommandId = BaseObject.CommandID[item.UniqueId]);
+            Items?.ForEach(item => item.CommandId = BaseObject.CommandID[item.Position]);
 
             // Add items that are visible for parts
             AddItemsToTabForModelType(manager, ModelType.Part, AddDropdownBoxForParts);

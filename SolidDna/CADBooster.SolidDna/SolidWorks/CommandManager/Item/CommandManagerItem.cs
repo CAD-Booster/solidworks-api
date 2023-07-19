@@ -13,11 +13,6 @@ namespace CADBooster.SolidDna
         public bool AddSeparatorBeforeThisItem { get; set; }
 
         /// <summary>
-        /// The unique Id of this item (set by the parent)
-        /// </summary>
-        public int UniqueId { get; set; }
-
-        /// <summary>
         /// The command Id of this item (set by the parent)
         /// </summary>
         public int CommandId { get; set; }
@@ -33,8 +28,8 @@ namespace CADBooster.SolidDna
         public string Name { get; set; }
 
         /// <summary>
-        /// The position of the item in the list.
-        /// NOTE: Specify 0 to add the CommandGroup to the beginning of the CommandManager, or specify -1 to add it to the end of the CommandManager.
+        /// The position of the item in the list. Specify 0 to add the item to the beginning of the toolbar or menu, or specify -1 to add it to the end.
+        /// After creating the item, we set this to the actual position.
         /// </summary>
         public int Position { get; set; } = -1;
 

@@ -7,8 +7,6 @@ namespace CADBooster.SolidDna
     /// </summary>
     public class CommandManagerItem
     {
-        #region Public Properties
-
         /// <summary>
         /// True to add a separator bar to the left of this item.
         /// </summary>
@@ -27,7 +25,7 @@ namespace CADBooster.SolidDna
         /// <summary>
         /// The unique Id used for identifying a callback that should be associated with this item
         /// </summary>
-        public string CallbackId { get; set; } = Guid.NewGuid().ToString("N");
+        public string CallbackId { get; } = Guid.NewGuid().ToString("N");
 
         /// <summary>
         /// The name of the item
@@ -90,20 +88,10 @@ namespace CADBooster.SolidDna
         /// </summary>
         public bool AddToTab { get; set; } = true;
 
-        #endregion
-
-        #region ToString
-
         /// <summary>
         /// Returns a user-friendly string with group properties.
         /// </summary>
         /// <returns></returns>
-        public override string ToString()
-        {
-            return $"Name: {Name}. Position: {Position}. Image index: {ImageIndex}. Hint: {Hint}. Tooltip: {Tooltip} ";
-        }
-
-        #endregion
-
+        public override string ToString() => $"Name: {Name}. Position: {Position}. Image index: {ImageIndex}. Hint: {Hint}. Tooltip: {Tooltip} ";
     }
 }

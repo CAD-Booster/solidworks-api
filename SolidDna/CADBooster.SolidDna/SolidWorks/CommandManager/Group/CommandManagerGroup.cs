@@ -427,7 +427,7 @@ namespace CADBooster.SolidDna
                 tab = manager.GetCommandTab(type, title, createIfNotExist: true);
 
                 // Keep track of this tab
-                mTabs.Add(new CommandManagerTabKey { ModelType = type, Title = title }, tab);
+                mTabs.Add(new CommandManagerTabKey(title, type), tab);
             }
 
             // New list of values

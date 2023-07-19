@@ -7,13 +7,24 @@
     public class CommandManagerTabKey
     {
         /// <summary>
-        /// The title of the tab
+        /// Takes two parameters which will be then set to the public properties of this class.
         /// </summary>
-        public string Title { get; set; }
+        /// <param name="title"></param>
+        /// <param name="modelType"></param>
+        public CommandManagerTabKey(string title, ModelType modelType)
+        {
+            Title = title;
+            ModelType = modelType;
+        }
+
+        /// <summary>
+        /// The unique title of the tab. Should be the same for each tab that is going to be created.
+        /// </summary>
+        public string Title { get; }
 
         /// <summary>
         /// Model type which this tab is attached to, could be either a part, assembly or drawing.
         /// </summary>
-        public ModelType ModelType { get; set; }
+        public ModelType ModelType { get; }
     }
 }

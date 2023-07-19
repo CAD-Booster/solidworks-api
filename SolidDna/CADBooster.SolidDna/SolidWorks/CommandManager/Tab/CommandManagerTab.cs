@@ -3,45 +3,29 @@
 namespace CADBooster.SolidDna
 {
     /// <summary>
-    /// A command manager tab for the top command group in SolidWorks
+    /// The <see cref="CommandManagerTab"/> class provides a way to manage and interact with command tabs, including the ability to create a corresponding <see cref="CommandManagerTabBox"/> and dispose of it correctly.
     /// </summary>
     public class CommandManagerTab : SolidDnaObject<ICommandTab>
     {
-        #region Public Properties
-
         /// <summary>
-        /// The command tab box for this tab
+        /// Public accessible command manager tab box. Can be used to add commands, get commands or remove commands.
         /// </summary>
         public CommandManagerTabBox Box { get; }
 
-        #endregion
-
-        #region Constructor
-
         /// <summary>
-        /// Default constructor
+        /// Takes an object of type <see cref="ICommandTab"/> and calls the constructor of its base class.
+        /// It will create a new instance of <see cref="CommandManagerTabBox"/>, it then utilizes a method on the BaseObject.
+        /// After the CommandManagerTabBox is created, it will be assigned to the '<see cref="Box"/>'-property of this class.
         /// </summary>
         public CommandManagerTab(ICommandTab tab) : base(tab)
         {
-            // Adds the command tab box on creation
             Box = new CommandManagerTabBox(BaseObject.AddCommandTabBox());
         }
-
-        #endregion
-
-        #region Dispose
-
-        /// <summary>
-        /// Disposing
-        /// </summary>
+        
         public override void Dispose()
         {
-            // Dispose of box
             Box?.Dispose();
-
             base.Dispose();
         }
-
-        #endregion
     }
 }

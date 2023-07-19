@@ -373,23 +373,6 @@ namespace CADBooster.SolidDna
             if (string.IsNullOrEmpty(title))
                 title = Title;
 
-            CommandManagerTab tab;
-
-            // Get the tab if it already exists
-            if (mTabs.Any(f => string.Equals(f.Key.Title, title) && f.Key.ModelType == type))
-            {
-                tab = mTabs.First(f => string.Equals(f.Key.Title, title) && f.Key.ModelType == type).Value;
-            }
-            // Otherwise create it
-            else
-            {
-                // Get the tab
-                tab = manager.GetCommandTab(type, title, true);
-
-                // Keep track of this tab
-                mTabs.Add(new CommandManagerTabKey(title, type), tab);
-            }
-
             // New list of values
             var ids = new List<int>();
             var styles = new List<int>();
@@ -416,12 +399,42 @@ namespace CADBooster.SolidDna
             // If there are items to add...
             if (ids.Count > 0)
             {
+                // Get the tab
+                var tab = GetNewOrExistingCommandManagerTab(type, manager, title);
+
                 // Add all the items
                 tab.Box.UnsafeObject.AddCommands(ids.ToArray(), styles.ToArray());
 
                 // Add a separator before each item that wants one.
                 AddSeparators(items, tab);
             }
+        }
+
+        /// <summary>
+        /// Check <see cref="mTabs"/> for an existing tab with the given title and model type. If it doesn't exist, create a new command manager tab.
+        /// </summary>
+        /// <param name="modelType"></param>
+        /// <param name="manager"></param>
+        /// <param name="title"></param>
+        /// <returns></returns>
+        private CommandManagerTab GetNewOrExistingCommandManagerTab(ModelType modelType, CommandManager manager, string title)
+        {
+            // Get the tab if it already exists
+            var existingTab = mTabs.FirstOrDefault(f => f.Key.Title.Equals(title) && f.Key.ModelType == modelType).Value;
+            if (existingTab != null)
+            {
+                // Return the existing tab
+                return existingTab;
+            }
+
+            // Otherwise create it
+            var tab = manager.GetCommandTab(modelType, title);
+
+            // Keep track of this tab
+            mTabs.Add(new CommandManagerTabKey(title, modelType), tab);
+
+            // Return the new tab
+            return tab;
         }
 
         /// <summary>

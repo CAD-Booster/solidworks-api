@@ -9,8 +9,6 @@ namespace CADBooster.SolidDna
 {
     public class CommandManager : SolidDnaObject<ICommandManager>
     {
-        #region Private Members
-
         /// <summary>
         /// A list of all created command groups
         /// </summary>
@@ -26,21 +24,10 @@ namespace CADBooster.SolidDna
         /// </summary>
         private int mFlyoutIdCount = 1000;
 
-        #endregion
-
-        #region Constructor
-
         /// <summary>
-        /// Default constructor
+        /// Creates a command manager which let us create and access a custom toolbar(/tab/toolbar) or menu.
         /// </summary>
-        public CommandManager(ICommandManager commandManager) : base(commandManager)
-        {
-
-        }
-
-        #endregion
-
-        #region Command Group
+        public CommandManager(ICommandManager commandManager) : base(commandManager) { }
 
         /// <summary>
         /// Create a command group from a list of <see cref="CommandManagerItem"/> items
@@ -67,22 +54,9 @@ namespace CADBooster.SolidDna
         /// <param name="mainIconPath">The icon absolute path base on a string format of the absolute path to the main icon images, replacing {0} with the size.
         /// The main icon is visible in the Customize window. If you don't set a main icon, SolidWorks uses the first icon in <paramref name="iconListsPath"/>.</param>
         /// <returns></returns>
-        public CommandManagerGroup CreateCommandGroupAndTabs(
-            string title,
-            List<CommandManagerItem> items,
-            List<CommandManagerFlyout> flyoutItems,
-            string iconListsPath = "",
-            string tooltip = "",
-            string hint = "",
-            int position = -1,
-            bool ignorePreviousVersion = true,
-            bool hasMenu = true,
-            bool hasToolbar = true,
-            bool addDropdownBoxForParts = false,
-            bool addDropdownBoxForAssemblies = false,
-            bool addDropdownBoxForDrawings = false,
-            ModelTemplateType documentTypes = ModelTemplateType.Part | ModelTemplateType.Assembly | ModelTemplateType.Drawing,
-            string mainIconPath = "")
+        public CommandManagerGroup CreateCommandGroupAndTabs(string title, List<CommandManagerItem> items, List<CommandManagerFlyout> flyoutItems, string iconListsPath = "", string tooltip = "", string hint = "",
+                                                             int position = -1, bool ignorePreviousVersion = true, bool hasMenu = true, bool hasToolbar = true, bool addDropdownBoxForParts = false, bool addDropdownBoxForAssemblies = false,
+                                                             bool addDropdownBoxForDrawings = false, ModelTemplateType documentTypes = ModelTemplateType.Part | ModelTemplateType.Assembly | ModelTemplateType.Drawing, string mainIconPath = "")
         {
             // Wrap any error creating the taskpane in a SolidDna exception
             return SolidDnaErrors.Wrap(() =>
@@ -91,22 +65,8 @@ namespace CADBooster.SolidDna
                 lock (mCommandGroups)
                 {
                     // Create the command group
-                    var group = CreateCommandGroup(
-                        title,
-                        items,
-                        flyoutItems,
-                        tooltip,
-                        hint,
-                        position,
-                        ignorePreviousVersion,
-                        hasMenu,
-                        hasToolbar,
-                        addDropdownBoxForParts,
-                        addDropdownBoxForAssemblies,
-                        addDropdownBoxForDrawings,
-                        documentTypes,
-                        iconListsPath,
-                        mainIconPath);
+                    var group = CreateCommandGroup(title, items, flyoutItems, tooltip, hint, position, ignorePreviousVersion, hasMenu, hasToolbar, 
+                                                   addDropdownBoxForParts, addDropdownBoxForAssemblies, addDropdownBoxForDrawings, documentTypes, iconListsPath, mainIconPath);
 
                     // Track all flyouts
                     mCommandFlyouts = flyoutItems;
@@ -144,24 +104,10 @@ namespace CADBooster.SolidDna
             var callbackId = Guid.NewGuid().ToString("N");
 
             // Attempt to create the command flyout
-            var unsafeCommandFlyout = BaseObject.CreateFlyoutGroup2(
-                mFlyoutIdCount,
-                title,
-                tooltip,
-                hint,
-                icons,
-                icons,
-                $"Callback({callbackId})",
-                null);
+            var unsafeCommandFlyout = BaseObject.CreateFlyoutGroup2(mFlyoutIdCount, title, tooltip, hint, icons, icons, $"Callback({callbackId})", null);
 
             // Create managed object
-            var flyout = new CommandManagerFlyout(
-                unsafeCommandFlyout,
-                mFlyoutIdCount++,
-                callbackId,
-                items,
-                title,
-                hint, tooltip);
+            var flyout = new CommandManagerFlyout(unsafeCommandFlyout, mFlyoutIdCount++, callbackId, items, title, hint, tooltip);
 
             // Return it
             return flyout;
@@ -192,22 +138,9 @@ namespace CADBooster.SolidDna
         /// <param name="mainIconPath">The icon absolute path base on a string format of the absolute path to the main icon images, replacing {0} with the size.
         /// The main icon is visible in the Customize window. If you don't set a main icon, SolidWorks uses the first icon in <paramref name="iconListsPath"/>.</param>
         /// <returns></returns>
-        private CommandManagerGroup CreateCommandGroup(
-            string title,
-            List<CommandManagerItem> items,
-            List<CommandManagerFlyout> flyoutItems,
-            string tooltip = "",
-            string hint = "",
-            int position = -1,
-            bool ignorePreviousVersion = true,
-            bool hasMenu = true,
-            bool hasToolbar = true,
-            bool addDropdownBoxForParts = false,
-            bool addDropdownBoxForAssemblies = false,
-            bool addDropdownBoxForDrawings = false, 
-            ModelTemplateType documentTypes = ModelTemplateType.Part | ModelTemplateType.Assembly | ModelTemplateType.Drawing,
-            string iconListsPath = "",
-            string mainIconPath = "")
+        private CommandManagerGroup CreateCommandGroup(string title, List<CommandManagerItem> items, List<CommandManagerFlyout> flyoutItems, string tooltip = "", string hint = "", int position = -1, bool ignorePreviousVersion = true,
+                                                       bool hasMenu = true, bool hasToolbar = true, bool addDropdownBoxForParts = false, bool addDropdownBoxForAssemblies = false, bool addDropdownBoxForDrawings = false, 
+                                                       ModelTemplateType documentTypes = ModelTemplateType.Part | ModelTemplateType.Assembly | ModelTemplateType.Drawing, string iconListsPath = "", string mainIconPath = "")
         {
             // NOTE: We may need to look carefully at this Id if things get removed and re-added based on this SolidWorks note:
             //     
@@ -230,31 +163,12 @@ namespace CADBooster.SolidDna
             {
                 // Get enum name
                 var errorEnumString = ((swCreateCommandGroupErrors)errors).ToString();
-
-                // Throw error
-                throw new SolidDnaException(SolidDnaErrors.CreateError(
-                    SolidDnaErrorTypeCode.SolidWorksCommandManager,
-                    SolidDnaErrorCode.SolidWorksCommandGroupCreateError, 
-                    errorEnumString));
+                throw new SolidDnaException(SolidDnaErrors.CreateError(SolidDnaErrorTypeCode.SolidWorksCommandManager, SolidDnaErrorCode.SolidWorksCommandGroupCreateError, errorEnumString));
             }
 
             // Otherwise we got the command group
-            var group = new CommandManagerGroup(
-                unsafeCommandGroup,
-                items,
-                flyoutItems,
-                id,
-                title,
-                tooltip,
-                hint,
-                hasMenu,
-                hasToolbar,
-                addDropdownBoxForParts,
-                addDropdownBoxForAssemblies,
-                addDropdownBoxForDrawings,
-                documentTypes,
-                iconListsPath,
-                mainIconPath);
+            var group = new CommandManagerGroup(unsafeCommandGroup, items, flyoutItems, id, title, tooltip, hint, hasMenu, hasToolbar,
+                addDropdownBoxForParts, addDropdownBoxForAssemblies, addDropdownBoxForDrawings, documentTypes, iconListsPath, mainIconPath);
 
             // Return it
             return group;
@@ -264,29 +178,22 @@ namespace CADBooster.SolidDna
         /// Removes the specific command flyout
         /// </summary>
         /// <param name="flyout">The command flyout to remove</param>
-        public void RemoveCommandFlyout(CommandManagerFlyout flyout)
+        private void RemoveCommandFlyout(CommandManagerFlyout flyout)
         {
             lock (mCommandFlyouts)
-            {
                 BaseObject.RemoveFlyoutGroup(flyout.UserId);
-            }
         }
+
         /// <summary>
         /// Removes the specific command group
         /// </summary>
         /// <param name="group">The command group to remove</param>
         /// <param name="runtimeOnly">True to remove the CommandGroup, saving its toolbar information in the registry. False to remove both the CommandGroup and its toolbar information in the registry</param>
-        public void RemoveCommandGroup(CommandManagerGroup group, bool runtimeOnly = false)
+        private void RemoveCommandGroup(CommandManagerGroup group, bool runtimeOnly = false)
         {
             lock (mCommandGroups)
-            {
                 BaseObject.RemoveCommandGroup2(group.UserId, runtimeOnly);
-            }
         }
-
-        #endregion
-
-        #region Command Tabs
 
         /// <summary>
         /// Gets the command tab for this 
@@ -324,19 +231,15 @@ namespace CADBooster.SolidDna
 
             // If it's still null, we failed
             if (unsafeTab == null)
-                // Throw error
-                throw new SolidDnaException(SolidDnaErrors.CreateError(
-                    SolidDnaErrorTypeCode.SolidWorksCommandManager,
-                    SolidDnaErrorCode.SolidWorksCommandGroupCreateTabError));
+                throw new SolidDnaException(SolidDnaErrors.CreateError(SolidDnaErrorTypeCode.SolidWorksCommandManager, SolidDnaErrorCode.SolidWorksCommandGroupCreateTabError));
 
             // Return tab
             return new CommandManagerTab(unsafeTab);
         }
 
-        #endregion
-
-        #region Dispose
-
+        /// <summary>
+        /// Dispose all <see cref="CommandGroup"/>(s) and <see cref="FlyoutGroup"/>(s) from the <see cref="mCommandGroups"/> and <see cref="mCommandFlyouts"/> lists correctly.
+        /// </summary>
         public override void Dispose()
         {
             // Remove all command groups
@@ -347,7 +250,5 @@ namespace CADBooster.SolidDna
 
             base.Dispose();
         }
-
-        #endregion
     }
 }

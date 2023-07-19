@@ -73,11 +73,9 @@ namespace CADBooster.SolidDna
         public Action OnClick { get; set; }
 
         #endregion
-
-        #region Constructor
-
+        
         /// <summary>
-        /// Default constructor
+        /// Creates a command manager flyout with all its belonging information such as title, userID, hints, tooltips and callbackIDs.
         /// </summary>
         /// <param name="flyoutGroup">The SolidWorks command manager flyout group</param>
         /// <param name="userId">The unique flyout ID</param>
@@ -118,10 +116,6 @@ namespace CADBooster.SolidDna
 
         }
 
-        #endregion
-
-        #region Callbacks
-
         /// <summary>
         /// Fired when a SolidWorks callback is fired
         /// </summary>
@@ -134,10 +128,6 @@ namespace CADBooster.SolidDna
             // Call the action
             item?.OnClick?.Invoke();
         }
-
-        #endregion
-
-        #region Public Methods
 
         /// <summary>
         /// Adds a command item to the group
@@ -152,10 +142,6 @@ namespace CADBooster.SolidDna
             item.UniqueId = id;
         }
 
-        #endregion
-
-        #region Dispose
-
         /// <summary>
         /// Disposing
         /// </summary>
@@ -166,7 +152,5 @@ namespace CADBooster.SolidDna
 
             base.Dispose();
         }
-
-        #endregion
     }
 }

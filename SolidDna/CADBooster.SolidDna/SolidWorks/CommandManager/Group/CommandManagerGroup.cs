@@ -11,8 +11,6 @@ namespace CADBooster.SolidDna
     /// </summary>
     public class CommandManagerGroup : SolidDnaObject<ICommandGroup>
     {
-        #region Private Members
-
         /// <summary>
         /// Keeps track if this group has been created already
         /// </summary>
@@ -35,9 +33,15 @@ namespace CADBooster.SolidDna
         /// </summary>
         private readonly Dictionary<CommandManagerTabKey, CommandManagerTab> mTabs = new Dictionary<CommandManagerTabKey, CommandManagerTab>();
 
-        #endregion
+        /// <summary>
+        /// The command items to add to this group
+        /// </summary>
+        private List<CommandManagerItem> Items { get; }
 
-        #region Public Properties
+        /// <summary>
+        /// The command flyouts to add to this group
+        /// </summary>
+        private List<CommandManagerFlyout> Flyouts { get; }
 
         /// <summary>
         /// The Id used when this command group was created
@@ -86,9 +90,7 @@ namespace CADBooster.SolidDna
         public ModelTemplateType MenuVisibleInDocumentTypes
         {
             get => (ModelTemplateType)BaseObject.ShowInDocumentType;
-            set =>
-                // Set base object
-                BaseObject.ShowInDocumentType = (int)value;
+            set => BaseObject.ShowInDocumentType = (int)value;
         }
 
         /// <summary>
@@ -98,9 +100,7 @@ namespace CADBooster.SolidDna
         public bool HasMenu
         {
             get => BaseObject.HasMenu;
-            set =>
-                // Set base object
-                BaseObject.HasMenu = value;
+            set => BaseObject.HasMenu = value;
         }
 
         /// <summary>
@@ -114,21 +114,7 @@ namespace CADBooster.SolidDna
         }
 
         /// <summary>
-        /// The command items to add to this group
-        /// </summary>
-        public List<CommandManagerItem> Items { get; set; }
-
-        /// <summary>
-        /// The command flyouts to add to this group
-        /// </summary>
-        public List<CommandManagerFlyout> Flyouts { get; set; }
-
-        #endregion
-
-        #region Constructor
-
-        /// <summary>
-        /// Default constructor
+        /// Creates a command manager group with all its belonging information such as title, userID, hints, tooltips and icons.
         /// </summary>
         /// <param name="commandGroup">The SolidWorks command group</param>
         /// <param name="items">The command items to add</param>
@@ -145,22 +131,9 @@ namespace CADBooster.SolidDna
         /// <param name="documentTypes">The document types where this menu/toolbar is visible</param>
         /// <param name="iconListsPath">Absolute path to all icon sprites with including {0} for the image size</param>
         /// <param name="mainIconPath">Absolute path to all main icons with including {0} for the image size</param>
-        public CommandManagerGroup(
-            ICommandGroup commandGroup, 
-            List<CommandManagerItem> items, 
-            List<CommandManagerFlyout> flyoutItems, 
-            int userId, 
-            string title, 
-            string hint,
-            string tooltip,
-            bool hasMenu, 
-            bool hasToolbar,
-            bool addDropdownBoxForParts,
-            bool addDropdownBoxForAssemblies,
-            bool addDropdownBoxForDrawings, 
-            ModelTemplateType documentTypes,
-            string iconListsPath,
-            string mainIconPath) : base(commandGroup)
+        public CommandManagerGroup(ICommandGroup commandGroup, List<CommandManagerItem> items, List<CommandManagerFlyout> flyoutItems, int userId, string title, string hint,
+                                   string tooltip, bool hasMenu, bool hasToolbar, bool addDropdownBoxForParts, bool addDropdownBoxForAssemblies, bool addDropdownBoxForDrawings,
+                                   ModelTemplateType documentTypes, string iconListsPath, string mainIconPath) : base(commandGroup)
         {
             // Store user Id, used to remove the command group
             UserId = userId;
@@ -204,10 +177,6 @@ namespace CADBooster.SolidDna
             PlugInIntegration.CallbackFired += PlugInIntegration_CallbackFired;
         }
 
-        #endregion
-
-        #region Callbacks
-
         /// <summary>
         /// Fired when a SolidWorks callback is fired
         /// </summary>
@@ -227,18 +196,15 @@ namespace CADBooster.SolidDna
             flyout?.OnClick?.Invoke();
         }
 
-        #endregion
-
-        #region Public Methods
-
         /// <summary>
         /// Adds a command item to the group
         /// </summary>
         /// <param name="item">The item to add</param>
-        public void AddCommandItem(CommandManagerItem item)
+        private void AddCommandItem(CommandManagerItem item)
         {
             // Add the item
-            var id = BaseObject.AddCommandItem2(item.Name, item.Position, item.Hint, item.Tooltip, item.ImageIndex, $"Callback({item.CallbackId})", null, UserId, (int)item.ItemType);
+            var id = BaseObject.AddCommandItem2(item.Name, item.Position, item.Hint, item.Tooltip, item.ImageIndex, $"Callback({item.CallbackId})", null, UserId,
+                (int)item.ItemType);
 
             // Set the Id we got
             item.UniqueId = id;
@@ -253,9 +219,7 @@ namespace CADBooster.SolidDna
         public void Create(CommandManager manager)
         {
             if (mCreated)
-                throw new SolidDnaException(SolidDnaErrors.CreateError(
-                    SolidDnaErrorTypeCode.SolidWorksCommandManager,
-                    SolidDnaErrorCode.SolidWorksCommandGroupReActivateError));
+                throw new SolidDnaException(SolidDnaErrors.CreateError(SolidDnaErrorTypeCode.SolidWorksCommandManager, SolidDnaErrorCode.SolidWorksCommandGroupReActivateError));
 
             // Set all relevant icon properties, depending on the solidworks version
             SetIcons();
@@ -269,8 +233,6 @@ namespace CADBooster.SolidDna
             // Get command Ids
             Items?.ForEach(item => item.CommandId = BaseObject.CommandID[item.UniqueId]);
 
-            #region Command Tab
-
             // Add items that are visible for parts
             AddItemsToTabForModelType(manager, ModelType.Part, AddDropdownBoxForParts);
 
@@ -280,13 +242,9 @@ namespace CADBooster.SolidDna
             // Add items that are visible for drawings
             AddItemsToTabForModelType(manager, ModelType.Drawing, AddDropdownBoxForDrawings);
 
-            #endregion
-
             // If we failed to create, throw
             if (!mCreated)
-                throw new SolidDnaException(SolidDnaErrors.CreateError(
-                    SolidDnaErrorTypeCode.SolidWorksCommandManager,
-                    SolidDnaErrorCode.SolidWorksCommandGroupActivateError));
+                throw new SolidDnaException(SolidDnaErrors.CreateError(SolidDnaErrorTypeCode.SolidWorksCommandManager, SolidDnaErrorCode.SolidWorksCommandGroupActivateError));
         }
 
         /// <summary>
@@ -409,7 +367,7 @@ namespace CADBooster.SolidDna
         /// <param name="items">Items to add</param>
         /// <param name="flyouts">Flyout Items to add</param>
         /// <param name="title">The title of the tab</param>
-        public void AddItemsToTab(ModelType type, CommandManager manager, List<CommandManagerItem> items, List<CommandManagerFlyout> flyouts, string title = "")
+        private void AddItemsToTab(ModelType type, CommandManager manager, List<CommandManagerItem> items, List<CommandManagerFlyout> flyouts, string title = "")
         {
             // Use default title if not specified
             if (string.IsNullOrEmpty(title))
@@ -419,12 +377,14 @@ namespace CADBooster.SolidDna
 
             // Get the tab if it already exists
             if (mTabs.Any(f => string.Equals(f.Key.Title, title) && f.Key.ModelType == type))
+            {
                 tab = mTabs.First(f => string.Equals(f.Key.Title, title) && f.Key.ModelType == type).Value;
+            }
             // Otherwise create it
             else
             {
                 // Get the tab
-                tab = manager.GetCommandTab(type, title, createIfNotExist: true);
+                tab = manager.GetCommandTab(type, title, true);
 
                 // Keep track of this tab
                 mTabs.Add(new CommandManagerTabKey(title, type), tab);
@@ -472,7 +432,7 @@ namespace CADBooster.SolidDna
         private static void AddSeparators(List<CommandManagerItem> items, CommandManagerTab tab)
         {
             // Get the current tab box
-            var tabBox = (CommandTabBox) tab.Box.UnsafeObject;
+            var tabBox = (CommandTabBox)tab.Box.UnsafeObject;
 
             // Add a separator before each item that wants one
             var itemsThatNeedSeparator = items.Where(f => f.AddSeparatorBeforeThisItem).ToList();
@@ -485,31 +445,20 @@ namespace CADBooster.SolidDna
                 // Stop if the don't receive a new tab box. This can happen if not all items are visible in all model types.
                 if (newTabBox == null)
                     break;
-                
+
                 // Use the new tab box to create the next separator.
                 tabBox = newTabBox;
             }
         }
 
-        #endregion
-
-        #region ToString
-
         /// <summary>
         /// Returns a user-friendly string with group properties.
         /// </summary>
         /// <returns></returns>
-        public override string ToString()
-        {
-            return $"{Title}: {Items?.Count ?? 0} items, {Flyouts?.Count ?? 0} flyouts. Has menu: {HasMenu}. Has toolbar: {HasToolbar}";
-        }
-
-        #endregion
-
-        #region Dispose
+        public override string ToString() => $"{Title}: {Items?.Count ?? 0} items, {Flyouts?.Count ?? 0} flyouts. Has menu: {HasMenu}. Has toolbar: {HasToolbar}";
 
         /// <summary>
-        /// Disposing
+        /// Unsubscribe from callbacks and safely dispose the current '<see cref="CommandManagerGroup"/>'-object
         /// </summary>
         public override void Dispose()
         {
@@ -522,7 +471,5 @@ namespace CADBooster.SolidDna
 
             base.Dispose();
         }
-
-        #endregion
     }
 }

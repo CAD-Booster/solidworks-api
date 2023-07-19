@@ -414,7 +414,7 @@ namespace CADBooster.SolidDna
             });
 
             // If there are items to add...
-            if (ids?.Count > 0)
+            if (ids.Count > 0)
             {
                 // Add all the items
                 tab.Box.UnsafeObject.AddCommands(ids.ToArray(), styles.ToArray());

@@ -243,7 +243,7 @@ namespace CADBooster.SolidDna
             }
 
             // Log it
-            Logger.LogDebugSource($"Loaded {plugIns?.Count} plug-ins from {addinPath}");
+            Logger.LogDebugSource($"Loaded {plugIns.Count} plug-ins from {addinPath}");
 
             return plugIns;
         }

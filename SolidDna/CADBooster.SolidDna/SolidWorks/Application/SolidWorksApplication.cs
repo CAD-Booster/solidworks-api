@@ -687,7 +687,7 @@ namespace CADBooster.SolidDna
                     var materials = new List<Material>();
 
                     // Iterate all classification nodes and inside are the materials
-                    xmlDoc.Root.Elements("classification")?.ToList()?.ForEach(f =>
+                    xmlDoc.Root.Elements("classification").ToList().ForEach(f =>
                     {
                         // Get classification name
                         var classification = f.Attribute("name")?.Value;

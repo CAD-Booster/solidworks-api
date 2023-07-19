@@ -184,13 +184,13 @@ namespace CADBooster.SolidDna
         private void PlugInIntegration_CallbackFired(string name)
         {
             // Find the item, if any
-            var item = Items?.FirstOrDefault(f => f.CallbackId == name);
+            var item = Items.FirstOrDefault(f => f.CallbackId == name);
 
             // Call the action
             item?.OnClick?.Invoke();
 
             // Find the flyout, if any
-            var flyout = Flyouts?.FirstOrDefault(f => f.CallbackId == name);
+            var flyout = Flyouts.FirstOrDefault(f => f.CallbackId == name);
 
             // Call the action
             flyout?.OnClick?.Invoke();
@@ -225,13 +225,13 @@ namespace CADBooster.SolidDna
             SetIcons();
 
             // Add items
-            Items?.ForEach(AddCommandItem);
+            Items.ForEach(AddCommandItem);
 
             // Activate the command group
             mCreated = BaseObject.Activate();
 
             // Get command Ids
-            Items?.ForEach(item => item.CommandId = BaseObject.CommandID[item.Position]);
+            Items.ForEach(item => item.CommandId = BaseObject.CommandID[item.Position]);
 
             // Add items that are visible for parts
             AddItemsToTabForModelType(manager, ModelType.Part, AddDropdownBoxForParts);
@@ -325,14 +325,14 @@ namespace CADBooster.SolidDna
         private static List<CommandManagerItem> GetItemsForModelType(List<CommandManagerItem> items, ModelType modelType)
         {
             // Get the items that should be added to the tab
-            var itemsForAllModelTypes = items?.Where(f => f.AddToTab && f.TabView != CommandManagerItemTabView.None);
+            var itemsForAllModelTypes = items.Where(f => f.AddToTab && f.TabView != CommandManagerItemTabView.None);
 
             // Return the items for this model type
             switch (modelType)
             {
-                case ModelType.Part: return itemsForAllModelTypes?.Where(f => f.VisibleForParts).ToList();
-                case ModelType.Assembly: return itemsForAllModelTypes?.Where(f => f.VisibleForAssemblies).ToList();
-                case ModelType.Drawing: return itemsForAllModelTypes?.Where(f => f.VisibleForDrawings).ToList();
+                case ModelType.Part: return itemsForAllModelTypes.Where(f => f.VisibleForParts).ToList();
+                case ModelType.Assembly: return itemsForAllModelTypes.Where(f => f.VisibleForAssemblies).ToList();
+                case ModelType.Drawing: return itemsForAllModelTypes.Where(f => f.VisibleForDrawings).ToList();
                 default: throw new ArgumentException("Invalid model type for command manager items");
             }
         }
@@ -347,14 +347,14 @@ namespace CADBooster.SolidDna
         private static List<CommandManagerFlyout> GetFlyoutsForModelType(List<CommandManagerFlyout> flyouts, ModelType modelType)
         {
             // Get the flyouts that should be added to the tab
-            var flyoutsForAllModelTypes = flyouts?.Where(f => f.TabView != CommandManagerItemTabView.None);
+            var flyoutsForAllModelTypes = flyouts.Where(f => f.TabView != CommandManagerItemTabView.None);
 
             // Return the flyouts for this model type
             switch (modelType)
             {
-                case ModelType.Part: return flyoutsForAllModelTypes?.Where(f => f.VisibleForParts).ToList();
-                case ModelType.Assembly: return flyoutsForAllModelTypes?.Where(f => f.VisibleForAssemblies).ToList();
-                case ModelType.Drawing: return flyoutsForAllModelTypes?.Where(f => f.VisibleForDrawings).ToList();
+                case ModelType.Part: return flyoutsForAllModelTypes.Where(f => f.VisibleForParts).ToList();
+                case ModelType.Assembly: return flyoutsForAllModelTypes.Where(f => f.VisibleForAssemblies).ToList();
+                case ModelType.Drawing: return flyoutsForAllModelTypes.Where(f => f.VisibleForDrawings).ToList();
                 default: throw new ArgumentException("Invalid model type for command manager flyouts");
             }
         }
@@ -468,7 +468,7 @@ namespace CADBooster.SolidDna
         /// Returns a user-friendly string with group properties.
         /// </summary>
         /// <returns></returns>
-        public override string ToString() => $"{Title}: {Items?.Count ?? 0} items, {Flyouts?.Count ?? 0} flyouts. Has menu: {HasMenu}. Has toolbar: {HasToolbar}";
+        public override string ToString() => $"{Title}: {Items.Count} items, {Flyouts.Count} flyouts. Has menu: {HasMenu}. Has toolbar: {HasToolbar}";
 
         /// <summary>
         /// Unsubscribe from callbacks and safely dispose the current '<see cref="CommandManagerGroup"/>'-object

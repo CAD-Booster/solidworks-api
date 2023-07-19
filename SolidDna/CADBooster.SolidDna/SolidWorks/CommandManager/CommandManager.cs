@@ -64,6 +64,13 @@ namespace CADBooster.SolidDna
                 // Lock the list
                 lock (mCommandGroups)
                 {
+                    // Make sure both item lists are not null. Check it once here so we never have to check again.
+                    if (items == null)
+                        items = new List<CommandManagerItem>();
+
+                    if (flyoutItems == null)
+                        flyoutItems = new List<CommandManagerFlyout>();
+
                     // Create the command group
                     var group = CreateCommandGroup(title, items, flyoutItems, tooltip, hint, position, ignorePreviousVersion, hasMenu, hasToolbar, 
                                                    addDropdownBoxForParts, addDropdownBoxForAssemblies, addDropdownBoxForDrawings, documentTypes, iconListsPath, mainIconPath);
@@ -97,6 +104,10 @@ namespace CADBooster.SolidDna
         /// <returns></returns>
         public CommandManagerFlyout CreateFlyoutGroup(string title, List<CommandManagerItem> items, string pathFormat, string tooltip = "", string hint = "")
         {
+            // Make sure the item list is not null. Check it once here so we never have to check again.
+            if (items == null)
+                items = new List<CommandManagerItem>();
+            
             // Get icon paths
             var icons = Icons.GetPathArrayFromPathFormat(pathFormat);
 

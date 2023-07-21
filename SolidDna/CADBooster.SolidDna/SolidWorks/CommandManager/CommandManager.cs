@@ -25,7 +25,8 @@ namespace CADBooster.SolidDna
         private int mFlyoutIdCount = 1000;
 
         /// <summary>
-        /// Creates a command manager which let us create and access a custom toolbar(/tab/toolbar) or menu.
+        /// Creates a command manager which let us create and access custom toolbars/tabs/ribbons) and menus.
+        /// There is only one command manager per SolidWorks instance.
         /// </summary>
         public CommandManager(ICommandManager commandManager) : base(commandManager) { }
 

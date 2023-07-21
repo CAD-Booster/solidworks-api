@@ -3,7 +3,8 @@
 namespace CADBooster.SolidDna
 {
     /// <summary>
-    /// The <see cref="CommandManagerTab"/> class provides a way to manage and interact with command tabs, including the ability to create a corresponding <see cref="CommandManagerTabBox"/> and dispose of it correctly.
+    /// Provides a way to manage and interact with command tabs. By default, it has one <see cref="CommandManagerTabBox"/>.
+    /// When you add a separator, it splits the tab box into two.
     /// </summary>
     public class CommandManagerTab : SolidDnaObject<ICommandTab>
     {

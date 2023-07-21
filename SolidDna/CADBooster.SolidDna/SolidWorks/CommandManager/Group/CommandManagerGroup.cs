@@ -297,14 +297,14 @@ namespace CADBooster.SolidDna
             // Add items to a tab
             AddItemsToTab(modelType, manager, items, flyouts);
 
-            // Add dropdown box?
+            // Add dropdown box that contains all items created above.
             if (addDropDown)
             {
                 var commandManagerItems = new List<CommandManagerItem>
                 {
                     new CommandManagerItem
                     {
-                        // Use this groups toolbar ID
+                        // Use this groups toolbar ID so all items we just added also get added to the dropdown.
                         CommandId = BaseObject.ToolbarId,
                         // Default style to text below for now
                         TabView = CommandManagerItemTabView.IconWithTextBelow

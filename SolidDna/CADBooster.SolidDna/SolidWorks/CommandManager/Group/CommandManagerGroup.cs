@@ -77,19 +77,9 @@ namespace CADBooster.SolidDna
         public bool HasToolbar => BaseObject.HasToolbar;
 
         /// <summary>
-        /// The hint of this command group
-        /// </summary>
-        public string Hint { get; }
-
-        /// <summary>
         /// The type of documents to show this command group in as a menu
         /// </summary>
         public ModelTemplateType MenuVisibleInDocumentTypes => (ModelTemplateType)BaseObject.ShowInDocumentType;
-
-        /// <summary>
-        /// The title of this command group
-        /// </summary>
-        public string Title { get; }
 
         /// <summary>
         /// The tooltip of this command group
@@ -108,8 +98,6 @@ namespace CADBooster.SolidDna
         /// <param name="items">The command items to add</param>
         /// <param name="flyoutItems">The flyout command items that contain a list of other commands</param>
         /// <param name="userId">The unique Id this group was assigned with when created</param>
-        /// <param name="title">The title</param>
-        /// <param name="hint">The hint</param>
         /// <param name="tooltip">The tool tip</param>
         /// <param name="hasMenu">Whether the CommandGroup should appear in the Tools dropdown menu.</param>
         /// <param name="hasToolbar">Whether the CommandGroup should appear in the Command Manager and as a separate toolbar.</param>
@@ -119,7 +107,7 @@ namespace CADBooster.SolidDna
         /// <param name="documentTypes">The document types where this menu/toolbar is visible</param>
         /// <param name="iconListsPath">Absolute path to all icon sprites with including {0} for the image size</param>
         /// <param name="mainIconPath">Absolute path to all main icons with including {0} for the image size</param>
-        public CommandManagerGroup(ICommandGroup commandGroup, List<CommandManagerItem> items, List<CommandManagerFlyout> flyoutItems, int userId, string title, string hint,
+        public CommandManagerGroup(ICommandGroup commandGroup, List<CommandManagerItem> items, List<CommandManagerFlyout> flyoutItems, int userId, 
                                    string tooltip, bool hasMenu, bool hasToolbar, bool addDropdownBoxForParts, bool addDropdownBoxForAssemblies, bool addDropdownBoxForDrawings,
                                    ModelTemplateType documentTypes, string iconListsPath, string mainIconPath) : base(commandGroup)
         {
@@ -131,12 +119,6 @@ namespace CADBooster.SolidDna
 
             // Set flyouts
             Flyouts = flyoutItems;
-
-            // Set title
-            Title = title;
-
-            // Set hint
-            Hint = hint;
 
             // Set tooltip
             Tooltip = tooltip;
@@ -171,7 +153,8 @@ namespace CADBooster.SolidDna
         /// This group cannot be re-used after creating, any edits will not take place
         /// </summary>
         /// <param name="manager">The command manager that is our owner</param>
-        public void Create(CommandManager manager)
+        /// <param name="title"> </param>
+        public void Create(CommandManager manager, string title)
         {
             if (mCreated)
                 throw new SolidDnaException(SolidDnaErrors.CreateError(SolidDnaErrorTypeCode.SolidWorksCommandManager, SolidDnaErrorCode.SolidWorksCommandGroupReActivateError));
@@ -189,13 +172,13 @@ namespace CADBooster.SolidDna
             Items.ForEach(item => item.CommandId = BaseObject.CommandID[item.Position]);
 
             // Add items that are visible for parts
-            AddItemsToTabForModelType(manager, ModelType.Part, AddDropdownBoxForParts);
+            AddItemsToTabForModelType(manager, title, ModelType.Part, AddDropdownBoxForParts);
 
             // Add items that are visible for assemblies
-            AddItemsToTabForModelType(manager, ModelType.Assembly, AddDropdownBoxForAssemblies);
+            AddItemsToTabForModelType(manager, title, ModelType.Assembly, AddDropdownBoxForAssemblies);
 
             // Add items that are visible for drawings
-            AddItemsToTabForModelType(manager, ModelType.Drawing, AddDropdownBoxForDrawings);
+            AddItemsToTabForModelType(manager, title, ModelType.Drawing, AddDropdownBoxForDrawings);
 
             // If we failed to create, throw
             if (!mCreated)
@@ -291,9 +274,10 @@ namespace CADBooster.SolidDna
         /// Add all items and flyouts that are visible for the given model type to a tab.
         /// </summary>
         /// <param name="manager"></param>
+        /// <param name="title"> </param>
         /// <param name="modelType"></param>
         /// <param name="addDropDown"></param>
-        private void AddItemsToTabForModelType(CommandManager manager, ModelType modelType, bool addDropDown)
+        private void AddItemsToTabForModelType(CommandManager manager, string title, ModelType modelType, bool addDropDown)
         {
             // Get items for this model type
             var items = GetItemsForModelType(Items, modelType);
@@ -302,7 +286,7 @@ namespace CADBooster.SolidDna
             var flyouts = GetFlyoutsForModelType(Flyouts, modelType);
 
             // Add items to a tab
-            AddItemsToTab(modelType, manager, items, flyouts);
+            AddItemsToTab(modelType, manager, items, flyouts, title);
 
             // Add dropdown box that contains all items created above.
             if (addDropDown)
@@ -318,7 +302,7 @@ namespace CADBooster.SolidDna
                     }
                 };
 
-                AddItemsToTab(modelType, manager, commandManagerItems, new List<CommandManagerFlyout>());
+                AddItemsToTab(modelType, manager, commandManagerItems, new List<CommandManagerFlyout>(), title);
             }
         }
 
@@ -330,12 +314,8 @@ namespace CADBooster.SolidDna
         /// <param name="items">Items to add</param>
         /// <param name="flyouts">Flyout Items to add</param>
         /// <param name="title">The title of the tab</param>
-        private void AddItemsToTab(ModelType type, CommandManager manager, List<CommandManagerItem> items, List<CommandManagerFlyout> flyouts, string title = "")
+        private void AddItemsToTab(ModelType type, CommandManager manager, List<CommandManagerItem> items, List<CommandManagerFlyout> flyouts, string title)
         {
-            // Use default title if not specified
-            if (string.IsNullOrEmpty(title))
-                title = Title;
-
             // New list of values
             var ids = new List<int>();
             var styles = new List<int>();
@@ -456,7 +436,7 @@ namespace CADBooster.SolidDna
         /// Returns a user-friendly string with group properties.
         /// </summary>
         /// <returns></returns>
-        public override string ToString() => $"{Title}: {Items.Count} items, {Flyouts.Count} flyouts. Has menu: {HasMenu}. Has toolbar: {HasToolbar}";
+        public override string ToString() => $"Group with {Items.Count} items and {Flyouts.Count} flyouts. Has menu: {HasMenu}. Has toolbar: {HasToolbar}";
 
         /// <summary>
         /// Unsubscribe from callbacks and safely dispose the current '<see cref="CommandManagerGroup"/>'-object

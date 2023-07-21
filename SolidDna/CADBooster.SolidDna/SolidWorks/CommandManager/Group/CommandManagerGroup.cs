@@ -311,7 +311,7 @@ namespace CADBooster.SolidDna
                     }
                 };
 
-                AddItemsToTab(modelType, manager, commandManagerItems, null);
+                AddItemsToTab(modelType, manager, commandManagerItems, new List<CommandManagerFlyout>());
             }
         }
 
@@ -378,7 +378,7 @@ namespace CADBooster.SolidDna
             var styles = new List<int>();
 
             // Add each items Id and style
-            items?.ForEach(item =>
+            items.ForEach(item =>
             {
                 // Add command Id
                 ids.Add(item.CommandId);
@@ -387,7 +387,7 @@ namespace CADBooster.SolidDna
                 styles.Add((int)item.TabView);
             });
 
-            flyouts?.ForEach(item =>
+            flyouts.ForEach(item =>
             {
                 // Add command Id
                 ids.Add(item.CommandId);

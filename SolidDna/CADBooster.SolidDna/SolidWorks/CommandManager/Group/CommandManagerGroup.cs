@@ -51,67 +51,55 @@ namespace CADBooster.SolidDna
         /// <summary>
         /// The title of this command group
         /// </summary>
-        public string Title { get; set; }
+        public string Title { get; }
 
         /// <summary>
         /// The hint of this command group
         /// </summary>
-        public string Hint { get; set; }
+        public string Hint { get; }
 
         /// <summary>
         /// The tooltip of this command group
         /// </summary>
-        public string Tooltip { get; set; }
+        public string Tooltip { get; }
 
         /// <summary>
         /// If true, adds a command box to the toolbar for parts that has a dropdown
         /// of all commands that are part of this group. The tooltip of the command 
         /// group is used as the name.
         /// </summary>
-        public bool AddDropdownBoxForParts { get; set; }
+        public bool AddDropdownBoxForParts { get; }
 
         /// <summary>
         /// If true, adds a command box to the toolbar for assemblies that has a dropdown
         /// of all commands that are part of this group. The tooltip of the command 
         /// group is used as the name.
         /// </summary>
-        public bool AddDropdownBoxForAssemblies { get; set; }
+        public bool AddDropdownBoxForAssemblies { get; }
 
         /// <summary>
         /// If true, adds a command box to the toolbar for drawings that has a dropdown
         /// of all commands that are part of this group. The tooltip of the command 
         /// group is used as the name.
         /// </summary>
-        public bool AddDropdownBoxForDrawings { get; set; }
+        public bool AddDropdownBoxForDrawings { get; }
 
         /// <summary>
         /// The type of documents to show this command group in as a menu
         /// </summary>
-        public ModelTemplateType MenuVisibleInDocumentTypes
-        {
-            get => (ModelTemplateType)BaseObject.ShowInDocumentType;
-            set => BaseObject.ShowInDocumentType = (int)value;
-        }
+        public ModelTemplateType MenuVisibleInDocumentTypes => (ModelTemplateType)BaseObject.ShowInDocumentType;
 
         /// <summary>
         /// Whether this command group has a Menu.
         /// NOTE: The menu is the regular drop-down menu like File, Edit, View etc...
         /// </summary>
-        public bool HasMenu
-        {
-            get => BaseObject.HasMenu;
-            set => BaseObject.HasMenu = value;
-        }
+        public bool HasMenu => BaseObject.HasMenu;
 
         /// <summary>
         /// Whether this command group has a Toolbar.
         /// NOTE: The toolbar is the small icons like the top-left SolidWorks menu New, Save, Open etc...
         /// </summary>
-        public bool HasToolbar
-        {
-            get => BaseObject.HasToolbar;
-            set => BaseObject.HasToolbar = value;
-        }
+        public bool HasToolbar => BaseObject.HasToolbar;
 
         /// <summary>
         /// Creates a command manager group with all its belonging information such as title, userID, hints, tooltips and icons.
@@ -154,13 +142,13 @@ namespace CADBooster.SolidDna
             Tooltip = tooltip;
 
             // Show for certain types of documents, or when no document is active.
-            MenuVisibleInDocumentTypes = documentTypes;
+            BaseObject.ShowInDocumentType = (int) documentTypes;
 
             // Have a menu
-            HasMenu = hasMenu;
+            BaseObject.HasMenu = hasMenu;
 
             // Have a toolbar
-            HasToolbar = hasToolbar;
+            BaseObject.HasToolbar = hasToolbar;
 
             // Dropdowns
             AddDropdownBoxForParts = addDropdownBoxForParts;

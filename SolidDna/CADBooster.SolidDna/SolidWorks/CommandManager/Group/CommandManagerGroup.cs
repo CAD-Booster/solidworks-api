@@ -255,18 +255,18 @@ namespace CADBooster.SolidDna
             // Get items for this model type
             var items = GetItemsForModelType(Items, modelType);
 
+            // Split the items into a list of lists, split at the separator
+            var itemsPerTabBox = SplitItemsAtSeparator(items);
+
             // Get flyouts for this model type
             var flyouts = GetFlyoutsForModelType(Flyouts, modelType);
-
-            // Split total items list into multiple sub lists at each separator
-            var separatedItemsLists = SplitItemsAtSeparator(items);
 
             // Get the tab
             var tab = GetNewOrExistingCommandManagerTab(modelType, manager, title);
 
             // Add all lists within separatedItemsLists to the tab
-            foreach (var subItemsList in separatedItemsLists)
-                AddItemsToTab(tab, subItemsList, flyouts);
+            foreach (var subItems in itemsPerTabBox)
+                AddItemsToTab(tab, subItems, flyouts);
 
             // Add dropdown box that contains all items created above.
             if (addDropDown)
@@ -286,33 +286,32 @@ namespace CADBooster.SolidDna
         }
 
         /// <summary>
-        /// Split total items list into multiple sub lists at each separator.
+        /// Split a list of items at the separator.
         /// </summary>
         /// <param name="items"></param>
         /// <returns></returns>
         private static List<List<CommandManagerItem>> SplitItemsAtSeparator(List<CommandManagerItem> items)
         {
-            var results = new List<List<CommandManagerItem>>();
             var currentList = new List<CommandManagerItem>();
-            
-            // Add the currentList always to results so we don't have to this on the end, if we don't do this, the results are wrong and one list isn't added.
-            results.Add(currentList);
+            var results = new List<List<CommandManagerItem>> { currentList };  // Always add the first list
 
             // Loop through each item in the original list.
             foreach (var item in items)
             {
-                // Check if the current item has the AddSeparatorBeforeThisItem property set to true and the current list is not empty.
+                // Check if we should start a new list because we need a separator
                 if (item.AddSeparatorBeforeThisItem && currentList.Count > 0)
                 {
-                    // Start a new list for the next sublist.
+                    // Start a new list
                     currentList = new List<CommandManagerItem>();
 
-                    // Add the newly created list to the results list.
+                    // Add the newly created list to the results list
                     results.Add(currentList); 
                 }
-                // Add the current item to the current sublist.
+
+                // Always add the current item to the current list
                 currentList.Add(item);
             }
+
             return results;
         }
 
@@ -321,7 +320,7 @@ namespace CADBooster.SolidDna
         /// </summary>
         /// <param name="tab"></param>
         /// <param name="items">Items to add</param>
-        /// <param name="flyouts">Flyout Items to add</param>
+        /// <param name="flyouts">Flyouts to add</param>
         private static void AddItemsToTab(CommandManagerTab tab, List<CommandManagerItem> items, List<CommandManagerFlyout> flyouts)
         {
             // New list of values
@@ -356,7 +355,7 @@ namespace CADBooster.SolidDna
                         SolidDnaErrorCode.SolidWorksCommandGroupCreateTabBoxError));
 
                 tab.TabBoxes.Add(new CommandManagerTabBox(tabBox));
-                var _ = tabBox.AddCommands(ids.ToArray(), styles.ToArray());
+                tabBox.AddCommands(ids.ToArray(), styles.ToArray());
             }
         }
 

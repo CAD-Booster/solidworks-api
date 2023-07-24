@@ -186,33 +186,6 @@ namespace CADBooster.SolidDna
         }
 
         /// <summary>
-        /// Add a separator before each <see cref="CommandManagerItem"/> that needs one.
-        /// </summary>
-        /// <param name="items"></param>
-        /// <param name="tab"></param>
-        private static void AddSeparators(List<CommandManagerItem> items, CommandManagerTab tab)
-        {
-            // Get the current tab box
-            var tabBox = (CommandTabBox)tab.Box.UnsafeObject;
-
-            // Add a separator before each item that wants one
-            var itemsThatNeedSeparator = items.Where(f => f.AddSeparatorBeforeThisItem).ToList();
-            foreach (var item in itemsThatNeedSeparator)
-            {
-                // Add the separator and split the current tab box in two.
-                // Returns the newly created tab box that contains the current items and all items on the right of it.
-                var newTabBox = tab.UnsafeObject.AddSeparator(tabBox, item.CommandId);
-
-                // Stop if the don't receive a new tab box. This can happen if not all items are visible in all model types.
-                if (newTabBox == null)
-                    break;
-
-                // Use the new tab box to create the next separator.
-                tabBox = newTabBox;
-            }
-        }
-
-        /// <summary>
         /// Get the command manager flyouts for a model type.
         /// </summary>
         /// <param name="flyouts"></param>
@@ -285,8 +258,15 @@ namespace CADBooster.SolidDna
             // Get flyouts for this model type
             var flyouts = GetFlyoutsForModelType(Flyouts, modelType);
 
-            // Add items to a tab
-            AddItemsToTab(modelType, manager, items, flyouts, title);
+            // Split total items list into multiple sub lists at each separator
+            var separatedItemsLists = SplitItemsAtSeparator(items);
+
+            // Get the tab
+            var tab = GetNewOrExistingCommandManagerTab(modelType, manager, title);
+
+            // Add all lists within separatedItemsLists to the tab
+            foreach (var subItemsList in separatedItemsLists)
+                AddItemsToTab(tab, subItemsList, flyouts);
 
             // Add dropdown box that contains all items created above.
             if (addDropDown)
@@ -301,55 +281,82 @@ namespace CADBooster.SolidDna
                         TabView = CommandManagerItemTabView.IconWithTextBelow
                     }
                 };
-
-                AddItemsToTab(modelType, manager, commandManagerItems, new List<CommandManagerFlyout>(), title);
+                AddItemsToTab(tab, commandManagerItems, new List<CommandManagerFlyout>());
             }
+        }
+
+        /// <summary>
+        /// Split total items list into multiple sub lists at each separator.
+        /// </summary>
+        /// <param name="items"></param>
+        /// <returns></returns>
+        private static List<List<CommandManagerItem>> SplitItemsAtSeparator(List<CommandManagerItem> items)
+        {
+            var results = new List<List<CommandManagerItem>>();
+            var currentList = new List<CommandManagerItem>();
+            
+            // Add the currentList always to results so we don't have to this on the end, if we don't do this, the results are wrong and one list isn't added.
+            results.Add(currentList);
+
+            // Loop through each item in the original list.
+            foreach (var item in items)
+            {
+                // Check if the current item has the AddSeparatorBeforeThisItem property set to true and the current list is not empty.
+                if (item.AddSeparatorBeforeThisItem && currentList.Count > 0)
+                {
+                    // Start a new list for the next sublist.
+                    currentList = new List<CommandManagerItem>();
+
+                    // Add the newly created list to the results list.
+                    results.Add(currentList); 
+                }
+                // Add the current item to the current sublist.
+                currentList.Add(item);
+            }
+            return results;
         }
 
         /// <summary>
         /// Adds all <see cref="Items"/> to the command tab of the given title and model type
         /// </summary>
-        /// <param name="type">The tab for this type of model</param>
-        /// <param name="manager">The command manager</param>
+        /// <param name="tab"></param>
         /// <param name="items">Items to add</param>
         /// <param name="flyouts">Flyout Items to add</param>
-        /// <param name="title">The title of the tab</param>
-        private void AddItemsToTab(ModelType type, CommandManager manager, List<CommandManagerItem> items, List<CommandManagerFlyout> flyouts, string title)
+        private static void AddItemsToTab(CommandManagerTab tab, List<CommandManagerItem> items, List<CommandManagerFlyout> flyouts)
         {
             // New list of values
             var ids = new List<int>();
             var styles = new List<int>();
 
             // Add each items Id and style
-            items.ForEach(item =>
+            foreach (var item in items)
             {
                 // Add command Id
                 ids.Add(item.CommandId);
 
                 // Add style
                 styles.Add((int)item.TabView);
-            });
+            }
 
-            flyouts.ForEach(item =>
+            foreach (var flyout in flyouts)
             {
                 // Add command Id
-                ids.Add(item.CommandId);
+                ids.Add(flyout.CommandId);
 
                 // Add style
-                styles.Add((int)item.TabView | (int)swCommandTabButtonFlyoutStyle_e.swCommandTabButton_ActionFlyout);
-            });
+                styles.Add((int)flyout.TabView | (int)swCommandTabButtonFlyoutStyle_e.swCommandTabButton_ActionFlyout);
+            }
 
             // If there are items to add...
             if (ids.Count > 0)
             {
-                // Get the tab
-                var tab = GetNewOrExistingCommandManagerTab(type, manager, title);
+                // Create new tab box
+                var tabBox = tab.UnsafeObject.AddCommandTabBox() ?? throw new SolidDnaException(SolidDnaErrors.CreateError(
+                        SolidDnaErrorTypeCode.SolidWorksCommandManager,
+                        SolidDnaErrorCode.SolidWorksCommandGroupCreateTabBoxError));
 
-                // Add all the items
-                tab.Box.UnsafeObject.AddCommands(ids.ToArray(), styles.ToArray());
-
-                // Add a separator before each item that wants one.
-                AddSeparators(items, tab);
+                tab.TabBoxes.Add(new CommandManagerTabBox(tabBox));
+                var _ = tabBox.AddCommands(ids.ToArray(), styles.ToArray());
             }
         }
 

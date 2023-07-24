@@ -213,6 +213,11 @@
         /// </summary>
         SolidWorksCommandFlyoutReActivateError = 12007,
 
+        /// <summary>
+        /// There was an error while trying to create a new tab box within a tab.
+        /// </summary>
+        SolidWorksCommandGroupCreateTabBoxError = 12008,
+
         #endregion
 
         #region Export Data (13,000)

@@ -87,6 +87,6 @@ namespace CADBooster.SolidDna
         /// Returns a user-friendly string with group properties.
         /// </summary>
         /// <returns></returns>
-        public override string ToString() => $"Name: {Name}. Position: {Position}. Image index: {ImageIndex}. Hint: {Hint}. Tooltip: {Tooltip} ";
+        public override string ToString() => $"Name: {Name}. CommandID: {CommandId}. Position: {Position}. Image index: {ImageIndex}. Hint: {Hint}. Tooltip: {Tooltip} ";
     }
 }

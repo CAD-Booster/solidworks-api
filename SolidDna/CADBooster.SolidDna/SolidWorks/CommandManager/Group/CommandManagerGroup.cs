@@ -168,7 +168,7 @@ namespace CADBooster.SolidDna
             // Activate the command group
             mCreated = BaseObject.Activate();
 
-            // Get command Ids
+            // Get command Ids, this is where our IDs will be replaced for solidworks generated IDs
             Items.ForEach(item => item.CommandId = BaseObject.CommandID[item.Position]);
 
             // Add items that are visible for parts

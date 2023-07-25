@@ -1,5 +1,5 @@
-﻿using SolidWorks.Interop.sldworks;
-using SolidWorks.Interop.swconst;
+﻿using CADBooster.SolidDna.SolidWorks.CommandManager.Tab;
+using SolidWorks.Interop.sldworks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -323,40 +323,31 @@ namespace CADBooster.SolidDna
         /// <param name="flyouts">Flyouts to add</param>
         private static void AddItemsToTab(CommandManagerTab tab, List<CommandManagerItem> items, List<CommandManagerFlyout> flyouts)
         {
-            // New list of values
-            var ids = new List<int>();
-            var styles = new List<int>();
+            // Initiate new list of values
+            var tabItemDataList = new List<TabItemData>();
 
-            // Add each items Id and style
-            foreach (var item in items)
-            {
-                // Add command Id
-                ids.Add(item.CommandId);
+            // Add each item id and style
+            tabItemDataList.AddRange(items.Select(item => new TabItemData(item)));
 
-                // Add style
-                styles.Add((int)item.TabView);
-            }
+            // Add each flyout id and combined styles
+            tabItemDataList.AddRange(flyouts.Select(flyout => new TabItemData(flyout)));
 
-            foreach (var flyout in flyouts)
-            {
-                // Add command Id
-                ids.Add(flyout.CommandId);
+            // If there are items to add, do something.. 
+            if (tabItemDataList.Count <= 0) return;
 
-                // Add style
-                styles.Add((int)flyout.TabView | (int)swCommandTabButtonFlyoutStyle_e.swCommandTabButton_ActionFlyout);
-            }
+            // Create new tab box
+            var tabBox = tab.UnsafeObject.AddCommandTabBox() ?? throw new SolidDnaException(SolidDnaErrors.CreateError(
+                SolidDnaErrorTypeCode.SolidWorksCommandManager,
+                SolidDnaErrorCode.SolidWorksCommandGroupCreateTabBoxError));
 
-            // If there are items to add...
-            if (ids.Count > 0)
-            {
-                // Create new tab box
-                var tabBox = tab.UnsafeObject.AddCommandTabBox() ?? throw new SolidDnaException(SolidDnaErrors.CreateError(
-                        SolidDnaErrorTypeCode.SolidWorksCommandManager,
-                        SolidDnaErrorCode.SolidWorksCommandGroupCreateTabBoxError));
+            // Add new tab-box to collection of tab-boxes.
+            tab.TabBoxes.Add(new CommandManagerTabBox(tabBox));
 
-                tab.TabBoxes.Add(new CommandManagerTabBox(tabBox));
-                tabBox.AddCommands(ids.ToArray(), styles.ToArray());
-            }
+            // Convert the list of TabData to arrays of ids and styles
+            var ids = tabItemDataList.Select(tabData => tabData.Id).ToArray();
+            var styles = tabItemDataList.Select(tabData => tabData.Style).ToArray();
+
+            tabBox.AddCommands(ids, styles);
         }
 
         /// <summary>

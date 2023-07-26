@@ -25,7 +25,7 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-	<Resource Include="Resources\Cancel.png" />
+    <Resource Include="Resources\Cancel.png" />
     <Resource Include="Resources\favicon.ico" />
     <Resource Include="Resources\Plus.png" />
     <Resource Include="Resources\Trash.png" />

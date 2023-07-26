@@ -74,8 +74,10 @@ namespace AngelSix.SolidWorksApi.IconGeneator
                             Console.WriteLine($"Image not found '{result}'");
                         }
                         else
+                        {
                             // Add this to the list and carry on
                             images.Add(result);
+                        }
                     }
                     else
                     {
@@ -86,26 +88,25 @@ namespace AngelSix.SolidWorksApi.IconGeneator
 
                 // Get filename to append
                 Console.ResetColor();
-                Console.WriteLine($"Enter the name to prepend to the output files");
+                Console.WriteLine("Enter the name to prepend to the output files");
                 filenamePrepend = Console.ReadLine();
             }
 
-            // Now create an image from each of the iamges, for each file size
+            // Now create an image from each of the images, for each file size
             possibleSizes.ForEach(size =>
             {
                 // Check all files exist
                 if (images.Any(image => !File.Exists(image)))
                 {
-                    Console.WriteLine($"One or more of the files do not exist. Press enter to exit");
-                    Console.ReadLine();
+                    Console.WriteLine("One or more of the files do not exist. Press enter to exit");
+                    var unused = Console.ReadLine();
                     return;
                 }
 
                 // Combine all bitmaps
-                using (var combinedImage = CombineBitmap(images, size))
-                {
-                    combinedImage.Save($"{filenamePrepend}{size}.png");
-                }
+                using var combinedImage = CombineBitmap(images, size);
+                if (combinedImage == null) return;
+                combinedImage.Save($"{filenamePrepend}{size}.png");
             });
         }
 
@@ -117,19 +118,15 @@ namespace AngelSix.SolidWorksApi.IconGeneator
         private static string NthNumber(int number)
         {
             // Base10 the number
-            number = number % 10;
+            number %= 10;
 
-            switch (number)
+            return number switch
             {
-                case 1:
-                    return $"{number}st";
-                case 2:
-                    return $"{number}nd";
-                case 3:
-                    return $"{number}rd";
-                default:
-                    return $"{number}th";
-            }
+                1 => $"{number}st",
+                2 => $"{number}nd",
+                3 => $"{number}rd",
+                _ => $"{number}th",
+            };
         }
 
         /// <summary>
@@ -147,37 +144,35 @@ namespace AngelSix.SolidWorksApi.IconGeneator
             try
             {
                 // Get size
-                int width = iconSize * files.Count;
-                int height = iconSize;
+                var width = iconSize * files.Count;
+                var height = iconSize;
 
                 // Create a bitmap to hold the combined image
                 finalImage = new Bitmap(width, height);
 
                 // Get a graphics object from the image so we can draw on it
-                using (var g = Graphics.FromImage(finalImage))
+                using var g = Graphics.FromImage(finalImage);
+                // Set background color
+                g.Clear(Color.Transparent);
+
+                // Go through each image and draw it on the final image
+                var offset = 0;
+                files.ForEach(file =>
                 {
-                    // Set background color
-                    g.Clear(Color.Transparent);
+                    // Read this image
+                    var bitmap = new Bitmap(file);
+                    images.Add(bitmap);
 
-                    // Go through each image and draw it on the final image
-                    int offset = 0;
-                    files.ForEach(file =>
-                    {
-                        // Read this image
-                        var bitmap = new Bitmap(file);
-                        images.Add(bitmap);
+                    // Scale it to the sprite size
+                    var scaleFactor = (float)iconSize / Math.Max(bitmap.Width, bitmap.Height);
 
-                        // Scale it to the sprite size
-                        var scaleFactor = (float)iconSize / Math.Max(bitmap.Width, bitmap.Height);
+                    // Draw it onto the new image
+                    g.DrawImage(bitmap, new Rectangle(offset, 0, (int)(scaleFactor * bitmap.Width), (int)(scaleFactor * bitmap.Height)));
 
-                        // Draw it onto the new image
-                        g.DrawImage(bitmap, new Rectangle(offset, 0, (int)(scaleFactor * bitmap.Width), (int)(scaleFactor * bitmap.Height)));
+                    // Move offset to next position
+                    offset += iconSize;                       
 
-                        // Move offset to next position
-                        offset += iconSize;                       
-
-                    });
-                }
+                });
 
                 // Return the final image
                 return finalImage;

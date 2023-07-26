@@ -1,9 +1,9 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AngelSix.SolidWorks.BlankAddin", "AngelSix.SolidWorks.BlankAddin.csproj", "{3893762A-3CF1-46D5-81B8-245C0659D2BB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AngelSix.SolidWorks.BlankAddin", "AngelSix.SolidWorks.BlankAddin.csproj", "{3893762A-3CF1-46D5-81B8-245C0659D2BB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

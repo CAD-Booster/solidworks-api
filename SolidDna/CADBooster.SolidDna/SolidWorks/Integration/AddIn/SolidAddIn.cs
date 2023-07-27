@@ -127,7 +127,8 @@ namespace CADBooster.SolidDna
         #region SolidWorks Add-in Callbacks
 
         /// <summary>
-        /// Used to pass a callback message onto our plug-ins
+        /// Important to know is that this features is used, even if VS thinks its not. Its Used to pass a callback message onto our plug-ins.
+        /// Its called from <see cref="CommandManagerGroup.AddCommandItem"/> and <see cref="CommandManagerFlyout.AddCommandItem"/> as strings.
         /// </summary>
         /// <param name="arg"></param>
         public void Callback(string arg)

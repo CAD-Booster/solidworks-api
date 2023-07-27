@@ -236,7 +236,7 @@ namespace CADBooster.SolidDna
         private void AddCommandItem(CommandManagerItem item)
         {
             // Add the item. We pass a preferred position for each item and receive the actual position back.
-            var actualPosition = BaseObject.AddCommandItem2(item.Name, item.Position, item.Hint, item.Tooltip, item.ImageIndex, $"Callback({item.CallbackId})", null, UserId, (int)item.ItemType);
+            var actualPosition = BaseObject.AddCommandItem2(item.Name, item.Position, item.Hint, item.Tooltip, item.ImageIndex, $"{nameof(SolidAddIn.Callback)}({item.CallbackId})", null, UserId, (int)item.ItemType);
 
             // Store the actual ID / position we receive. If we have multiple items and, for example, set each position at the default -1, we receive sequential numbers, starting at 0.
             // Starts at zero for each command manager tab / ribbon.

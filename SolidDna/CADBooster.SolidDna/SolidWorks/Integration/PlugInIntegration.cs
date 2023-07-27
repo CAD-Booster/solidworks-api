@@ -109,7 +109,7 @@ namespace CADBooster.SolidDna
         #region SolidWorks Callbacks
 
         /// <summary>
-        /// Called by the SolidWorks domain (<see cref="SolidAddIn"/>) when a callback is fired
+        /// Called by the SolidWorks domain (<see cref="SolidAddIn"/>) when a callback is fired when a user clicks a command manager item or flyout.
         /// </summary>
         /// <param name="name">The parameter passed into the generic callback</param>
         public void OnCallback(string name)

@@ -137,6 +137,9 @@ namespace CADBooster.SolidDna
         {
             // Add the item and receive the actual position.
             var actualPosition = BaseObject.AddCommandItem(item.Name, item.Hint, item.ImageIndex, $"{nameof(SolidAddIn.Callback)}({item.CallbackId})", null);
+            if (actualPosition == -1)
+                throw new SolidDnaException(SolidDnaErrors.CreateError(SolidDnaErrorTypeCode.SolidWorksCommandManager, 
+                    SolidDnaErrorCode.SolidWorksCommandFlyoutPositionError, "Can be caused by setting the image indexes wrong."));
 
             // Store the actual ID / position we receive. 
             // Starts at zero for each command manager tab / ribbon. Todo is this true just like it is for CommandManagerGroup?

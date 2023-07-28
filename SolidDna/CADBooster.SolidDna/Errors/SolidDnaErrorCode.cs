@@ -218,6 +218,11 @@
         /// </summary>
         SolidWorksCommandGroupCreateTabBoxError = 12008,
 
+        /// <summary>
+        /// There was an error while trying to set the position of a flyout. Can be caused by setting the wrong image indexes.
+        /// </summary>
+        SolidWorksCommandFlyoutPositionError = 12009,
+
         #endregion
 
         #region Export Data (13,000)

@@ -101,6 +101,7 @@ namespace CADBooster.SolidDna
         /// <param name="tooltip">Tool tip for the new flyout</param>
         /// <param name="hint">Text displayed in SOLIDWORKS status bar when a user's mouse pointer is over the flyout</param>
         /// <returns></returns>
+        [Obsolete("Replaced by CreateFlyoutGroup2, which allows you to set separate icon lists for the main icon and underlying command icons.")]
         public CommandManagerFlyout CreateFlyoutGroup(string title, List<CommandManagerItem> items, string pathFormat, string tooltip = "", string hint = "")
         {
             // Make sure the item list is not null. Check it once here so we never have to check again.
@@ -115,6 +116,41 @@ namespace CADBooster.SolidDna
 
             // Attempt to create the command flyout
             var unsafeCommandFlyout = BaseObject.CreateFlyoutGroup2(mFlyoutIdCount, title, tooltip, hint, icons, icons, $"Callback({callbackId})", null);
+
+            // Create managed object
+            var flyout = new CommandManagerFlyout(unsafeCommandFlyout, mFlyoutIdCount++, callbackId, items, title, hint, tooltip);
+
+            // Return it
+            return flyout;
+        }
+
+        /// <summary>
+        /// Create a command group flyout containing a list of <see cref="CommandManagerItem"/> items. This is the newer version of
+        /// <see cref="CreateFlyoutGroup"/>, and makes it possible to add the main icons separately from the underlying commands.
+        /// <paramref name="flyoutIconsPath"/> is the main icon for the flyout on the toolbar its self. <paramref name="commandIconsPath"/> contains the icons for all the underlying commands.
+        /// </summary>
+        /// <param name="title">Name of the flyout to create</param>
+        /// <param name="items">The command items to add</param>
+        /// <param name="flyoutIconsPath">The flyout icon list's absolute path using a string format with {0} representing the size, like: C:\Folder\flyoutIcons{0}.png.</param>
+        /// <param name="commandIconsPath">The command icon list's absolute path using a string format with {0} representing the size, like: C:\Folder\commandIcons{0}.png.</param>
+        /// <param name="tooltip">Tool tip for the new flyout</param>
+        /// <param name="hint">Text displayed in SOLIDWORKS status bar when a user's mouse pointer is over the flyout</param>
+        /// <returns></returns>
+        public CommandManagerFlyout CreateFlyoutGroup2(string title, List<CommandManagerItem> items, string flyoutIconsPath, string commandIconsPath, string tooltip = "", string hint = "")
+        {
+            // Make sure the item list is not null. Check it once here so we never have to check again.
+            if (items == null)
+                items = new List<CommandManagerItem>();
+
+            // Get icon paths
+            var flyoutIcons = Icons.GetPathArrayFromPathFormat(flyoutIconsPath);
+            var commandIcons = Icons.GetPathArrayFromPathFormat(commandIconsPath);
+
+            // Create unique callback Id
+            var callbackId = Guid.NewGuid().ToString("N");
+
+            // Attempt to create the command flyout
+            var unsafeCommandFlyout = BaseObject.CreateFlyoutGroup2(mFlyoutIdCount, title, tooltip, hint, flyoutIcons, commandIcons, $"Callback({callbackId})", null);
 
             // Create managed object
             var flyout = new CommandManagerFlyout(unsafeCommandFlyout, mFlyoutIdCount++, callbackId, items, title, hint, tooltip);

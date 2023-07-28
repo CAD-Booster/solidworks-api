@@ -1,9 +1,4 @@
 ﻿using SolidWorks.Interop.swconst;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CADBooster.SolidDna.SolidWorks.CommandManager.Tab
 {

@@ -345,7 +345,7 @@ namespace CADBooster.SolidDna
 
             // Convert the list of TabData to arrays of ids and styles
             var ids = tabItemDataList.Select(tabData => tabData.Id).ToArray();
-            var styles = tabItemDataList.Select(tabData => tabData.Style).ToArray();
+            var styles = tabItemDataList.Select(tabData => (int)tabData.Style).ToArray();
 
             tabBox.AddCommands(ids, styles);
         }

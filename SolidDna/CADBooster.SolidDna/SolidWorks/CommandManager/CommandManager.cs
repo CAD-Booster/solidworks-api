@@ -102,27 +102,7 @@ namespace CADBooster.SolidDna
         /// <param name="hint">Text displayed in SOLIDWORKS status bar when a user's mouse pointer is over the flyout</param>
         /// <returns></returns>
         [Obsolete("Replaced by CreateFlyoutGroup2, which allows you to set separate icon lists for the main icon and underlying command icons.")]
-        public CommandManagerFlyout CreateFlyoutGroup(string title, List<CommandManagerItem> items, string pathFormat, string tooltip = "", string hint = "")
-        {
-            // Make sure the item list is not null. Check it once here so we never have to check again.
-            if (items == null)
-                items = new List<CommandManagerItem>();
-            
-            // Get icon paths
-            var icons = Icons.GetPathArrayFromPathFormat(pathFormat);
-
-            // Create unique callback Id
-            var callbackId = Guid.NewGuid().ToString("N");
-
-            // Attempt to create the command flyout
-            var unsafeCommandFlyout = BaseObject.CreateFlyoutGroup2(mFlyoutIdCount, title, tooltip, hint, icons, icons, $"{nameof(SolidAddIn.Callback)}({callbackId})", null);
-
-            // Create managed object
-            var flyout = new CommandManagerFlyout(unsafeCommandFlyout, mFlyoutIdCount++, callbackId, items, title, hint, tooltip);
-
-            // Return it
-            return flyout;
-        }
+        public CommandManagerFlyout CreateFlyoutGroup(string title, List<CommandManagerItem> items, string pathFormat, string tooltip = "", string hint = "") => CreateFlyoutGroup2(title, items, pathFormat, pathFormat, tooltip, hint);
 
         /// <summary>
         /// Create a command group flyout containing a list of <see cref="CommandManagerItem"/> items. This is the newer version of

@@ -44,27 +44,6 @@ namespace CADBooster.SolidDna
         private List<CommandManagerFlyout> Flyouts { get; }
 
         /// <summary>
-        /// If true, adds a command box to the toolbar for assemblies that has a dropdown
-        /// of all commands that are part of this group. The tooltip of the command 
-        /// group is used as the name.
-        /// </summary>
-        public bool AddDropdownBoxForAssemblies { get; }
-
-        /// <summary>
-        /// If true, adds a command box to the toolbar for drawings that has a dropdown
-        /// of all commands that are part of this group. The tooltip of the command 
-        /// group is used as the name.
-        /// </summary>
-        public bool AddDropdownBoxForDrawings { get; }
-
-        /// <summary>
-        /// If true, adds a command box to the toolbar for parts that has a dropdown
-        /// of all commands that are part of this group. The tooltip of the command 
-        /// group is used as the name.
-        /// </summary>
-        public bool AddDropdownBoxForParts { get; }
-
-        /// <summary>
         /// Whether this command group has a Menu.
         /// NOTE: The menu is the regular drop-down menu like File, Edit, View etc...
         /// </summary>
@@ -101,15 +80,11 @@ namespace CADBooster.SolidDna
         /// <param name="tooltip">The tool tip</param>
         /// <param name="hasMenu">Whether the CommandGroup should appear in the Tools dropdown menu.</param>
         /// <param name="hasToolbar">Whether the CommandGroup should appear in the Command Manager and as a separate toolbar.</param>
-        /// <param name="addDropdownBoxForParts">If true, adds a command box to the toolbar for parts that has a dropdown of all commands that are part of this group. The tooltip of the command group is used as the name.</param>
-        /// <param name="addDropdownBoxForAssemblies">If true, adds a command box to the toolbar for assemblies that has a dropdown of all commands that are part of this group. The tooltip of the command group is used as the name.</param>
-        /// <param name="addDropdownBoxForDrawings">If true, adds a command box to the toolbar for drawings that has a dropdown of all commands that are part of this group. The tooltip of the command group is used as the name.</param>
         /// <param name="documentTypes">The document types where this menu/toolbar is visible</param>
         /// <param name="iconListsPath">Absolute path to all icon sprites with including {0} for the image size</param>
         /// <param name="mainIconPath">Absolute path to all main icons with including {0} for the image size</param>
         public CommandManagerGroup(ICommandGroup commandGroup, List<CommandManagerItem> items, List<CommandManagerFlyout> flyoutItems, int userId, 
-                                   string tooltip, bool hasMenu, bool hasToolbar, bool addDropdownBoxForParts, bool addDropdownBoxForAssemblies, bool addDropdownBoxForDrawings,
-                                   ModelTemplateType documentTypes, string iconListsPath, string mainIconPath) : base(commandGroup)
+                                   string tooltip, bool hasMenu, bool hasToolbar, ModelTemplateType documentTypes, string iconListsPath, string mainIconPath) : base(commandGroup)
         {
             // Store user Id, used to remove the command group
             UserId = userId;
@@ -131,11 +106,6 @@ namespace CADBooster.SolidDna
 
             // Have a toolbar
             BaseObject.HasToolbar = hasToolbar;
-
-            // Dropdowns
-            AddDropdownBoxForParts = addDropdownBoxForParts;
-            AddDropdownBoxForAssemblies = addDropdownBoxForAssemblies;
-            AddDropdownBoxForDrawings = addDropdownBoxForDrawings;
 
             // Set icon list
             mIconListPaths = Icons.GetFormattedPathDictionary(iconListsPath);
@@ -172,13 +142,13 @@ namespace CADBooster.SolidDna
             Items.ForEach(item => item.CommandId = BaseObject.CommandID[item.Position]);
 
             // Add items that are visible for parts
-            AddItemsToTabForModelType(manager, title, ModelType.Part, AddDropdownBoxForParts);
+            AddItemsToTabForModelType(manager, title, ModelType.Part);
 
             // Add items that are visible for assemblies
-            AddItemsToTabForModelType(manager, title, ModelType.Assembly, AddDropdownBoxForAssemblies);
+            AddItemsToTabForModelType(manager, title, ModelType.Assembly);
 
             // Add items that are visible for drawings
-            AddItemsToTabForModelType(manager, title, ModelType.Drawing, AddDropdownBoxForDrawings);
+            AddItemsToTabForModelType(manager, title, ModelType.Drawing);
 
             // If we failed to create, throw
             if (!mCreated)
@@ -249,8 +219,7 @@ namespace CADBooster.SolidDna
         /// <param name="manager"></param>
         /// <param name="title"> </param>
         /// <param name="modelType"></param>
-        /// <param name="addDropDown"></param>
-        private void AddItemsToTabForModelType(CommandManager manager, string title, ModelType modelType, bool addDropDown)
+        private void AddItemsToTabForModelType(CommandManager manager, string title, ModelType modelType)
         {
             // Get items for this model type
             var items = GetItemsForModelType(Items, modelType);
@@ -267,22 +236,6 @@ namespace CADBooster.SolidDna
             // Add all lists within separatedItemsLists to the tab
             foreach (var subItems in itemsPerTabBox)
                 AddItemsToTab(tab, subItems, flyouts);
-
-            // Add dropdown box that contains all items created above.
-            if (addDropDown)
-            {
-                var commandManagerItems = new List<CommandManagerItem>
-                {
-                    new CommandManagerItem
-                    {
-                        // Use this groups toolbar ID so all items we just added also get added to the dropdown.
-                        CommandId = BaseObject.ToolbarId,
-                        // Default style to text below for now
-                        TabView = CommandManagerItemTabView.IconWithTextBelow
-                    }
-                };
-                AddItemsToTab(tab, commandManagerItems, new List<CommandManagerFlyout>());
-            }
         }
 
         /// <summary>

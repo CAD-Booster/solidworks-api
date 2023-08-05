@@ -225,7 +225,7 @@ namespace CADBooster.SolidDna
             var items = GetItemsForModelType(Items, modelType);
 
             // Split the items into a list of lists, split at the separator
-            var itemsPerTabBox = SplitItemsAtSeparator(items);
+            var itemsPerTabBox = GetSplitListsAtSeparator(items);
 
             // Get flyouts for this model type
             var flyouts = GetFlyoutsForModelType(Flyouts, modelType);
@@ -233,17 +233,17 @@ namespace CADBooster.SolidDna
             // Get the tab
             var tab = GetNewOrExistingCommandManagerTab(modelType, manager, title);
 
-            // Add all lists within separatedItemsLists to the tab
+            // Add each list to its own tab box
             foreach (var subItems in itemsPerTabBox)
                 AddItemsToTab(tab, subItems, flyouts);
         }
 
         /// <summary>
-        /// Split a list of items at the separator.
+        /// Split a list of items at the separator. Returns a list of lists.
         /// </summary>
         /// <param name="items"></param>
         /// <returns></returns>
-        private static List<List<CommandManagerItem>> SplitItemsAtSeparator(List<CommandManagerItem> items)
+        private static List<List<CommandManagerItem>> GetSplitListsAtSeparator(List<CommandManagerItem> items)
         {
             var currentList = new List<CommandManagerItem>();
             var results = new List<List<CommandManagerItem>> { currentList };  // Always add the first list
@@ -293,7 +293,7 @@ namespace CADBooster.SolidDna
                 SolidDnaErrorTypeCode.SolidWorksCommandManager,
                 SolidDnaErrorCode.SolidWorksCommandGroupCreateTabBoxError));
 
-            // Add new tab-box to collection of tab-boxes.
+            // Add the new tab box to list of tab boxes.
             tab.TabBoxes.Add(new CommandManagerTabBox(tabBox));
 
             // Convert the list of TabData to arrays of ids and styles

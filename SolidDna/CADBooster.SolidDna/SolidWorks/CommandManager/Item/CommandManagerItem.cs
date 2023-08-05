@@ -28,7 +28,7 @@ namespace CADBooster.SolidDna
         public string CallbackId { get; } = Guid.NewGuid().ToString("N");
 
         /// <summary>
-        /// The hint to show for this item
+        /// The help text for this item. Is only used for toolbar items and flyouts, underneath the <see cref="Tooltip"/>. Is not used for menus and flyout items.
         /// </summary>
         public string Hint { get; set; }
 
@@ -43,7 +43,7 @@ namespace CADBooster.SolidDna
         public CommandItemType ItemType { get; set; } = CommandItemType.MenuItem | CommandItemType.ToolbarItem;
 
         /// <summary>
-        /// The name of the item
+        /// The name of the item. Is used as the only text for menus and flyout items. Is not used for toolbar items.
         /// </summary>
         public string Name { get; set; }
 
@@ -64,7 +64,7 @@ namespace CADBooster.SolidDna
         public CommandManagerItemTabView TabView { get; set; } = CommandManagerItemTabView.IconWithTextBelow;
 
         /// <summary>
-        /// The tooltip to show for this item
+        /// The name of this item. Is only used for toolbar items and flyouts, above the <see cref="Hint"/>. Is not used for menus and flyout items.
         /// </summary>
         public string Tooltip { get; set; }
 

@@ -46,10 +46,6 @@ namespace CADBooster.SolidDna
 
         #endregion
 
-        #region Setup / Tear down
-
-        #endregion
-
         #region Connected to SolidWorks
 
         /// <summary>

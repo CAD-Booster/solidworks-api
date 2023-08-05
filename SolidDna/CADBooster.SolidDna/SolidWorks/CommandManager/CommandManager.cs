@@ -38,6 +38,8 @@ namespace CADBooster.SolidDna
         /// <param name="commandManagerFlyouts">The flyout command items that contain a list of other commands</param>
         /// <param name="iconListsPath">The icon list absolute path based on a string format of the absolute path to the icon list images, replacing {0} with the size. 
         ///     For example C:\Folder\icons{0}.png</param>
+        /// <param name="tooltip">Tool tip for the CommandGroup</param>
+        /// <param name="hint">Text displayed in SOLIDWORKS status bar when a user's mouse pointer is over the CommandGroup</param>
         /// <param name="position">Position of the CommandGroup in the CommandManager for all document templates.
         /// NOTE: Specify 0 to add the CommandGroup to the beginning of the CommandManager, or specify -1 to add it to the end of the CommandManager.
         /// NOTE: You can also use ICommandGroup::MenuPosition to control the position of the CommandGroup in specific document templates.</param>
@@ -53,9 +55,42 @@ namespace CADBooster.SolidDna
         /// <param name="mainIconPath">The icon absolute path base on a string format of the absolute path to the main icon images, replacing {0} with the size.
         /// The main icon is visible in the Customize window. If you don't set a main icon, SolidWorks uses the first icon in <paramref name="iconListsPath"/>.</param>
         /// <returns></returns>
-        public CommandManagerGroup CreateCommandGroupAndTabs(string title, List<CommandManagerItem> commandManagerItems, List<CommandManagerFlyout> commandManagerFlyouts, string iconListsPath = "", 
+        [Obsolete("Use CreateCommandGroupAndTabs2, which removed the tooltip and hint parameters that were not used.")]
+        public CommandManagerGroup CreateCommandGroupAndTabs(string title, List<CommandManagerItem> commandManagerItems, List<CommandManagerFlyout> commandManagerFlyouts, string iconListsPath = "", string tooltip = "", string hint = "",
                                                              int position = -1, bool ignorePreviousVersion = true, bool hasMenu = true, bool hasToolbar = true, bool addDropdownBoxForParts = false, bool addDropdownBoxForAssemblies = false,
                                                              bool addDropdownBoxForDrawings = false, ModelTemplateType documentTypes = ModelTemplateType.Part | ModelTemplateType.Assembly | ModelTemplateType.Drawing, string mainIconPath = "")
+        {
+            // Call the latest version
+            return CreateCommandGroupAndTabs2(title, commandManagerItems, commandManagerFlyouts, mainIconPath, iconListsPath, position, 
+                                              ignorePreviousVersion, hasMenu, hasToolbar, addDropdownBoxForParts, addDropdownBoxForAssemblies, addDropdownBoxForDrawings, documentTypes);
+        }
+
+        /// <summary>
+        /// Create a command group from a list of <see cref="CommandManagerItem"/> items
+        /// </summary>
+        /// <param name="title">Name of the CommandGroup to create. Is also used for the tab.</param>
+        /// <param name="commandManagerItems">The command items to add</param>
+        /// <param name="commandManagerFlyouts">The flyout command items that contain a list of other commands</param>
+        /// <param name="mainIconPath">The icon absolute path base on a string format of the absolute path to the main icon images, replacing {0} with the size.
+        /// The main icon is visible in the Customize window. If you don't set a main icon, SolidWorks uses the first icon in <paramref name="iconListsPath"/>.</param>
+        /// <param name="iconListsPath">The icon list absolute path based on a string format of the absolute path to the icon list images, replacing {0} with the size. 
+        ///     For example C:\Folder\icons{0}.png</param>
+        /// <param name="position">Position of the CommandGroup in the CommandManager for all document templates.
+        /// NOTE: Specify 0 to add the CommandGroup to the beginning of the CommandManager, or specify -1 to add it to the end of the CommandManager.
+        /// NOTE: You can also use ICommandGroup::MenuPosition to control the position of the CommandGroup in specific document templates.</param>
+        /// <param name="ignorePreviousVersion">True to remove all previously saved customization and toolbar information before creating a new CommandGroup, false to not.
+        /// Call CommandManager.GetGroupDataFromRegistry before calling this method to determine how to set IgnorePreviousVersion.
+        /// Set IgnorePreviousVersion to true to prevent SOLIDWORKS from saving the current toolbar setting to the registry, even if there is no previous version.</param>
+        /// <param name="hasMenu">Whether the CommandGroup should appear in the Tools dropdown menu.</param>
+        /// <param name="hasToolbar">Whether the CommandGroup should appear in the Command Manager and as a separate toolbar.</param>
+        /// <param name="addDropdownBoxForParts">If true, adds a command box to the toolbar for parts that has a dropdown of all commands that are part of this group. The tooltip of the command group is used as the name.</param>
+        /// <param name="addDropdownBoxForAssemblies">If true, adds a command box to the toolbar for assemblies that has a dropdown of all commands that are part of this group. The tooltip of the command group is used as the name.</param>
+        /// <param name="addDropdownBoxForDrawings">If true, adds a command box to the toolbar for drawings that has a dropdown of all commands that are part of this group. The tooltip of the command group is used as the name.</param>
+        /// <param name="documentTypes">The document types where this menu/toolbar is visible.</param>
+        /// <returns></returns>
+        public CommandManagerGroup CreateCommandGroupAndTabs2(string title, List<CommandManagerItem> commandManagerItems, List<CommandManagerFlyout> commandManagerFlyouts, string mainIconPath = "", string iconListsPath = "", 
+                                                              int position = -1, bool ignorePreviousVersion = true, bool hasMenu = true, bool hasToolbar = true, bool addDropdownBoxForParts = false, bool addDropdownBoxForAssemblies = false,
+                                                              bool addDropdownBoxForDrawings = false, ModelTemplateType documentTypes = ModelTemplateType.Part | ModelTemplateType.Assembly | ModelTemplateType.Drawing)
         {
             // Wrap any error creating the taskpane in a SolidDna exception
             return SolidDnaErrors.Wrap(() =>

@@ -10,6 +10,12 @@ namespace CADBooster.SolidDna
     /// </summary>
     public class CommandManagerFlyout : SolidDnaObject<IFlyoutGroup>
     {
+        /// <summary>
+        /// Flyouts only work when you add the items after clicking the flyout, SolidWorks calls them 'dynamic flyouts' in the help.
+        /// It seems to work well when we only do this on the first click.
+        /// </summary>
+        private bool _addedItemsAfterFirstClick;
+
         #region Public Properties
 
         /// <summary>
@@ -107,30 +113,37 @@ namespace CADBooster.SolidDna
             // Listen out for callbacks
             PlugInIntegration.CallbackFired += PlugInIntegration_CallbackFired;
 
-            // Add items
-            Items?.ForEach(AddCommandItem);
+            // Add the items when the flyout is clicked for the first time
+            OnClick = AddCommandItems;
     
             // NOTE: No need to set items command IDs as they are only needed when 
             //       Calling AddItemToTab and the flyout itself gets added, not
             //       the flyouts inner commands
-
         }
 
         /// <summary>
-        /// Fired when a SolidWorks callback is fired
+        /// Remove, then re-add all items to the flyout.
+        /// Is called on every click of the flyout, but only does something on the first click.
+        /// SolidWorks calls this a 'dynamic flyout' in the help.
         /// </summary>
-        /// <param name="name">The name of the callback that was fired</param>
-        private void PlugInIntegration_CallbackFired(string name)
+        private void AddCommandItems()
         {
-            // Find the item, if any
-            var item = Items?.FirstOrDefault(f => f.CallbackId == name);
+            // Only add items once
+            if (_addedItemsAfterFirstClick)
+                return;
 
-            // Call the action
-            item?.OnClick?.Invoke();
+            // Clear all existing items / buttons first.
+            BaseObject.RemoveAllCommandItems();
+
+            // Add items
+            Items?.ForEach(AddCommandItem);
+
+            // Set flag
+            _addedItemsAfterFirstClick = true;
         }
 
         /// <summary>
-        /// Adds a command item to the group
+        /// Adds a command item to the flyout.
         /// </summary>
         /// <param name="item">The item to add</param>
         private void AddCommandItem(CommandManagerItem item)
@@ -144,6 +157,19 @@ namespace CADBooster.SolidDna
             // Store the actual ID / position we receive. 
             // Starts at zero for each command manager tab / ribbon. Todo is this true just like it is for CommandManagerGroup?
             item.Position = actualPosition;
+        }
+
+        /// <summary>
+        /// Fired when a SolidWorks callback is fired
+        /// </summary>
+        /// <param name="name">The name of the callback that was fired</param>
+        private void PlugInIntegration_CallbackFired(string name)
+        {
+            // Find the item, if any
+            var item = Items?.FirstOrDefault(f => f.CallbackId == name);
+
+            // Call the action
+            item?.OnClick?.Invoke();
         }
 
         /// <summary>

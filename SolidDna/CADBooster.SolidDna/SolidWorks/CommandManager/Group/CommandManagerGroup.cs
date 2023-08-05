@@ -138,8 +138,8 @@ namespace CADBooster.SolidDna
             // Activate the command group
             mCreated = BaseObject.Activate();
 
-            // Get command Ids, this is where our IDs will be replaced for solidworks generated IDs
-            Items.ForEach(item => item.CommandId = BaseObject.CommandID[item.Position]);
+            // Get the command ID that solidworks generated for each item
+            Items.ForEach(SaveCommandId);
 
             // Add items that are visible for parts
             AddItemsToTabForModelType(manager, title, ModelType.Part);
@@ -348,6 +348,12 @@ namespace CADBooster.SolidDna
             // Call the action
             flyout?.OnClick?.Invoke();
         }
+
+        /// <summary>
+        /// Get the command ID that solidworks generated from the command group and save it to the item.
+        /// </summary>
+        /// <param name="item"></param>
+        private void SaveCommandId(CommandManagerItem item) => item.CommandId = BaseObject.CommandID[item.Position];
 
         /// <summary>
         /// Set the icon list properties on the base object.

@@ -208,7 +208,46 @@ namespace CADBooster.SolidDna
 
             // Add each list to its own tab box
             foreach (var subItems in itemsPerTabBox)
-                AddItemsToTab(tab, subItems);
+            {
+                // Add the items to a new tab box and return the tab box.
+                var tabBox = AddItemsToTab(tab, subItems);
+
+                // Make sure we have a tab box. Returns null if there are no items to add to the tab box.
+                if (tabBox != null)
+                {
+                    // Add the new tab box to list of tab boxes.
+                    tab.TabBoxes.Add(tabBox);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Adds all items to the command tab.
+        /// </summary>
+        /// <param name="tab"></param>
+        /// <param name="items">Items to add</param>
+        private static CommandManagerTabBox AddItemsToTab(CommandManagerTab tab, List<ICommandManagerItem> items)
+        {
+            // Get the ID and style for each item and flyout
+            var tabItemData = GetTabItemData(items);
+
+            // Return if there are no items to add
+            if (tabItemData.Count <= 0) return null;
+
+            // Create new tab box
+            var tabBox = tab.UnsafeObject.AddCommandTabBox() ?? throw new SolidDnaException(SolidDnaErrors.CreateError(
+                SolidDnaErrorTypeCode.SolidWorksCommandManager,
+                SolidDnaErrorCode.SolidWorksCommandGroupCreateTabBoxError));
+
+            // Convert the list of TabData to arrays of ids and styles
+            var ids = tabItemData.Select(tabData => tabData.Id).ToArray();
+            var styles = tabItemData.Select(tabData => (int)tabData.Style).ToArray();
+
+            // Add the items to the new tab box
+            tabBox.AddCommands(ids, styles);
+
+            // Wrap it in our own tab box and return it
+            return new CommandManagerTabBox(tabBox);
         }
 
         /// <summary>
@@ -245,34 +284,6 @@ namespace CADBooster.SolidDna
             }
 
             return results;
-        }
-
-        /// <summary>
-        /// Adds all items to the command tab.
-        /// </summary>
-        /// <param name="tab"></param>
-        /// <param name="items">Items to add</param>
-        private static void AddItemsToTab(CommandManagerTab tab, List<ICommandManagerItem> items)
-        {
-            // Get the ID and style for each item and flyout
-            var tabItemData = GetTabItemData(items);
-
-            // If there are items to add, do something.. 
-            if (tabItemData.Count <= 0) return;
-
-            // Create new tab box
-            var tabBox = tab.UnsafeObject.AddCommandTabBox() ?? throw new SolidDnaException(SolidDnaErrors.CreateError(
-                SolidDnaErrorTypeCode.SolidWorksCommandManager,
-                SolidDnaErrorCode.SolidWorksCommandGroupCreateTabBoxError));
-
-            // Add the new tab box to list of tab boxes.
-            tab.TabBoxes.Add(new CommandManagerTabBox(tabBox));
-
-            // Convert the list of TabData to arrays of ids and styles
-            var ids = tabItemData.Select(tabData => tabData.Id).ToArray();
-            var styles = tabItemData.Select(tabData => (int)tabData.Style).ToArray();
-
-            tabBox.AddCommands(ids, styles);
         }
 
         /// <summary>

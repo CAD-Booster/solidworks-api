@@ -35,10 +35,10 @@ namespace CADBooster.SolidDna
         /// </summary>
         /// <param name="title">Name of the CommandGroup to create. Is also used for the tab.</param>
         /// <param name="commandManagerItems">The items (<see cref="CommandManagerItem"/>), separators (<see cref="CommandManagerSeparator"/>) and flyouts (<see cref="CommandManagerFlyout"/>) to add.</param>
-        /// <param name="mainIconPath">The icon absolute path base on a string format of the absolute path to the main icon images, replacing {0} with the size.
-        /// The main icon is visible in the Customize window. If you don't set a main icon, SolidWorks uses the first icon in <paramref name="iconListsPath"/>.</param>
-        /// <param name="iconListsPath">The icon list absolute path based on a string format of the absolute path to the icon list images, replacing {0} with the size. 
-        ///     For example C:\Folder\icons{0}.png</param>
+        /// <param name="mainIconPathFormat">Absolute path to the image files that contain the main icon.
+        /// The main icon is visible in the Customize window. If you don't set a main icon, SolidWorks uses the first icon in <paramref name="iconListsPathFormat"/>.
+        /// Based on a string format, replacing {0} with the size. For example C:\Folder\MainIcon{0}.png</param>
+        /// <param name="iconListsPathFormat">Absolute path to the image files that contain the button icons. Based on a string format, replacing {0} with the size. For example C:\Folder\Icons{0}.png</param>
         /// <param name="position">Position of the CommandGroup in the CommandManager for all document templates.
         /// NOTE: Specify 0 to add the CommandGroup to the beginning of the CommandManager, or specify -1 to add it to the end of the CommandManager.
         /// NOTE: You can also use ICommandGroup::MenuPosition to control the position of the CommandGroup in specific document templates.</param>
@@ -49,7 +49,7 @@ namespace CADBooster.SolidDna
         /// <param name="hasToolbar">Whether the CommandGroup should appear in the Command Manager and as a separate toolbar.</param>
         /// <param name="documentTypes">The document types where this menu/toolbar is visible.</param>
         /// <returns></returns>
-        public CommandManagerGroup CreateCommandGroupAndTabs(string title, List<ICommandManagerItem> commandManagerItems, string mainIconPath = "", string iconListsPath = "", 
+        public CommandManagerGroup CreateCommandGroupAndTabs(string title, List<ICommandManagerItem> commandManagerItems, string mainIconPathFormat = "", string iconListsPathFormat = "", 
                                                               int position = -1, bool ignorePreviousVersion = true, bool hasMenu = true, bool hasToolbar = true, 
                                                               ModelTemplateType documentTypes = ModelTemplateType.Part | ModelTemplateType.Assembly | ModelTemplateType.Drawing)
         {
@@ -64,7 +64,7 @@ namespace CADBooster.SolidDna
                         commandManagerItems = new List<ICommandManagerItem>();
 
                     // Create the command group
-                    var group = CreateCommandGroup(title, commandManagerItems, position, ignorePreviousVersion, hasMenu, hasToolbar, documentTypes, iconListsPath, mainIconPath);
+                    var group = CreateCommandGroup(title, commandManagerItems, position, ignorePreviousVersion, hasMenu, hasToolbar, documentTypes, iconListsPathFormat, mainIconPathFormat);
 
                     // Track all flyouts
                     mCommandFlyouts = commandManagerItems.OfType<CommandManagerFlyout>().ToList();
@@ -88,41 +88,42 @@ namespace CADBooster.SolidDna
         /// </summary>
         /// <param name="title">Name of the flyout to create</param>
         /// <param name="items">The command items to add</param>
-        /// <param name="pathFormat">The icon list absolute path based on a string format of the absolute path to the icon list images, replacing {0} with the size. 
+        /// <param name="iconListsPathFormat">The icon list absolute path based on a string format of the absolute path to the icon list images, replacing {0} with the size. 
         ///     For example C:\Folder\icons{0}.png</param>
         /// <param name="tooltip">Tool tip for the new flyout</param>
         /// <param name="hint">Text displayed in SOLIDWORKS status bar when a user's mouse pointer is over the flyout</param>
         /// <returns></returns>
         [Obsolete("Replaced by CreateFlyoutGroup2, which allows you to set separate icon lists for the main icon and underlying command icons.")]
-        public CommandManagerFlyout CreateFlyoutGroup(string title, List<CommandManagerItem> items, string pathFormat, string tooltip = "", string hint = "") => CreateFlyoutGroup2(title, items, pathFormat, pathFormat, tooltip, hint);
+        public CommandManagerFlyout CreateFlyoutGroup(string title, List<CommandManagerItem> items, string iconListsPathFormat, string tooltip = "", string hint = "")
+            => CreateFlyoutGroup2(title, items, iconListsPathFormat, iconListsPathFormat, tooltip, hint);
 
         /// <summary>
         /// Create a command group flyout containing a list of <see cref="CommandManagerItem"/> items. This is the newer version of
         /// <see cref="CreateFlyoutGroup"/>, and makes it possible to add the main icons separately from the underlying commands.
-        /// <paramref name="flyoutIconsPath"/> is the main icon for the flyout on the toolbar its self. <paramref name="commandIconsPath"/> contains the icons for all the underlying commands.
+        /// <paramref name="mainIconPathFormat"/> is the main icon for the flyout on the toolbar its self. <paramref name="iconListsPathFormat"/> contains the icons for all the underlying commands.
         /// </summary>
         /// <param name="title">Name of the flyout to create</param>
         /// <param name="items">The command items to add</param>
-        /// <param name="flyoutIconsPath">Path format for the main flyout icon. Used to create a list of paths using a string format with {0} representing the size, like: C:\Folder\flyoutIcons{0}.png.</param>
-        /// <param name="commandIconsPath">Path format for the command icons. Used to create a list of paths using a string format with {0} representing the size, like: C:\Folder\commandIcons{0}.png.</param>
+        /// <param name="mainIconPathFormat">Absolute path to the image files that contain the main flyout icon that appears in the tab. Based on a string format, replacing {0} with the size. For example C:\Folder\FlyoutIcon{0}.png</param>
+        /// <param name="iconListsPathFormat">Absolute path to the image files that contain the button icons. Based on a string format, replacing {0} with the size. For example C:\Folder\Icons{0}.png</param>
         /// <param name="tooltip">The name of this item. Appears as the name and above the <paramref name="hint"/> in the tooltip.</param>
         /// <param name="hint">Text displayed in SOLIDWORKS status bar when a user's mouse pointer is over the flyout. Also visible in the tooltip below the <paramref name="tooltip"/></param>
         /// <returns></returns>
-        public CommandManagerFlyout CreateFlyoutGroup2(string title, List<CommandManagerItem> items, string flyoutIconsPath, string commandIconsPath, string tooltip, string hint)
+        public CommandManagerFlyout CreateFlyoutGroup2(string title, List<CommandManagerItem> items, string mainIconPathFormat, string iconListsPathFormat, string tooltip, string hint)
         {
             // Make sure the item list is not null. Check it once here so we never have to check again.
             if (items == null)
                 items = new List<CommandManagerItem>();
 
             // Get icon paths
-            var flyoutIcons = Icons.GetPathArrayFromPathFormat(flyoutIconsPath);
-            var commandIcons = Icons.GetPathArrayFromPathFormat(commandIconsPath);
+            var mainIconPaths = Icons.GetPathArrayFromPathFormat(mainIconPathFormat);
+            var commandIconPaths = Icons.GetPathArrayFromPathFormat(iconListsPathFormat);
 
             // Create unique callback Id
             var callbackId = Guid.NewGuid().ToString("N");
 
             // Attempt to create the command flyout
-            var unsafeCommandFlyout = BaseObject.CreateFlyoutGroup2(mFlyoutIdCount, title, tooltip, hint, flyoutIcons, commandIcons, $"{nameof(SolidAddIn.Callback)}({callbackId})", null);
+            var unsafeCommandFlyout = BaseObject.CreateFlyoutGroup2(mFlyoutIdCount, title, tooltip, hint, mainIconPaths, commandIconPaths, $"{nameof(SolidAddIn.Callback)}({callbackId})", null);
 
             // Create managed object
             var flyout = new CommandManagerFlyout(unsafeCommandFlyout, mFlyoutIdCount++, callbackId, items, title, hint, tooltip);
@@ -145,15 +146,15 @@ namespace CADBooster.SolidDna
         /// <param name="hasMenu">Whether the CommandGroup should appear in the Tools dropdown menu.</param>
         /// <param name="hasToolbar">Whether the CommandGroup should appear in the Command Manager and as a separate toolbar.</param>
         /// <param name="documentTypes">The document types where this menu/toolbar is visible.</param>
-        /// <param name="iconListsPath">The icon list absolute path based on a string format of the absolute path to the icon list images, replacing {0} with the size. 
+        /// <param name="iconListsPathFormat">The icon list absolute path based on a string format of the absolute path to the icon list images, replacing {0} with the size. 
         ///     For example C:\Folder\icons{0}.png</param>
-        /// <param name="mainIconPath">The icon absolute path base on a string format of the absolute path to the main icon images, replacing {0} with the size.
-        /// The main icon is visible in the Customize window. If you don't set a main icon, SolidWorks uses the first icon in <paramref name="iconListsPath"/>.</param>
+        /// <param name="mainIconPathFormat">The icon absolute path base on a string format of the absolute path to the main icon images, replacing {0} with the size.
+        /// The main icon is visible in the Customize window. If you don't set a main icon, SolidWorks uses the first icon in <paramref name="iconListsPathFormat"/>.</param>
         /// <returns></returns>
         private CommandManagerGroup CreateCommandGroup(string title, List<ICommandManagerItem> items, int position = -1, bool ignorePreviousVersion = true,
                                                        bool hasMenu = true, bool hasToolbar = true, 
                                                        ModelTemplateType documentTypes = ModelTemplateType.Part | ModelTemplateType.Assembly | ModelTemplateType.Drawing, 
-                                                       string iconListsPath = "", string mainIconPath = "")
+                                                       string iconListsPathFormat = "", string mainIconPathFormat = "")
         {
             // NOTE: We may need to look carefully at this Id if things get removed and re-added based on this SolidWorks note:
             //     
@@ -180,7 +181,7 @@ namespace CADBooster.SolidDna
             }
 
             // Otherwise we got the command group
-            var group = new CommandManagerGroup(unsafeCommandGroup, items, id, title, hasMenu, hasToolbar, documentTypes, iconListsPath, mainIconPath);
+            var group = new CommandManagerGroup(unsafeCommandGroup, items, id, title, hasMenu, hasToolbar, documentTypes, iconListsPathFormat, mainIconPathFormat);
 
             // Return it
             return group;

@@ -75,10 +75,10 @@ namespace CADBooster.SolidDna
         /// <param name="hasMenu">Whether the CommandGroup should appear in the Tools dropdown menu.</param>
         /// <param name="hasToolbar">Whether the CommandGroup should appear in the Command Manager and as a separate toolbar.</param>
         /// <param name="documentTypes">The document types where this menu/toolbar is visible</param>
-        /// <param name="iconListsPath">Absolute path to all icon sprites with including {0} for the image size</param>
-        /// <param name="mainIconPath">Absolute path to all main icons with including {0} for the image size</param>
+        /// <param name="iconListsPathFormat">Absolute path to all icon sprites with including {0} for the image size</param>
+        /// <param name="mainIconPathFormat">Absolute path to all main icons with including {0} for the image size</param>
         public CommandManagerGroup(ICommandGroup commandGroup, List<ICommandManagerItem> items, int userId, string tooltip, bool hasMenu, bool hasToolbar,
-                                   ModelTemplateType documentTypes, string iconListsPath, string mainIconPath) : base(commandGroup)
+                                   ModelTemplateType documentTypes, string iconListsPathFormat, string mainIconPathFormat) : base(commandGroup)
         {
             // Store user Id, used to remove the command group
             UserId = userId;
@@ -99,10 +99,10 @@ namespace CADBooster.SolidDna
             BaseObject.HasToolbar = hasToolbar;
 
             // Set icon list
-            mIconListPaths = Icons.GetFormattedPathDictionary(iconListsPath);
+            mIconListPaths = Icons.GetFormattedPathDictionary(iconListsPathFormat);
 
             // Set the main icon list
-            mMainIconPaths = Icons.GetFormattedPathDictionary(mainIconPath);
+            mMainIconPaths = Icons.GetFormattedPathDictionary(mainIconPathFormat);
 
             // Listen out for callbacks
             PlugInIntegration.CallbackFired += PlugInIntegration_CallbackFired;

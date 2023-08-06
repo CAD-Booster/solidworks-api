@@ -8,7 +8,7 @@ namespace CADBooster.SolidDna
     /// <summary>
     /// A command flyout for the top command bar in SolidWorks
     /// </summary>
-    public class CommandManagerFlyout : SolidDnaObject<IFlyoutGroup>
+    public class CommandManagerFlyout : SolidDnaObject<IFlyoutGroup>, ICommandManagerItem
     {
         /// <summary>
         /// Flyouts only work when you add the items after clicking the flyout, SolidWorks calls them 'dynamic flyouts' in the help.
@@ -17,6 +17,11 @@ namespace CADBooster.SolidDna
         private bool _addedItemsAfterFirstClick;
 
         #region Public Properties
+
+        /// <summary>
+        /// True if the command should be added to the tab
+        /// </summary>
+        public bool AddToTab { get; set; } = true;
 
         /// <summary>
         /// The Id used when this command flyout was created
@@ -54,6 +59,12 @@ namespace CADBooster.SolidDna
         public int CommandId => BaseObject.CmdID;
 
         /// <summary>
+        /// The position of the item in the list. Specify 0 to add the item to the beginning of the toolbar or menu, or specify -1 to add it to the end.
+        /// After creating the item, we set this to the actual position.
+        /// </summary>
+        public int Position { get; set; } = -1;
+
+        /// <summary>
         /// The tab view style (whether and how to show in the large icon tab bar view)
         /// </summary>
         public CommandManagerItemTabView TabView { get; set; } = CommandManagerItemTabView.IconWithTextBelow;
@@ -79,7 +90,7 @@ namespace CADBooster.SolidDna
         public Action OnClick { get; set; }
 
         #endregion
-        
+
         /// <summary>
         /// Creates a command manager flyout with all its belonging information such as title, userID, hints, tooltips and callbackIDs.
         /// </summary>
@@ -115,7 +126,7 @@ namespace CADBooster.SolidDna
 
             // Add the items when the flyout is clicked for the first time
             OnClick = AddCommandItems;
-    
+
             // NOTE: No need to set items command IDs as they are only needed when 
             //       Calling AddItemToTab and the flyout itself gets added, not
             //       the flyouts inner commands
@@ -151,7 +162,7 @@ namespace CADBooster.SolidDna
             // Add the item and receive the actual position.
             var actualPosition = BaseObject.AddCommandItem(item.Name, item.Hint, item.ImageIndex, $"{nameof(SolidAddIn.Callback)}({item.CallbackId})", null);
             if (actualPosition == -1)
-                throw new SolidDnaException(SolidDnaErrors.CreateError(SolidDnaErrorTypeCode.SolidWorksCommandManager, 
+                throw new SolidDnaException(SolidDnaErrors.CreateError(SolidDnaErrorTypeCode.SolidWorksCommandManager,
                     SolidDnaErrorCode.SolidWorksCommandFlyoutPositionError, "Can be caused by setting the image indexes wrong."));
 
             // Store the actual ID / position we receive. 
@@ -182,5 +193,7 @@ namespace CADBooster.SolidDna
 
             base.Dispose();
         }
+
+        public override string ToString() => $"Flyout with name: {Tooltip}. CommandID: {CommandId}. Position: {Position}. Hint: {Hint}.";
     }
 }

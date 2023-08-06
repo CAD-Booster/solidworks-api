@@ -5,13 +5,8 @@ namespace CADBooster.SolidDna
     /// <summary>
     /// A command item for the top command bar in SolidWorks
     /// </summary>
-    public class CommandManagerItem
+    public class CommandManagerItem : ICommandManagerItem
     {
-        /// <summary>
-        /// True to add a separator bar to the left of this item.
-        /// </summary>
-        public bool AddSeparatorBeforeThisItem { get; set; }
-
         /// <summary>
         /// True if the command should be added to the tab
         /// </summary>
@@ -87,6 +82,6 @@ namespace CADBooster.SolidDna
         /// Returns a user-friendly string with group properties.
         /// </summary>
         /// <returns></returns>
-        public override string ToString() => $"Name: {Name}. CommandID: {CommandId}. Position: {Position}. Image index: {ImageIndex}. Hint: {Hint}. Tooltip: {Tooltip} ";
+        public override string ToString() => $"Item with name: {Name}. CommandID: {CommandId}. Position: {Position}. Image index: {ImageIndex}. Hint: {Hint}. Tooltip: {Tooltip}.";
     }
 }

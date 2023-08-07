@@ -49,24 +49,12 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Assets\icons128.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Assets\icons20.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Assets\icons32.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Assets\icons40.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Assets\icons64.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Assets\icons96.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
+    <EmbeddedResource Include="Assets\icons128.png" CopyToOutputDirectory="PreserveNewest" />
+    <EmbeddedResource Include="Assets\icons20.png" CopyToOutputDirectory="PreserveNewest" />
+    <EmbeddedResource Include="Assets\icons32.png" CopyToOutputDirectory="PreserveNewest" />
+    <EmbeddedResource Include="Assets\icons40.png" CopyToOutputDirectory="PreserveNewest" />
+    <EmbeddedResource Include="Assets\icons64.png" CopyToOutputDirectory="PreserveNewest" />
+    <EmbeddedResource Include="Assets\icons96.png" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="References\SolidWorks.Interop.sldworks.dll" />
     <Content Include="References\SolidWorks.Interop.sw3dprinter.dll" />
     <Content Include="References\SolidWorks.Interop.swcommands.dll" />

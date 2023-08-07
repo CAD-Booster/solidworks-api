@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Controls;
 using static CADBooster.SolidDna.SolidWorksEnvironment;
-// ReSharper disable ArrangeMethodOrOperatorBody
 
 namespace SolidDna.CustomProperties
 {

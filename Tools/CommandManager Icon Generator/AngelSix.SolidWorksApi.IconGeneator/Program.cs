@@ -99,14 +99,17 @@ namespace AngelSix.SolidWorksApi.IconGeneator
                 if (images.Any(image => !File.Exists(image)))
                 {
                     Console.WriteLine("One or more of the files do not exist. Press enter to exit");
-                    var unused = Console.ReadLine();
+                    Console.ReadLine();
                     return;
                 }
 
                 // Combine all bitmaps
-                using var combinedImage = CombineBitmap(images, size);
-                if (combinedImage == null) return;
-                combinedImage.Save($"{filenamePrepend}{size}.png");
+                using (var combinedImage = CombineBitmap(images, size))
+                {
+                    if (combinedImage == null)
+                        return;
+                    combinedImage.Save($"{filenamePrepend}{size}.png");
+                }
             });
         }
 
@@ -120,13 +123,17 @@ namespace AngelSix.SolidWorksApi.IconGeneator
             // Base10 the number
             number %= 10;
 
-            return number switch
+            switch (number)
             {
-                1 => $"{number}st",
-                2 => $"{number}nd",
-                3 => $"{number}rd",
-                _ => $"{number}th",
-            };
+                case 1:
+                    return $"{number}st";
+                case 2:
+                    return $"{number}nd";
+                case 3:
+                    return $"{number}rd";
+                default:
+                    return $"{number}th";
+            }
         }
 
         /// <summary>
@@ -151,28 +158,30 @@ namespace AngelSix.SolidWorksApi.IconGeneator
                 finalImage = new Bitmap(width, height);
 
                 // Get a graphics object from the image so we can draw on it
-                using var g = Graphics.FromImage(finalImage);
-                // Set background color
-                g.Clear(Color.Transparent);
-
-                // Go through each image and draw it on the final image
-                var offset = 0;
-                files.ForEach(file =>
+                using (var g = Graphics.FromImage(finalImage))
                 {
-                    // Read this image
-                    var bitmap = new Bitmap(file);
-                    images.Add(bitmap);
+                    // Set background color
+                    g.Clear(Color.Transparent);
 
-                    // Scale it to the sprite size
-                    var scaleFactor = (float)iconSize / Math.Max(bitmap.Width, bitmap.Height);
+                    // Go through each image and draw it on the final image
+                    var offset = 0;
+                    files.ForEach(file =>
+                    {
+                        // Read this image
+                        var bitmap = new Bitmap(file);
+                        images.Add(bitmap);
 
-                    // Draw it onto the new image
-                    g.DrawImage(bitmap, new Rectangle(offset, 0, (int)(scaleFactor * bitmap.Width), (int)(scaleFactor * bitmap.Height)));
+                        // Scale it to the sprite size
+                        var scaleFactor = (float)iconSize / Math.Max(bitmap.Width, bitmap.Height);
 
-                    // Move offset to next position
-                    offset += iconSize;                       
+                        // Draw it onto the new image
+                        g.DrawImage(bitmap, new Rectangle(offset, 0, (int)(scaleFactor * bitmap.Width), (int)(scaleFactor * bitmap.Height)));
 
-                });
+                        // Move offset to next position
+                        offset += iconSize;
+
+                    });
+                }
 
                 // Return the final image
                 return finalImage;

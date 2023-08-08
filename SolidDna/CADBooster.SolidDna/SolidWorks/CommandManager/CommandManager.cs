@@ -47,7 +47,8 @@ namespace CADBooster.SolidDna
         /// Set IgnorePreviousVersion to true to prevent SOLIDWORKS from saving the current toolbar setting to the registry, even if there is no previous version.</param>
         /// <param name="hasMenu">Whether the CommandGroup should appear in the Tools dropdown menu.</param>
         /// <param name="hasToolbar">Whether the CommandGroup should appear in the Command Manager and as a separate toolbar.</param>
-        /// <param name="documentTypes">The document types where this menu/toolbar is visible.</param>
+        /// <param name="documentTypes">The document types where this menu is visible. Only works for menus.
+        /// To set toolbar button visibilities, set the three VisibleForX properties in <see cref="CommandManagerItem"/>. To hide flyouts items, use the item's UpdateCallback function.</param>
         /// <returns></returns>
         public CommandManagerGroup CreateCommandGroupAndTabs(string title, List<ICommandManagerItem> commandManagerItems, string mainIconPathFormat = "", string iconListsPathFormat = "", 
                                                               int position = -1, bool ignorePreviousVersion = true, bool hasMenu = true, bool hasToolbar = true, 

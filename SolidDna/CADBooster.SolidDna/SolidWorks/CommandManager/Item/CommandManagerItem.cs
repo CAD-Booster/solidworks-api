@@ -64,17 +64,17 @@ namespace CADBooster.SolidDna
         public string Tooltip { get; set; }
 
         /// <summary>
-        /// True to show this item in the command tab when an assembly is open
+        /// True to show this item in the command tab when an assembly is open. Only works for toolbar items and flyouts, not for menus or flyout items.
         /// </summary>
         public bool VisibleForAssemblies { get; set; } = true;
 
         /// <summary>
-        /// True to show this item in the command tab when a drawing is open
+        /// True to show this item in the command tab when a drawing is open. Only works for toolbar items and flyouts, not for menus or flyout items.
         /// </summary>
         public bool VisibleForDrawings { get; set; } = true;
 
         /// <summary>
-        /// True to show this item in the command tab when a part is open
+        /// True to show this item in the command tab when a part is open. Only works for toolbar items and flyouts, not for menus or flyout items.
         /// </summary>
         public bool VisibleForParts { get; set; } = true;
 

@@ -92,7 +92,7 @@ namespace CADBooster.SolidDna
         #endregion
 
         /// <summary>
-        /// Creates a command manager flyout with all its belonging information such as title, userID, hints, tooltips and callbackIDs.
+        /// Create a command manager flyout (group).
         /// </summary>
         /// <param name="flyoutGroup">The SolidWorks command manager flyout group</param>
         /// <param name="userId">The unique flyout ID</param>
@@ -124,12 +124,11 @@ namespace CADBooster.SolidDna
             // Listen out for callbacks
             PlugInIntegration.CallbackFired += PlugInIntegration_CallbackFired;
 
-            // Add the items when the flyout is clicked for the first time
+            // Add the items when the flyout is clicked for the first time. Does not work when you add items right away.
             OnClick = AddCommandItems;
 
-            // NOTE: No need to set items command IDs as they are only needed when 
-            //       Calling AddItemToTab and the flyout itself gets added, not
-            //       the flyouts inner commands
+            // NOTE: No need to set items command IDs as they are only needed when calling AddItemToTab
+            //       and the flyout itself gets added, not the flyouts inner commands
         }
 
         /// <summary>

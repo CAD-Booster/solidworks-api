@@ -34,7 +34,7 @@ namespace CADBooster.SolidDna
         /// Create a command group from a list of <see cref="CommandManagerItem"/> items. Uses a single list of items, separators and flyouts.
         /// </summary>
         /// <param name="title">Name of the CommandGroup to create. Is also used for the tab.</param>
-        /// <param name="commandManagerItems">The items (<see cref="CommandManagerItem"/>), separators (<see cref="CommandManagerSeparator"/>) and flyouts (<see cref="CommandManagerFlyout"/>) to add.</param>
+        /// <param name="commandManagerItems">All items that should appear in this tab. You can mix items (<see cref="CommandManagerItem"/>), separators (<see cref="CommandManagerSeparator"/>) and flyouts (<see cref="CommandManagerFlyout"/>).</param>
         /// <param name="mainIconPathFormat">Absolute path to the image files that contain the main icon.
         /// The main icon is visible in the Customize window. If you don't set a main icon, SolidWorks uses the first icon in <paramref name="iconListsPathFormat"/>.
         /// Based on a string format, replacing {0} with the size. For example C:\Folder\MainIcon{0}.png</param>

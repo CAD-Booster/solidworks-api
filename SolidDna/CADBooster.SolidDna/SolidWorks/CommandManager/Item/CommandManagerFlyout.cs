@@ -59,8 +59,7 @@ namespace CADBooster.SolidDna
         public int CommandId => BaseObject.CmdID;
 
         /// <summary>
-        /// The position of the item in the list. Specify 0 to add the item to the beginning of the toolbar or menu, or specify -1 to add it to the end.
-        /// After creating the item, we set this to the actual position.
+        /// The position of the item in the list. Not used for flyouts.
         /// </summary>
         public int Position { get; set; } = -1;
 
@@ -159,14 +158,12 @@ namespace CADBooster.SolidDna
         private void AddCommandItem(CommandManagerItem item)
         {
             // Add the item and receive the actual position.
-            var actualPosition = BaseObject.AddCommandItem(item.Name, item.Hint, item.ImageIndex, $"{nameof(SolidAddIn.Callback)}({item.CallbackId})", null);
-            if (actualPosition == -1)
+            var position = BaseObject.AddCommandItem(item.Name, item.Hint, item.ImageIndex, $"{nameof(SolidAddIn.Callback)}({item.CallbackId})", null);
+
+            // If the returned position is -1, the item was not added.
+            if (position == -1)
                 throw new SolidDnaException(SolidDnaErrors.CreateError(SolidDnaErrorTypeCode.SolidWorksCommandManager,
                     SolidDnaErrorCode.SolidWorksCommandFlyoutPositionError, "Can be caused by setting the image indexes wrong."));
-
-            // Store the actual ID / position we receive. 
-            // Starts at zero for each command manager tab / ribbon. Todo is this true just like it is for CommandManagerGroup?
-            item.Position = actualPosition;
         }
 
         /// <summary>

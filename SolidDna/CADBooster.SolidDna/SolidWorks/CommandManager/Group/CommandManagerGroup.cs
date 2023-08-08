@@ -130,7 +130,7 @@ namespace CADBooster.SolidDna
             mCreated = BaseObject.Activate();
 
             // Get the command ID that solidworks generated for each item
-            Items.ForEach(SaveCommandId);
+            Items.ForEach(GetCommandId);
 
             // Add items that are visible for parts
             AddItemsToTabForModelType(manager, title, ModelType.Part);
@@ -182,9 +182,15 @@ namespace CADBooster.SolidDna
                 // Add the item. We pass a preferred position for each item and receive the actual position back.
                 var actualPosition = BaseObject.AddCommandItem2(item.Name, item.Position, item.Hint, item.Tooltip, item.ImageIndex,
                                                                 $"{nameof(SolidAddIn.Callback)}({item.CallbackId})", null, UserId, (int)item.ItemType);
+                
+                // If the returned position is -1, the item was not added.
+                if (actualPosition == -1)
+                    throw new SolidDnaException(SolidDnaErrors.CreateError(SolidDnaErrorTypeCode.SolidWorksCommandManager,
+                        SolidDnaErrorCode.SolidWorksCommandItemPositionError, "Can be caused by setting the image indexes wrong."));
 
-                // Store the actual ID / position we receive. If we have multiple items and, for example, set each position at the default -1, we receive sequential numbers, starting at 0.
-                // Starts at zero for each command manager tab / ribbon.
+                // Store the actual position we receive. It's more an ID than it is a position because flyouts and separators are not counted.
+                // If we have multiple items and, for example, set each position at the default -1, we receive sequential numbers, starting at 0.
+                // Starts at zero for each command manager tab / ribbon. The position is later used to get the CommandID of the item.
                 item.Position = actualPosition;
             }
         }
@@ -363,7 +369,7 @@ namespace CADBooster.SolidDna
         /// Get the command ID that solidworks generated from the command group and save it to the item.
         /// </summary>
         /// <param name="item"></param>
-        private void SaveCommandId(ICommandManagerItem item)
+        private void GetCommandId(ICommandManagerItem item)
         {
             //This is only necessary for CommandManagerItems, not for flyouts or separators.
             if (item is CommandManagerItem commandManagerItem)

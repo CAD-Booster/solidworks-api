@@ -219,9 +219,14 @@
         SolidWorksCommandGroupCreateTabBoxError = 12008,
 
         /// <summary>
-        /// There was an error while trying to set the position of a flyout. Can be caused by setting the wrong image indexes.
+        /// There was an error while trying to add a flyout item. Can be caused by setting an incorrect image index.
         /// </summary>
         SolidWorksCommandFlyoutPositionError = 12009,
+
+        /// <summary>
+        /// There was an error while trying to add an command manager item.
+        /// </summary>
+        SolidWorksCommandItemPositionError = 12010,
 
         #endregion
 

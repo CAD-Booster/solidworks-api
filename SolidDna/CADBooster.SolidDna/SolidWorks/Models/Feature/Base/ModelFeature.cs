@@ -241,6 +241,11 @@ namespace CADBooster.SolidDna
         /// </summary>
         public bool IsWeldment => FeatureType == ModelFeatureType.Weldment;
 
+        /// <summary>
+        /// Checks if this feature's specific type is a Weld Table 
+        /// </summary>
+        public bool IsWeldTable => FeatureType == ModelFeatureType.WeldTable;
+
         #endregion
 
         #region Feature Data

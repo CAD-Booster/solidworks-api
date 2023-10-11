@@ -48,7 +48,7 @@ namespace CADBooster.SolidDna
                                                      ModelTemplateType documentTypes = ModelTemplateType.None | ModelTemplateType.Part | ModelTemplateType.Assembly | ModelTemplateType.Drawing)
         {
 #pragma warning disable CS0618
-            return CreateCommandGroupAndTabs(title, commandManagerItems.Cast<ICommandManagerItem>().ToList(), "", iconListsPathFormat, position, ignorePreviousVersion, true, false, documentTypes);
+            return CreateCommandGroupAndTabs(title, commandManagerItems?.Cast<ICommandManagerItem>().ToList(), "", iconListsPathFormat, position, ignorePreviousVersion, true, false, documentTypes);
         }
 
         /// <summary>

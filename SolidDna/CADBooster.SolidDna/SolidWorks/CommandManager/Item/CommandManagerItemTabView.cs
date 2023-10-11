@@ -6,7 +6,7 @@ namespace CADBooster.SolidDna
     /// The view style of a <see cref="CommandManagerItem"/> for a Tab (the large icons above opened files).
     /// References <see cref="swCommandTabButtonTextDisplay_e"/>
     /// </summary>
-    public  enum CommandManagerItemTabView
+    public enum CommandManagerItemTabView
     {
         /// <summary>
         /// The item is not shown in the tab

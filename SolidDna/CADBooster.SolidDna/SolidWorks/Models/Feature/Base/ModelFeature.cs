@@ -256,7 +256,7 @@ namespace CADBooster.SolidDna
         public bool IsAdvancedHoleWizardData => FeatureType == ModelFeatureType.AdvancedHoleWizardData;
 
         /// <summary>
-        /// Checks if this feature's specific type is  data
+        /// Checks if this feature's specific type is Angle Mate data
         /// </summary>
         public bool IsAngleMateData => FeatureType == ModelFeatureType.AngleMateData;
 

@@ -215,6 +215,10 @@ namespace CADBooster.SolidDna
             // Add each list to its own tab box
             foreach (var subItems in itemsPerTabBox)
             {
+                // Skip empty lists
+                if (subItems.Count == 0)
+                    continue;
+
                 // Add the items to a new tab box and return the tab box.
                 var tabBox = AddItemsToTab(tab, subItems);
 
@@ -288,8 +292,9 @@ namespace CADBooster.SolidDna
                     currentList.Add(item);
                 }
             }
-
-            return results;
+            
+            // Remove empty lists. If we don't do this, the first list is empty when Items is empty.
+            return results.Where(x => x.Any()).ToList();
         }
 
         /// <summary>

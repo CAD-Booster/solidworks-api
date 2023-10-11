@@ -45,7 +45,7 @@ namespace CADBooster.SolidDna
         /// <returns></returns>
         public CommandManagerGroup CreateCommandMenu(string title, List<CommandManagerItem> commandManagerItems, string iconListsPathFormat = "",
                                                      int position = -1, bool ignorePreviousVersion = true, 
-                                                     ModelTemplateType documentTypes = ModelTemplateType.Part | ModelTemplateType.Assembly | ModelTemplateType.Drawing)
+                                                     ModelTemplateType documentTypes = ModelTemplateType.None | ModelTemplateType.Part | ModelTemplateType.Assembly | ModelTemplateType.Drawing)
         {
 #pragma warning disable CS0618
             return CreateCommandGroupAndTabs(title, commandManagerItems.Cast<ICommandManagerItem>().ToList(), "", iconListsPathFormat, position, ignorePreviousVersion, true, false, documentTypes);
@@ -93,7 +93,7 @@ namespace CADBooster.SolidDna
         [Obsolete("Use CreateCommandMenu to create a Tools menu item or use CreateCommandTab to create a tab/toolbar")]
         public CommandManagerGroup CreateCommandGroupAndTabs(string title, List<ICommandManagerItem> commandManagerItems, string mainIconPathFormat = "", string iconListsPathFormat = "", 
                                                               int position = -1, bool ignorePreviousVersion = true, bool hasMenu = true, bool hasToolbar = true, 
-                                                              ModelTemplateType documentTypes = ModelTemplateType.Part | ModelTemplateType.Assembly | ModelTemplateType.Drawing)
+                                                              ModelTemplateType documentTypes = ModelTemplateType.None | ModelTemplateType.Part | ModelTemplateType.Assembly | ModelTemplateType.Drawing)
         {
             // Wrap any error creating the taskpane in a SolidDna exception
             return SolidDnaErrors.Wrap(() =>
@@ -195,7 +195,7 @@ namespace CADBooster.SolidDna
         /// <returns></returns>
         private CommandManagerGroup CreateCommandGroup(string title, List<ICommandManagerItem> items, int position = -1, bool ignorePreviousVersion = true,
                                                        bool hasMenu = true, bool hasToolbar = true, 
-                                                       ModelTemplateType documentTypes = ModelTemplateType.Part | ModelTemplateType.Assembly | ModelTemplateType.Drawing, 
+                                                       ModelTemplateType documentTypes = ModelTemplateType.None | ModelTemplateType.Part | ModelTemplateType.Assembly | ModelTemplateType.Drawing, 
                                                        string iconListsPathFormat = "", string mainIconPathFormat = "")
         {
             // NOTE: We may need to look carefully at this Id if things get removed and re-added based on this SolidWorks note:

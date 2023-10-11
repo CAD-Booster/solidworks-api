@@ -1,7 +1,7 @@
 ﻿using System;
 using SolidWorks.Interop.swconst;
 
-namespace CADBooster.SolidDna.SolidWorks.CommandManager.Tab
+namespace CADBooster.SolidDna
 {
     /// <summary>
     /// Provides an easier-to-understand enum for choosing how to show the tab items within the CommandManagerTab.

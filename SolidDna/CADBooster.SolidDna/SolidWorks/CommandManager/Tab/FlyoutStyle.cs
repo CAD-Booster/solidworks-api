@@ -4,9 +4,9 @@ using SolidWorks.Interop.swconst;
 namespace CADBooster.SolidDna
 {
     /// <summary>
+    /// Combines <see cref="swCommandTabButtonFlyoutStyle_e"/> and <see cref="CommandManagerItemTabView"/>.
     /// Provides an easier-to-understand enum for choosing how to show the tab items within the CommandManagerTab.
-    /// It has the flags attribute, enabling multiple styles to be combined using bitwise operators. Combines the
-    /// '<see cref="swCommandTabButtonFlyoutStyle_e"/>'-enum and '<see cref="CommandManagerItemTabView"/>'-enum.
+    /// You can combine styles by using bitwise operators. 
     /// </summary>
     [Flags]
     public enum CommandManagerFlyoutStyle
@@ -32,20 +32,20 @@ namespace CADBooster.SolidDna
         IconWithTextAtRight = 4,
 
         /// <summary>
-        /// Sets style to have no flyout
-        /// Represents <see cref="swCommandTabButtonFlyoutStyle_e.swCommandTabButton_NoFlyout"/>
+        /// Sets style to have no flyout. Represents <see cref="swCommandTabButtonFlyoutStyle_e.swCommandTabButton_NoFlyout"/>.
+        /// When we combine this value with <see cref="CommandManagerFlyout.TabView"/> to create <see cref="TabItemData.Style"/>, there are no visible changes.
         /// </summary>
         NoFlyout = 8,
 
         /// <summary>
-        /// No idea what this enum does exactly, ToDo - We need to find out what this does when we're going to fix the flyout menus.
-        /// Represents the <see cref="swCommandTabButtonFlyoutStyle_e.swCommandTabButton_SimpleFlyout"/>
+        /// Sets style to have a simple flyout. Represents the <see cref="swCommandTabButtonFlyoutStyle_e.swCommandTabButton_SimpleFlyout"/>
+        /// When we combine this value with <see cref="CommandManagerFlyout.TabView"/> to create <see cref="TabItemData.Style"/>, there are no visible changes.
         /// </summary>
         SimpleFlyout = 16,
 
         /// <summary>
-        /// No idea what this enum does exactly, ToDo - We need to find out what this does when we're going to fix the flyout menus.
-        /// Represents the <see cref="swCommandTabButtonFlyoutStyle_e.swCommandTabButton_ActionFlyout"/>
+        /// Sets style to have an action flyout. Represents the <see cref="swCommandTabButtonFlyoutStyle_e.swCommandTabButton_ActionFlyout"/>
+        /// When we combine this value with <see cref="CommandManagerFlyout.TabView"/> to create <see cref="TabItemData.Style"/>, there are no visible changes.
         /// </summary>
         ActionFlyout = 32
     }

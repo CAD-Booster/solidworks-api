@@ -66,7 +66,13 @@ namespace CADBooster.SolidDna
         /// <summary>
         /// The tab view style (whether and how to show in the large icon tab bar view)
         /// </summary>
-        public CommandManagerItemTabView TabView { get; set; } = CommandManagerItemTabView.IconWithTextBelow;
+        public CommandManagerItemTabView TabView { get; set; }
+
+        /// <summary>
+        /// Defines the look and behavior of the flyout. By default, it shows the main icon of the flyout. When you click on it, the flyout expands and does not execute a command.
+        /// Other options: always show the first item, show the last-used item.
+        /// </summary>
+        public CommandManagerFlyoutType Type { get; set; }
 
         /// <summary>
         /// True to show this item in the command tab when a part is open
@@ -100,7 +106,10 @@ namespace CADBooster.SolidDna
         /// <param name="title">The title</param>
         /// <param name="hint">The hint</param>
         /// <param name="tooltip">The tool tip</param>
-        public CommandManagerFlyout(IFlyoutGroup flyoutGroup, int userId, string callbackId, List<CommandManagerItem> items, string title, string hint, string tooltip) : base(flyoutGroup)
+        /// <param name="tabView"> </param>
+        /// <param name="type"> </param>
+        public CommandManagerFlyout(IFlyoutGroup flyoutGroup, int userId, string callbackId, List<CommandManagerItem> items, string title, string hint, string tooltip, 
+                                    CommandManagerItemTabView tabView, CommandManagerFlyoutType type) : base(flyoutGroup)
         {
             // Set user Id
             UserId = userId;
@@ -119,6 +128,12 @@ namespace CADBooster.SolidDna
 
             // Set tooltip
             Tooltip = tooltip;
+
+            // Set tab view / style
+            TabView = tabView;
+
+            // Set type / visible item
+            Type = type;
 
             // Listen out for callbacks
             PlugInIntegration.CallbackFired += PlugInIntegration_CallbackFired;
@@ -146,6 +161,9 @@ namespace CADBooster.SolidDna
 
             // Add items
             Items?.ForEach(AddCommandItem);
+
+            // Set the flyout type
+            BaseObject.FlyoutType = (int)Type;
 
             // Set flag
             _addedItemsAfterFirstClick = true;

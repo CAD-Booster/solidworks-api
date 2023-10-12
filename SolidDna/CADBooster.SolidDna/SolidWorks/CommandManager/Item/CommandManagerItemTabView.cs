@@ -14,17 +14,17 @@ namespace CADBooster.SolidDna
         None = 0,
 
         /// <summary>
-        /// The item is shown with an icon only
+        /// The item is shown with an icon only. See the "Line" button in the Sketch tab for an example.
         /// </summary>
         IconOnly = 1,
 
         /// <summary>
-        /// The item is shown with the icon, then the text below it
+        /// The item is shown with the icon, then the text below it. See the"Smart Dimension" button in the Sketch tab for an example.
         /// </summary>
         IconWithTextBelow = 2,
 
         /// <summary>
-        /// The item is shown with the icon then the text to the right
+        /// The item is shown with the icon then the text to the right. See the "Linear Sketch Pattern" button in the Sketch tab for an example.
         /// </summary>
         IconWithTextAtRight = 4
     }

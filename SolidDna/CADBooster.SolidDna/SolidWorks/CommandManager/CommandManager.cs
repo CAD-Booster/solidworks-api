@@ -144,7 +144,7 @@ namespace CADBooster.SolidDna
         /// <param name="tooltip">Tool tip for the new flyout</param>
         /// <param name="hint">Text displayed in SOLIDWORKS status bar when a user's mouse pointer is over the flyout</param>
         /// <returns></returns>
-        [Obsolete("Replaced by CreateFlyoutGroup2, which allows you to set separate icon lists for the main icon and underlying command icons.")]
+        [Obsolete("Replaced by CreateFlyoutGroup2 that lets you to set a main icon, flyout style and flyout type.")]
         public CommandManagerFlyout CreateFlyoutGroup(string title, List<CommandManagerItem> items, string iconListsPathFormat, string tooltip = "", string hint = "")
             => CreateFlyoutGroup2(title, items, iconListsPathFormat, iconListsPathFormat, tooltip, hint);
 
@@ -159,8 +159,11 @@ namespace CADBooster.SolidDna
         /// <param name="iconListsPathFormat">Absolute path to the image files that contain the button icons. Based on a string format, replacing {0} with the size. For example C:\Folder\Icons{0}.png</param>
         /// <param name="tooltip">The name of this item. Appears as the name and above the <paramref name="hint"/> in the tooltip.</param>
         /// <param name="hint">Text displayed in SOLIDWORKS status bar when a user's mouse pointer is over the flyout. Also visible in the tooltip below the <paramref name="tooltip"/></param>
+        /// <param name="tabView">The style of the flyout. </param>
+        /// <param name="type"> </param>
         /// <returns></returns>
-        public CommandManagerFlyout CreateFlyoutGroup2(string title, List<CommandManagerItem> items, string mainIconPathFormat, string iconListsPathFormat, string tooltip, string hint)
+        public CommandManagerFlyout CreateFlyoutGroup2(string title, List<CommandManagerItem> items, string mainIconPathFormat, string iconListsPathFormat, string tooltip, string hint,
+                                                       CommandManagerItemTabView tabView = CommandManagerItemTabView.IconWithTextBelow, CommandManagerFlyoutType type = CommandManagerFlyoutType.ExpandOnly)
         {
             // Make sure the item list is not null. Check it once here so we never have to check again.
             if (items == null)
@@ -177,7 +180,7 @@ namespace CADBooster.SolidDna
             var unsafeCommandFlyout = BaseObject.CreateFlyoutGroup2(mFlyoutIdCount, title, tooltip, hint, mainIconPaths, commandIconPaths, $"{nameof(SolidAddIn.Callback)}({callbackId})", null);
 
             // Create managed object
-            var flyout = new CommandManagerFlyout(unsafeCommandFlyout, mFlyoutIdCount++, callbackId, items, title, hint, tooltip);
+            var flyout = new CommandManagerFlyout(unsafeCommandFlyout, mFlyoutIdCount++, callbackId, items, title, hint, tooltip, tabView, type);
 
             // Return it
             return flyout;

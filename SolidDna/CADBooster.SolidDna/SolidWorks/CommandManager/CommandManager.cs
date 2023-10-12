@@ -32,8 +32,11 @@ namespace CADBooster.SolidDna
 
         /// <summary>
         /// Create an item in the Tools menu with a list of <see cref="CommandManagerItem"/> items. Only uses items, so no separators or flyouts.
+        /// NOTE: If you set <paramref name="ignorePreviousVersion"/> to false, you should pick a new ID every time you change your menu.
         /// </summary>
         /// <param name="title">Name of the menu to create. Is shown in the Tools menu.</param>
+        /// <param name="id">Unique ID for your menu. Should not be the same as an ID you pass to <see cref="CreateCommandTab"/>.
+        /// If you set <paramref name="ignorePreviousVersion"/> to false, you should pick a new ID every time you change your menu.</param>
         /// <param name="commandManagerItems">All items that should appear in this menu.</param>
         /// <param name="iconListsPathFormat">Absolute path to the image files that contain the button icons. Based on a string format, replacing {0} with the size. For example C:\Folder\Icons{0}.png</param>
         /// <param name="position">Position of the menu item in the Tools menu for all document templates.
@@ -43,18 +46,21 @@ namespace CADBooster.SolidDna
         /// Set IgnorePreviousVersion to true to prevent SOLIDWORKS from saving the current toolbar setting to the registry, even if there is no previous version.</param>
         /// <param name="documentTypes">The document types where this menu is visible.</param>
         /// <returns></returns>
-        public CommandManagerGroup CreateCommandMenu(string title, List<CommandManagerItem> commandManagerItems, string iconListsPathFormat = "",
+        public CommandManagerGroup CreateCommandMenu(string title, int id, List<CommandManagerItem> commandManagerItems, string iconListsPathFormat = "",
                                                      int position = -1, bool ignorePreviousVersion = true, 
                                                      ModelTemplateType documentTypes = ModelTemplateType.None | ModelTemplateType.Part | ModelTemplateType.Assembly | ModelTemplateType.Drawing)
         {
 #pragma warning disable CS0618
-            return CreateCommandGroupAndTabs(title, commandManagerItems?.Cast<ICommandManagerItem>().ToList(), "", iconListsPathFormat, position, ignorePreviousVersion, true, false, documentTypes);
+            return CreateCommandGroupAndTabs(title, id, commandManagerItems?.Cast<ICommandManagerItem>().ToList(), "", iconListsPathFormat, position, ignorePreviousVersion, true, false, documentTypes);
         }
 
         /// <summary>
         /// Create a command group / tab / toolbar from a list of <see cref="CommandManagerItem"/> items. Uses a single list of items, separators and flyouts.
+        /// NOTE: If you set <paramref name="ignorePreviousVersion"/> to false, you should pick a new ID every time you change your tab.
         /// </summary>
         /// <param name="title">Name of the tab to create. Is shown in the tab.</param>
+        /// <param name="id">Unique ID for your tab. Should not be the same as an ID you pass to <see cref="CreateCommandMenu"/>.
+        /// If you set <paramref name="ignorePreviousVersion"/> to false, you should pick a new ID every time you change your tab.</param>
         /// <param name="commandManagerItems">All items that should appear in this tab. You can mix items (<see cref="CommandManagerItem"/>), separators (<see cref="CommandManagerSeparator"/>) and flyouts (<see cref="CommandManagerFlyout"/>).</param>
         /// <param name="mainIconPathFormat">Absolute path to the image files that contain the main icon.
         /// The main icon is visible in the Customize window. If you don't set a main icon, SolidWorks uses the first icon in <paramref name="iconListsPathFormat"/>.
@@ -64,16 +70,19 @@ namespace CADBooster.SolidDna
         /// Call CommandManager.GetGroupDataFromRegistry before calling this method to determine how to set IgnorePreviousVersion.
         /// Set IgnorePreviousVersion to true to prevent SOLIDWORKS from saving the current toolbar setting to the registry, even if there is no previous version.</param>
         /// <returns></returns>
-        public CommandManagerGroup CreateCommandTab(string title, List<ICommandManagerItem> commandManagerItems, string mainIconPathFormat = "", string iconListsPathFormat = "", bool ignorePreviousVersion = true)
+        public CommandManagerGroup CreateCommandTab(string title, int id, List<ICommandManagerItem> commandManagerItems, string mainIconPathFormat = "", string iconListsPathFormat = "", bool ignorePreviousVersion = true)
         {
-            return CreateCommandGroupAndTabs(title, commandManagerItems, mainIconPathFormat, iconListsPathFormat, -1, ignorePreviousVersion, false, true);
+            return CreateCommandGroupAndTabs(title, id, commandManagerItems, mainIconPathFormat, iconListsPathFormat, -1, ignorePreviousVersion, false, true);
 #pragma warning restore CS0618
         }
 
         /// <summary>
         /// Create a command group from a list of <see cref="CommandManagerItem"/> items. Uses a single list of items, separators and flyouts.
+        /// NOTE: If you set <paramref name="ignorePreviousVersion"/> to false, you should pick a new ID every time you change your tab.
         /// </summary>
         /// <param name="title">Name of the CommandGroup to create. Is also used for the tab.</param>
+        /// <param name="id">Unique ID for your tab/menu/command group. Should be unique for each command manager group.
+        /// If you set <paramref name="ignorePreviousVersion"/> to false, you should pick a new ID every time you change your tab.</param>
         /// <param name="commandManagerItems">All items that should appear in this tab. You can mix items (<see cref="CommandManagerItem"/>), separators (<see cref="CommandManagerSeparator"/>) and flyouts (<see cref="CommandManagerFlyout"/>).</param>
         /// <param name="mainIconPathFormat">Absolute path to the image files that contain the main icon.
         /// The main icon is visible in the Customize window. If you don't set a main icon, SolidWorks uses the first icon in <paramref name="iconListsPathFormat"/>.
@@ -91,7 +100,7 @@ namespace CADBooster.SolidDna
         /// To set toolbar button visibilities, set the three VisibleForX properties in <see cref="CommandManagerItem"/>. To hide flyouts items, use the item's UpdateCallback function.</param>
         /// <returns></returns>
         [Obsolete("Use CreateCommandMenu to create a Tools menu item or use CreateCommandTab to create a tab/toolbar")]
-        public CommandManagerGroup CreateCommandGroupAndTabs(string title, List<ICommandManagerItem> commandManagerItems, string mainIconPathFormat = "", string iconListsPathFormat = "", 
+        public CommandManagerGroup CreateCommandGroupAndTabs(string title, int id, List<ICommandManagerItem> commandManagerItems, string mainIconPathFormat = "", string iconListsPathFormat = "", 
                                                               int position = -1, bool ignorePreviousVersion = true, bool hasMenu = true, bool hasToolbar = true, 
                                                               ModelTemplateType documentTypes = ModelTemplateType.None | ModelTemplateType.Part | ModelTemplateType.Assembly | ModelTemplateType.Drawing)
         {
@@ -106,7 +115,7 @@ namespace CADBooster.SolidDna
                         commandManagerItems = new List<ICommandManagerItem>();
 
                     // Create the command group
-                    var group = CreateCommandGroup(title, commandManagerItems, position, ignorePreviousVersion, hasMenu, hasToolbar, documentTypes, iconListsPathFormat, mainIconPathFormat);
+                    var group = CreateCommandGroup(title, id, commandManagerItems, position, ignorePreviousVersion, hasMenu, hasToolbar, documentTypes, iconListsPathFormat, mainIconPathFormat);
 
                     // Track all flyouts
                     mCommandFlyouts = commandManagerItems.OfType<CommandManagerFlyout>().ToList();
@@ -178,6 +187,8 @@ namespace CADBooster.SolidDna
         /// Creates a command group
         /// </summary>
         /// <param name="title">The title</param>
+        /// <param name="id">Unique ID for your tab/menu/command group. Should not be the same as an ID you pass to <see cref="CreateCommandMenu"/>.
+        /// If you set <paramref name="ignorePreviousVersion"/> to false, you should pick a new ID every time you change your tab.</param>
         /// <param name="items">The command items to add</param>
         /// <param name="position">Position of the CommandGroup in the CommandManager for all document templates.
         /// NOTE: Specify 0 to add the CommandGroup to the beginning of the CommandManager, or specify -1 to add it to the end of the CommandManager.
@@ -193,20 +204,20 @@ namespace CADBooster.SolidDna
         /// <param name="mainIconPathFormat">The icon absolute path base on a string format of the absolute path to the main icon images, replacing {0} with the size.
         /// The main icon is visible in the Customize window. If you don't set a main icon, SolidWorks uses the first icon in <paramref name="iconListsPathFormat"/>.</param>
         /// <returns></returns>
-        private CommandManagerGroup CreateCommandGroup(string title, List<ICommandManagerItem> items, int position = -1, bool ignorePreviousVersion = true,
+        private CommandManagerGroup CreateCommandGroup(string title, int id, List<ICommandManagerItem> items, int position = -1, bool ignorePreviousVersion = true,
                                                        bool hasMenu = true, bool hasToolbar = true, 
                                                        ModelTemplateType documentTypes = ModelTemplateType.None | ModelTemplateType.Part | ModelTemplateType.Assembly | ModelTemplateType.Drawing, 
                                                        string iconListsPathFormat = "", string mainIconPathFormat = "")
         {
-            // NOTE: We may need to look carefully at this Id if things get removed and re-added based on this SolidWorks note:
+            // NOTE: from the SolidWorks API documentation:
             //     
             //       If you change the definition of an existing CommandGroup (i.e., add or remove toolbar buttons), you must assign a 
             //       new unique user-defined UserID to that CommandGroup. You must perform this action to avoid conflicts with any 
             //       previously existing CommandGroups and to allow for backward and forward compatibility of the CommandGroups in your application.
-            // 
-
-            // Get the next Id
-            var id = mCommandGroups.Count == 0 ? 1 : mCommandGroups.Max(f => f.UserId) + 1;
+            //
+            // How we interpret this:
+            //       This only matters when you save your command group to the registry by setting ignorePreviousVersion to false.
+            //       If you don't save your command group to the registry, you can use the same ID forever.
 
             // Store error code
             var errors = -1;

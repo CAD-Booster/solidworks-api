@@ -17,7 +17,7 @@ namespace CADBooster.SolidDna
         /// <summary>
         /// A list of all created command flyouts
         /// </summary>
-        private List<CommandManagerFlyout> mCommandFlyouts = new List<CommandManagerFlyout>();
+        private readonly List<CommandManagerFlyout> mCommandFlyouts = new List<CommandManagerFlyout>();
 
         /// <summary>
         /// Unique Id for flyouts (just increment every time we add one)
@@ -117,8 +117,8 @@ namespace CADBooster.SolidDna
                     // Create the command group
                     var group = CreateCommandGroup(title, id, commandManagerItems, position, ignorePreviousVersion, hasMenu, hasToolbar, documentTypes, iconListsPathFormat, mainIconPathFormat);
 
-                    // Track all flyouts
-                    mCommandFlyouts = commandManagerItems.OfType<CommandManagerFlyout>().ToList();
+                    // Track all flyouts for all add-ins that use SolidDNA
+                    mCommandFlyouts.AddRange(commandManagerItems.OfType<CommandManagerFlyout>());
 
                     // Create the group
                     group.Create(this, title);
@@ -315,7 +315,7 @@ namespace CADBooster.SolidDna
             mCommandGroups?.ForEach(f => RemoveCommandGroup(f));
 
             // Remove all command flyouts
-            mCommandFlyouts?.ForEach(f => RemoveCommandFlyout(f));
+            mCommandFlyouts?.ForEach(RemoveCommandFlyout);
 
             base.Dispose();
         }

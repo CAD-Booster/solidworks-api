@@ -74,8 +74,10 @@ namespace AngelSix.SolidWorksApi.IconGeneator
                             Console.WriteLine($"Image not found '{result}'");
                         }
                         else
+                        {
                             // Add this to the list and carry on
                             images.Add(result);
+                        }
                     }
                     else
                     {
@@ -86,17 +88,17 @@ namespace AngelSix.SolidWorksApi.IconGeneator
 
                 // Get filename to append
                 Console.ResetColor();
-                Console.WriteLine($"Enter the name to prepend to the output files");
+                Console.WriteLine("Enter the name to prepend to the output files");
                 filenamePrepend = Console.ReadLine();
             }
 
-            // Now create an image from each of the iamges, for each file size
+            // Now create an image from each of the images, for each file size
             possibleSizes.ForEach(size =>
             {
                 // Check all files exist
                 if (images.Any(image => !File.Exists(image)))
                 {
-                    Console.WriteLine($"One or more of the files do not exist. Press enter to exit");
+                    Console.WriteLine("One or more of the files do not exist. Press enter to exit");
                     Console.ReadLine();
                     return;
                 }
@@ -104,6 +106,8 @@ namespace AngelSix.SolidWorksApi.IconGeneator
                 // Combine all bitmaps
                 using (var combinedImage = CombineBitmap(images, size))
                 {
+                    if (combinedImage == null)
+                        return;
                     combinedImage.Save($"{filenamePrepend}{size}.png");
                 }
             });
@@ -117,7 +121,7 @@ namespace AngelSix.SolidWorksApi.IconGeneator
         private static string NthNumber(int number)
         {
             // Base10 the number
-            number = number % 10;
+            number %= 10;
 
             switch (number)
             {
@@ -147,8 +151,8 @@ namespace AngelSix.SolidWorksApi.IconGeneator
             try
             {
                 // Get size
-                int width = iconSize * files.Count;
-                int height = iconSize;
+                var width = iconSize * files.Count;
+                var height = iconSize;
 
                 // Create a bitmap to hold the combined image
                 finalImage = new Bitmap(width, height);
@@ -160,7 +164,7 @@ namespace AngelSix.SolidWorksApi.IconGeneator
                     g.Clear(Color.Transparent);
 
                     // Go through each image and draw it on the final image
-                    int offset = 0;
+                    var offset = 0;
                     files.ForEach(file =>
                     {
                         // Read this image
@@ -174,7 +178,7 @@ namespace AngelSix.SolidWorksApi.IconGeneator
                         g.DrawImage(bitmap, new Rectangle(offset, 0, (int)(scaleFactor * bitmap.Width), (int)(scaleFactor * bitmap.Height)));
 
                         // Move offset to next position
-                        offset += iconSize;                       
+                        offset += iconSize;
 
                     });
                 }

@@ -252,7 +252,7 @@ namespace SolidDna.CustomProperties
 
                 // If we have a material
                 if (existingMaterial != null)
-                    RawMaterialList.SelectedItem = materials?.FirstOrDefault(f => f.Database == existingMaterial.Database && f.Name == existingMaterial.Name);
+                    RawMaterialList.SelectedItem = materials?.FirstOrDefault(f => f.DatabasePathOrFilename == existingMaterial.DatabasePathOrFilename && f.Name == existingMaterial.Name);
             });
         }
 
@@ -388,13 +388,11 @@ namespace SolidDna.CustomProperties
 
         private void MaterialAssemblyCheck_Checked(object sender, System.Windows.RoutedEventArgs e)
         {
-            // Unckech plasma
             MaterialPlasmaCheck.IsChecked = false;
         }
 
         private void MaterialPlasmaCheck_Checked(object sender, System.Windows.RoutedEventArgs e)
         {
-            // Uncheck assembly
             MaterialAssemblyCheck.IsChecked = false;
         }
     }

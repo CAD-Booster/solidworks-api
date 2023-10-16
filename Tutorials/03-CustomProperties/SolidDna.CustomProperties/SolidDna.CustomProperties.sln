@@ -1,9 +1,9 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31424.327
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SolidDna.CustomProperties", "SolidDna.CustomProperties.csproj", "{73B94EE6-BC16-49B2-824D-4C4E114859AC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SolidDna.CustomProperties", "SolidDna.CustomProperties.csproj", "{73B94EE6-BC16-49B2-824D-4C4E114859AC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CADBooster.SolidDna", "..\..\..\SolidDna\CADBooster.SolidDna\CADBooster.SolidDna.csproj", "{62DCD55F-880A-4C22-A190-70A5FC6FCE56}"
 EndProject

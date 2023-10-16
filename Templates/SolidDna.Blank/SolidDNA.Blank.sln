@@ -1,9 +1,9 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27428.2043
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SolidDNA.Blank", "SolidDNA.Blank\SolidDNA.Blank.csproj", "{5AD833FE-1498-413A-89DA-9366E71C5F9C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SolidDNA.Blank", "SolidDNA.Blank\SolidDNA.Blank.csproj", "{5AD833FE-1498-413A-89DA-9366E71C5F9C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

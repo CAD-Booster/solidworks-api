@@ -53,11 +53,12 @@ namespace SolidDna.Exporting
 
         public override void ConnectedToSolidWorks()
         {
-            // Part commands
-            var partGroup = Application.CommandManager.CreateCommandGroupAndTabs(
+            // Part commands.
+            // You don't need to use the return value, but it's there if you want to.
+            var partGroup = Application.CommandManager.CreateCommandTab(
                 title: "Export Part",
-                items: new List<CommandManagerItem>(new[] {
-
+                id: 120_000,
+                commandManagerItems: new List<ICommandManagerItem>{
                     new CommandManagerItem {
                         Name = "DXF",
                         Tooltip = "DXF",
@@ -65,10 +66,7 @@ namespace SolidDna.Exporting
                         Hint = "Export part as DXF",
                         VisibleForDrawings = false,
                         VisibleForAssemblies = false,
-                        OnClick = () =>
-                        {
-                            FileExporting.ExportPartAsDxf();
-                        }
+                        OnClick = FileExporting.ExportPartAsDxf
                     },
 
                     new CommandManagerItem {
@@ -78,23 +76,17 @@ namespace SolidDna.Exporting
                         Hint = "Export part as STEP",
                         VisibleForDrawings = false,
                         VisibleForAssemblies = false,
-                        OnClick = () =>
-                        {
-                            FileExporting.ExportModelAsStep();
-                        }
+                        OnClick = FileExporting.ExportModelAsStep
                     },
-
-                }),
-                flyoutItems: null,
-                iconListsPath: "icons{0}.png",
-                hint: "Export parts in other formats",
-                tooltip: "Such as DXF, STEP and IGES");
+                },
+                mainIconPathFormat: "icons{0}.png",
+                iconListsPathFormat: "icons{0}.png");
 
             // Assembly commands
-            var assemblyGroup = Application.CommandManager.CreateCommandGroupAndTabs(
+            var assemblyGroup = Application.CommandManager.CreateCommandTab(
                 title: "Export Assembly",
-                items: new List<CommandManagerItem>(new[] {
-
+                id: 120_001,
+                commandManagerItems: new List<ICommandManagerItem> {
                     new CommandManagerItem {
                         Name = "STEP",
                         Tooltip = "STEP",
@@ -102,22 +94,17 @@ namespace SolidDna.Exporting
                         Hint = "Export assembly as STEP",
                         VisibleForDrawings = false,
                         VisibleForParts = false,
-                        OnClick = () =>
-                        {
-                            FileExporting.ExportModelAsStep();
-                        }
+                        OnClick = FileExporting.ExportModelAsStep
                     },
-
-                }),
-                flyoutItems: null,
-                iconListsPath: "icons{0}.png",
-                hint: "Export assemblies in other formats",
-                tooltip: "Such as Step");
+                },
+                mainIconPathFormat: "icons{0}.png",
+                iconListsPathFormat: "icons{0}.png");
 
             // Drawing commands
-            var drawingGroup = Application.CommandManager.CreateCommandGroupAndTabs(
+            var drawingGroup = Application.CommandManager.CreateCommandTab(
                 title: "Export Drawing",
-                items: new List<CommandManagerItem>(new[] {
+                id: 120_002,
+                commandManagerItems: new List<ICommandManagerItem>{
 
                     new CommandManagerItem {
                         Name = "PDF",
@@ -126,17 +113,12 @@ namespace SolidDna.Exporting
                         ImageIndex = 1,
                         VisibleForParts = false,
                         VisibleForAssemblies = false,
-                        OnClick = () =>
-                        {
-                            FileExporting.ExportDrawingAsPdf();
-                        }
+                        OnClick = FileExporting.ExportDrawingAsPdf
                     },
 
-                }),
-                flyoutItems: null,
-                iconListsPath: "icons{0}.png",
-                hint: "Export drawing to other formats",
-                tooltip: "Such as PDF");
+                },
+                mainIconPathFormat: "icons{0}.png",
+                iconListsPathFormat: "icons{0}.png");
         }
 
         public override void DisconnectedFromSolidWorks()

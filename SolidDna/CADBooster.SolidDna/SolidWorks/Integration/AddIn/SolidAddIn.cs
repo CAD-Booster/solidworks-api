@@ -127,7 +127,10 @@ namespace CADBooster.SolidDna
         #region SolidWorks Add-in Callbacks
 
         /// <summary>
-        /// Used to pass a callback message onto our plug-ins
+        /// Receives all callbacks from command manager items and flyouts. 
+        /// We tell SolidWorks to call a method in the <see cref="SolidAddIn"/> class in <see cref="SetUpCallbacks"/>
+        /// We tell it to call this method in <see cref="CommandManagerGroup.AddCommandItem"/> and <see cref="CommandManagerFlyout.AddCommandItem"/>.
+        /// We forward this to <see cref="PlugInIntegration.OnCallback"/>, which then finds the correct command manager item or flyout and calls its OnClick method.
         /// </summary>
         /// <param name="arg"></param>
         public void Callback(string arg)
@@ -171,11 +174,8 @@ namespace CADBooster.SolidDna
                 // Initialize SolidWorks (SolidDNA class)
                 //SolidWorks = new SolidWorksApplication((SldWorks)ThisSW, Cookie);
 
-                // Log it
-                Logger.LogDebugSource($"Setting AddinCallbackInfo...");
-
-                // Setup callback info
-                var ok = ((SldWorks)thisSw).SetAddinCallbackInfo2(0, this, cookie);
+                // Tell solidworks which method to call when it receives a button click on a command manager item or flyout.
+                SetUpCallbacks(thisSw, cookie);
 
                 // Log it
                 Logger.LogDebugSource($"Storing the SOLIDWORKS instance...");
@@ -280,6 +280,20 @@ namespace CADBooster.SolidDna
             
             // Register our add-in as a partner product. If the key is an empty string, the status will be PartnerAddInKeyStatus.Fail. This is not a problem.
             SolidWorksAddInPartnerKeyStatus = (PartnerAddInKeyStatus) factory.SetPartnerKey(SolidWorksAddInPartnerLicenseKey, out var tokenForFutureUse);
+        }
+
+        /// <summary>
+        /// Tell SolidWorks that it should call the <see cref="Callback"/> method in this class whenever it receives a Command Manager item or flyout button click.
+        /// We forward this to <see cref="PlugInIntegration.OnCallback"/>, which then finds the correct command manager item or flyout and calls its OnClick method.
+        /// </summary>
+        /// <param name="thisSw"></param>
+        /// <param name="cookie"></param>
+        private void SetUpCallbacks(object thisSw, int cookie)
+        {
+            // Log it
+            Logger.LogDebugSource($"Setting AddinCallbackInfo...");
+
+            var ok = ((SldWorks)thisSw).SetAddinCallbackInfo2(0, this, cookie);
         }
 
         #endregion

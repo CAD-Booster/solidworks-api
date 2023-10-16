@@ -340,7 +340,7 @@ namespace CADBooster.SolidDna
                 Directory.CreateDirectory(outputFolder);
 
                 // If folder is not empty
-                if (Directory.GetFiles(outputFolder)?.Length > 0)
+                if (Directory.GetFiles(outputFolder).Length > 0)
                     throw new ArgumentException("Output folder is not empty");
 
                 // Get pack and go object

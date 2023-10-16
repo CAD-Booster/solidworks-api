@@ -8,9 +8,20 @@ namespace CADBooster.SolidDna
     /// <summary>
     /// A command flyout for the top command bar in SolidWorks
     /// </summary>
-    public class CommandManagerFlyout : SolidDnaObject<IFlyoutGroup>
+    public class CommandManagerFlyout : SolidDnaObject<IFlyoutGroup>, ICommandManagerItem
     {
+        /// <summary>
+        /// Flyouts only work when you add the items after clicking the flyout, SolidWorks calls them 'dynamic flyouts' in the help.
+        /// It seems to work well when we only do this on the first click.
+        /// </summary>
+        private bool _addedItemsAfterFirstClick;
+
         #region Public Properties
+
+        /// <summary>
+        /// True if the command should be added to the tab
+        /// </summary>
+        public bool AddToTab { get; set; } = true;
 
         /// <summary>
         /// The Id used when this command flyout was created
@@ -48,9 +59,20 @@ namespace CADBooster.SolidDna
         public int CommandId => BaseObject.CmdID;
 
         /// <summary>
+        /// The position of the item in the list. Not used for flyouts.
+        /// </summary>
+        public int Position { get; set; } = -1;
+
+        /// <summary>
         /// The tab view style (whether and how to show in the large icon tab bar view)
         /// </summary>
-        public CommandManagerItemTabView TabView { get; set; } = CommandManagerItemTabView.IconWithTextBelow;
+        public CommandManagerItemTabView TabView { get; set; }
+
+        /// <summary>
+        /// Defines the look and behavior of the flyout. By default, it shows the main icon of the flyout. When you click on it, the flyout expands and does not execute a command.
+        /// Other options: always show the first item, show the last-used item.
+        /// </summary>
+        public CommandManagerFlyoutType Type { get; set; }
 
         /// <summary>
         /// True to show this item in the command tab when a part is open
@@ -74,10 +96,8 @@ namespace CADBooster.SolidDna
 
         #endregion
 
-        #region Constructor
-
         /// <summary>
-        /// Default constructor
+        /// Create a command manager flyout (group).
         /// </summary>
         /// <param name="flyoutGroup">The SolidWorks command manager flyout group</param>
         /// <param name="userId">The unique flyout ID</param>
@@ -86,7 +106,10 @@ namespace CADBooster.SolidDna
         /// <param name="title">The title</param>
         /// <param name="hint">The hint</param>
         /// <param name="tooltip">The tool tip</param>
-        public CommandManagerFlyout(IFlyoutGroup flyoutGroup, int userId, string callbackId, List<CommandManagerItem> items, string title, string hint, string tooltip) : base(flyoutGroup)
+        /// <param name="tabView"> </param>
+        /// <param name="type"> </param>
+        public CommandManagerFlyout(IFlyoutGroup flyoutGroup, int userId, string callbackId, List<CommandManagerItem> items, string title, string hint, string tooltip, 
+                                    CommandManagerItemTabView tabView, CommandManagerFlyoutType type) : base(flyoutGroup)
         {
             // Set user Id
             UserId = userId;
@@ -106,21 +129,60 @@ namespace CADBooster.SolidDna
             // Set tooltip
             Tooltip = tooltip;
 
+            // Set tab view / style
+            TabView = tabView;
+
+            // Set type / visible item
+            Type = type;
+
             // Listen out for callbacks
             PlugInIntegration.CallbackFired += PlugInIntegration_CallbackFired;
 
-            // Add items
-            Items?.ForEach(AddCommandItem);
-    
-            // NOTE: No need to set items command IDs as they are only needed when 
-            //       Calling AddItemToTab and the flyout itself gets added, not
-            //       the flyouts inner commands
+            // Add the items when the flyout is clicked for the first time. Does not work when you add items right away.
+            OnClick = AddCommandItems;
 
+            // NOTE: No need to set items command IDs as they are only needed when calling AddItemToTab
+            //       and the flyout itself gets added, not the flyouts inner commands
         }
 
-        #endregion
+        /// <summary>
+        /// Remove, then re-add all items to the flyout.
+        /// Is called on every click of the flyout, but only does something on the first click.
+        /// SolidWorks calls this a 'dynamic flyout' in the help.
+        /// </summary>
+        private void AddCommandItems()
+        {
+            // Only add items once
+            if (_addedItemsAfterFirstClick)
+                return;
 
-        #region Callbacks
+            // Clear all existing items / buttons first.
+            BaseObject.RemoveAllCommandItems();
+
+            // Add items
+            Items?.ForEach(AddCommandItem);
+
+            // Set the flyout type
+            BaseObject.FlyoutType = (int)Type;
+
+            // Set flag
+            _addedItemsAfterFirstClick = true;
+        }
+
+        /// <summary>
+        /// Adds a command item to the flyout.
+        /// </summary>
+        /// <param name="item">The item to add</param>
+        private void AddCommandItem(CommandManagerItem item)
+        {
+            // Add the item and receive the actual position.
+            var position = BaseObject.AddCommandItem(item.Name, item.Hint, item.ImageIndex, $"{nameof(SolidAddIn.Callback)}({item.CallbackId})", null);
+
+            // If the returned position is -1, the item was not added.
+            if (position == -1)
+                throw new SolidDnaException(SolidDnaErrors.CreateError(SolidDnaErrorTypeCode.SolidWorksCommandManager,
+                    SolidDnaErrorCode.SolidWorksCommandFlyoutPositionError, "Can be caused by setting the image indexes wrong."));
+        }
 
         /// <summary>
         /// Fired when a SolidWorks callback is fired
@@ -135,27 +197,6 @@ namespace CADBooster.SolidDna
             item?.OnClick?.Invoke();
         }
 
-        #endregion
-
-        #region Public Methods
-
-        /// <summary>
-        /// Adds a command item to the group
-        /// </summary>
-        /// <param name="item">The item to add</param>
-        public void AddCommandItem(CommandManagerItem item)
-        {
-            // Add the item
-            var id = BaseObject.AddCommandItem(item.Name, item.Hint, item.ImageIndex, $"Callback({item.CallbackId})", null);
-
-            // Set the Id we got
-            item.UniqueId = id;
-        }
-
-        #endregion
-
-        #region Dispose
-
         /// <summary>
         /// Disposing
         /// </summary>
@@ -167,6 +208,6 @@ namespace CADBooster.SolidDna
             base.Dispose();
         }
 
-        #endregion
+        public override string ToString() => $"Flyout with name: {Tooltip}. CommandID: {CommandId}. Position: {Position}. Hint: {Hint}.";
     }
 }

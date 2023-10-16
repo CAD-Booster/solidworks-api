@@ -1,5 +1,4 @@
 ﻿using SolidWorks.Interop.sldworks;
-using SolidWorks.Interop.swconst;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,8 +10,6 @@ namespace CADBooster.SolidDna
     /// </summary>
     public class CommandManagerGroup : SolidDnaObject<ICommandGroup>
     {
-        #region Private Members
-
         /// <summary>
         /// Keeps track if this group has been created already
         /// </summary>
@@ -35,9 +32,32 @@ namespace CADBooster.SolidDna
         /// </summary>
         private readonly Dictionary<CommandManagerTabKey, CommandManagerTab> mTabs = new Dictionary<CommandManagerTabKey, CommandManagerTab>();
 
-        #endregion
+        /// <summary>
+        /// The command items and flyouts to add to this group
+        /// </summary>
+        private List<ICommandManagerItem> Items { get; }
 
-        #region Public Properties
+        /// <summary>
+        /// Whether this command group has a Menu.
+        /// NOTE: The menu is the regular drop-down menu like File, Edit, View etc...
+        /// </summary>
+        public bool HasMenu => BaseObject.HasMenu;
+
+        /// <summary>
+        /// Whether this command group has a Toolbar.
+        /// NOTE: The toolbar is the small icons like the top-left SolidWorks menu New, Save, Open etc...
+        /// </summary>
+        public bool HasToolbar => BaseObject.HasToolbar;
+
+        /// <summary>
+        /// The type of documents to show this command group in as a menu
+        /// </summary>
+        public ModelTemplateType MenuVisibleInDocumentTypes => (ModelTemplateType)BaseObject.ShowInDocumentType;
+
+        /// <summary>
+        /// The tooltip of this command group
+        /// </summary>
+        public string Tooltip { get; }
 
         /// <summary>
         /// The Id used when this command group was created
@@ -45,203 +65,46 @@ namespace CADBooster.SolidDna
         public int UserId { get; }
 
         /// <summary>
-        /// The title of this command group
-        /// </summary>
-        public string Title { get; set; }
-
-        /// <summary>
-        /// The hint of this command group
-        /// </summary>
-        public string Hint { get; set; }
-
-        /// <summary>
-        /// The tooltip of this command group
-        /// </summary>
-        public string Tooltip { get; set; }
-
-        /// <summary>
-        /// If true, adds a command box to the toolbar for parts that has a dropdown
-        /// of all commands that are part of this group. The tooltip of the command 
-        /// group is used as the name.
-        /// </summary>
-        public bool AddDropdownBoxForParts { get; set; }
-
-        /// <summary>
-        /// If true, adds a command box to the toolbar for assemblies that has a dropdown
-        /// of all commands that are part of this group. The tooltip of the command 
-        /// group is used as the name.
-        /// </summary>
-        public bool AddDropdownBoxForAssemblies { get; set; }
-
-        /// <summary>
-        /// If true, adds a command box to the toolbar for drawings that has a dropdown
-        /// of all commands that are part of this group. The tooltip of the command 
-        /// group is used as the name.
-        /// </summary>
-        public bool AddDropdownBoxForDrawings { get; set; }
-
-        /// <summary>
-        /// The type of documents to show this command group in as a menu
-        /// </summary>
-        public ModelTemplateType MenuVisibleInDocumentTypes
-        {
-            get => (ModelTemplateType)BaseObject.ShowInDocumentType;
-            set =>
-                // Set base object
-                BaseObject.ShowInDocumentType = (int)value;
-        }
-
-        /// <summary>
-        /// Whether this command group has a Menu.
-        /// NOTE: The menu is the regular drop-down menu like File, Edit, View etc...
-        /// </summary>
-        public bool HasMenu
-        {
-            get => BaseObject.HasMenu;
-            set =>
-                // Set base object
-                BaseObject.HasMenu = value;
-        }
-
-        /// <summary>
-        /// Whether this command group has a Toolbar.
-        /// NOTE: The toolbar is the small icons like the top-left SolidWorks menu New, Save, Open etc...
-        /// </summary>
-        public bool HasToolbar
-        {
-            get => BaseObject.HasToolbar;
-            set => BaseObject.HasToolbar = value;
-        }
-
-        /// <summary>
-        /// The command items to add to this group
-        /// </summary>
-        public List<CommandManagerItem> Items { get; set; }
-
-        /// <summary>
-        /// The command flyouts to add to this group
-        /// </summary>
-        public List<CommandManagerFlyout> Flyouts { get; set; }
-
-        #endregion
-
-        #region Constructor
-
-        /// <summary>
-        /// Default constructor
+        /// Creates a command manager group with all its belonging information such as title, userID, hints, tooltips and icons.
         /// </summary>
         /// <param name="commandGroup">The SolidWorks command group</param>
         /// <param name="items">The command items to add</param>
-        /// <param name="flyoutItems">The flyout command items that contain a list of other commands</param>
         /// <param name="userId">The unique Id this group was assigned with when created</param>
-        /// <param name="title">The title</param>
-        /// <param name="hint">The hint</param>
         /// <param name="tooltip">The tool tip</param>
         /// <param name="hasMenu">Whether the CommandGroup should appear in the Tools dropdown menu.</param>
         /// <param name="hasToolbar">Whether the CommandGroup should appear in the Command Manager and as a separate toolbar.</param>
-        /// <param name="addDropdownBoxForParts">If true, adds a command box to the toolbar for parts that has a dropdown of all commands that are part of this group. The tooltip of the command group is used as the name.</param>
-        /// <param name="addDropdownBoxForAssemblies">If true, adds a command box to the toolbar for assemblies that has a dropdown of all commands that are part of this group. The tooltip of the command group is used as the name.</param>
-        /// <param name="addDropdownBoxForDrawings">If true, adds a command box to the toolbar for drawings that has a dropdown of all commands that are part of this group. The tooltip of the command group is used as the name.</param>
         /// <param name="documentTypes">The document types where this menu/toolbar is visible</param>
-        /// <param name="iconListsPath">Absolute path to all icon sprites with including {0} for the image size</param>
-        /// <param name="mainIconPath">Absolute path to all main icons with including {0} for the image size</param>
-        public CommandManagerGroup(
-            ICommandGroup commandGroup, 
-            List<CommandManagerItem> items, 
-            List<CommandManagerFlyout> flyoutItems, 
-            int userId, 
-            string title, 
-            string hint,
-            string tooltip,
-            bool hasMenu, 
-            bool hasToolbar,
-            bool addDropdownBoxForParts,
-            bool addDropdownBoxForAssemblies,
-            bool addDropdownBoxForDrawings, 
-            ModelTemplateType documentTypes,
-            string iconListsPath,
-            string mainIconPath) : base(commandGroup)
+        /// <param name="iconListsPathFormat">Absolute path to all icon sprites with including {0} for the image size</param>
+        /// <param name="mainIconPathFormat">Absolute path to all main icons with including {0} for the image size</param>
+        public CommandManagerGroup(ICommandGroup commandGroup, List<ICommandManagerItem> items, int userId, string tooltip, bool hasMenu, bool hasToolbar,
+                                   ModelTemplateType documentTypes, string iconListsPathFormat, string mainIconPathFormat) : base(commandGroup)
         {
             // Store user Id, used to remove the command group
             UserId = userId;
 
             // Set items
             Items = items;
-
-            // Set flyouts
-            Flyouts = flyoutItems;
-
-            // Set title
-            Title = title;
-
-            // Set hint
-            Hint = hint;
-
+            
             // Set tooltip
             Tooltip = tooltip;
 
             // Show for certain types of documents, or when no document is active.
-            MenuVisibleInDocumentTypes = documentTypes;
+            BaseObject.ShowInDocumentType = (int) documentTypes;
 
             // Have a menu
-            HasMenu = hasMenu;
+            BaseObject.HasMenu = hasMenu;
 
             // Have a toolbar
-            HasToolbar = hasToolbar;
-
-            // Dropdowns
-            AddDropdownBoxForParts = addDropdownBoxForParts;
-            AddDropdownBoxForAssemblies = addDropdownBoxForAssemblies;
-            AddDropdownBoxForDrawings = addDropdownBoxForDrawings;
+            BaseObject.HasToolbar = hasToolbar;
 
             // Set icon list
-            mIconListPaths = Icons.GetFormattedPathDictionary(iconListsPath);
+            mIconListPaths = Icons.GetFormattedPathDictionary(iconListsPathFormat);
 
             // Set the main icon list
-            mMainIconPaths = Icons.GetFormattedPathDictionary(mainIconPath);
+            mMainIconPaths = Icons.GetFormattedPathDictionary(mainIconPathFormat);
 
             // Listen out for callbacks
             PlugInIntegration.CallbackFired += PlugInIntegration_CallbackFired;
-        }
-
-        #endregion
-
-        #region Callbacks
-
-        /// <summary>
-        /// Fired when a SolidWorks callback is fired
-        /// </summary>
-        /// <param name="name">The name of the callback that was fired</param>
-        private void PlugInIntegration_CallbackFired(string name)
-        {
-            // Find the item, if any
-            var item = Items?.FirstOrDefault(f => f.CallbackId == name);
-
-            // Call the action
-            item?.OnClick?.Invoke();
-
-            // Find the flyout, if any
-            var flyout = Flyouts?.FirstOrDefault(f => f.CallbackId == name);
-
-            // Call the action
-            flyout?.OnClick?.Invoke();
-        }
-
-        #endregion
-
-        #region Public Methods
-
-        /// <summary>
-        /// Adds a command item to the group
-        /// </summary>
-        /// <param name="item">The item to add</param>
-        public void AddCommandItem(CommandManagerItem item)
-        {
-            // Add the item
-            var id = BaseObject.AddCommandItem2(item.Name, item.Position, item.Hint, item.Tooltip, item.ImageIndex, $"Callback({item.CallbackId})", null, UserId, (int)item.ItemType);
-
-            // Set the Id we got
-            item.UniqueId = id;
         }
 
         /// <summary>
@@ -250,43 +113,271 @@ namespace CADBooster.SolidDna
         /// This group cannot be re-used after creating, any edits will not take place
         /// </summary>
         /// <param name="manager">The command manager that is our owner</param>
-        public void Create(CommandManager manager)
+        /// <param name="title"> </param>
+        public void Create(CommandManager manager, string title)
         {
             if (mCreated)
-                throw new SolidDnaException(SolidDnaErrors.CreateError(
-                    SolidDnaErrorTypeCode.SolidWorksCommandManager,
-                    SolidDnaErrorCode.SolidWorksCommandGroupReActivateError));
+                throw new SolidDnaException(SolidDnaErrors.CreateError(SolidDnaErrorTypeCode.SolidWorksCommandManager, SolidDnaErrorCode.SolidWorksCommandGroupReActivateError));
 
             // Set all relevant icon properties, depending on the solidworks version
             SetIcons();
 
             // Add items
-            Items?.ForEach(AddCommandItem);
+            Items.ForEach(AddCommandItem);
 
             // Activate the command group
             mCreated = BaseObject.Activate();
 
-            // Get command Ids
-            Items?.ForEach(item => item.CommandId = BaseObject.CommandID[item.UniqueId]);
-
-            #region Command Tab
+            // Get the command ID that solidworks generated for each item
+            Items.ForEach(GetCommandId);
 
             // Add items that are visible for parts
-            AddItemsToTabForModelType(manager, ModelType.Part, AddDropdownBoxForParts);
+            AddItemsToTabForModelType(manager, title, ModelType.Part);
 
             // Add items that are visible for assemblies
-            AddItemsToTabForModelType(manager, ModelType.Assembly, AddDropdownBoxForAssemblies);
+            AddItemsToTabForModelType(manager, title, ModelType.Assembly);
 
             // Add items that are visible for drawings
-            AddItemsToTabForModelType(manager, ModelType.Drawing, AddDropdownBoxForDrawings);
-
-            #endregion
+            AddItemsToTabForModelType(manager, title, ModelType.Drawing);
 
             // If we failed to create, throw
             if (!mCreated)
-                throw new SolidDnaException(SolidDnaErrors.CreateError(
-                    SolidDnaErrorTypeCode.SolidWorksCommandManager,
-                    SolidDnaErrorCode.SolidWorksCommandGroupActivateError));
+                throw new SolidDnaException(SolidDnaErrors.CreateError(SolidDnaErrorTypeCode.SolidWorksCommandManager, SolidDnaErrorCode.SolidWorksCommandGroupActivateError));
+        }
+
+        /// <summary>
+        /// Get the command manager items for a model type.
+        /// </summary>
+        /// <param name="items"></param>
+        /// <param name="modelType"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        private static List<ICommandManagerItem> GetItemsForModelType(List<ICommandManagerItem> items, ModelType modelType)
+        {
+            // Get the items that should be added to the tab
+            var itemsForAllModelTypes = items.Where(f => f.AddToTab && f.TabView != CommandManagerItemTabView.None);
+
+            // Return the items for this model type
+            switch (modelType)
+            {
+                case ModelType.Part:     return itemsForAllModelTypes.Where(f => f.VisibleForParts).ToList();
+                case ModelType.Assembly: return itemsForAllModelTypes.Where(f => f.VisibleForAssemblies).ToList();
+                case ModelType.Drawing:  return itemsForAllModelTypes.Where(f => f.VisibleForDrawings).ToList();
+                default:                 throw new ArgumentException("Invalid model type for command manager items");
+            }
+        }
+
+        /// <summary>
+        /// Adds a command item to the group
+        /// </summary>
+        /// <param name="commandManagerItem">The item to add</param>
+        private void AddCommandItem(ICommandManagerItem commandManagerItem)
+        {
+            // Flyouts are already added to the command manager when you create them.
+            // Separators are not added as items
+
+            if (commandManagerItem is CommandManagerItem item)
+            {
+                // Add the item. We pass a preferred position for each item and receive the actual position back.
+                var actualPosition = BaseObject.AddCommandItem2(item.Name, item.Position, item.Hint, item.Tooltip, item.ImageIndex,
+                                                                $"{nameof(SolidAddIn.Callback)}({item.CallbackId})", null, UserId, (int)item.ItemType);
+                
+                // If the returned position is -1, the item was not added.
+                if (actualPosition == -1)
+                    throw new SolidDnaException(SolidDnaErrors.CreateError(SolidDnaErrorTypeCode.SolidWorksCommandManager,
+                        SolidDnaErrorCode.SolidWorksCommandItemPositionError, "Can be caused by setting the image indexes wrong."));
+
+                // Store the actual position we receive. It's more an ID than it is a position because flyouts and separators are not counted.
+                // If we have multiple items and, for example, set each position at the default -1, we receive sequential numbers, starting at 0.
+                // Starts at zero for each command manager tab / ribbon. The position is later used to get the CommandID of the item.
+                item.Position = actualPosition;
+            }
+        }
+
+        /// <summary>
+        /// Add all items and flyouts that are visible for the given model type to a tab.
+        /// </summary>
+        /// <param name="manager"></param>
+        /// <param name="title"> </param>
+        /// <param name="modelType"></param>
+        private void AddItemsToTabForModelType(CommandManager manager, string title, ModelType modelType)
+        {
+            // Get items for this model type
+            var items = GetItemsForModelType(Items, modelType);
+
+            // Split the items into a list of lists, split at the separator
+            var itemsPerTabBox = GetSplitListsAtSeparator(items);
+
+            // Get the tab
+            var tab = GetNewOrExistingCommandManagerTab(modelType, manager, title);
+
+            // Add each list to its own tab box
+            foreach (var subItems in itemsPerTabBox)
+            {
+                // Skip empty lists
+                if (subItems.Count == 0)
+                    continue;
+
+                // Add the items to a new tab box and return the tab box.
+                var tabBox = AddItemsToTab(tab, subItems);
+
+                // Make sure we have a tab box. Returns null if there are no items to add to the tab box.
+                if (tabBox != null)
+                {
+                    // Add the new tab box to list of tab boxes.
+                    tab.TabBoxes.Add(tabBox);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Adds all items to the command tab.
+        /// </summary>
+        /// <param name="tab"></param>
+        /// <param name="items">Items to add</param>
+        private static CommandManagerTabBox AddItemsToTab(CommandManagerTab tab, List<ICommandManagerItem> items)
+        {
+            // Get the ID and style for each item and flyout
+            var tabItemData = GetTabItemData(items);
+
+            // Return if there are no items to add
+            if (tabItemData.Count <= 0) return null;
+
+            // Create new tab box
+            var tabBox = tab.UnsafeObject.AddCommandTabBox() ?? throw new SolidDnaException(SolidDnaErrors.CreateError(
+                SolidDnaErrorTypeCode.SolidWorksCommandManager,
+                SolidDnaErrorCode.SolidWorksCommandGroupCreateTabBoxError));
+
+            // Convert the list of TabData to arrays of ids and styles
+            var ids = tabItemData.Select(tabData => tabData.Id).ToArray();
+            var styles = tabItemData.Select(tabData => (int)tabData.Style).ToArray();
+
+            // Add the items to the new tab box
+            tabBox.AddCommands(ids, styles);
+
+            // Wrap it in our own tab box and return it
+            return new CommandManagerTabBox(tabBox);
+        }
+
+        /// <summary>
+        /// Split a list of items at the separator. Returns a list of lists.
+        /// </summary>
+        /// <param name="items"></param>
+        /// <returns></returns>
+        private static List<List<ICommandManagerItem>> GetSplitListsAtSeparator(List<ICommandManagerItem> items)
+        {
+            var currentList = new List<ICommandManagerItem>();
+            var results = new List<List<ICommandManagerItem>> { currentList };  // Always add the first list
+
+            // Loop through each item in the original list.
+            foreach (var item in items)
+            {
+                // Check if we should start a new list because we found a separator
+                if (item is CommandManagerSeparator)
+                {
+                    // Only create a new list if the current list is not empty
+                    if (currentList.Count > 0)
+                    {
+                        // Start a new list
+                        currentList = new List<ICommandManagerItem>();
+
+                        // Add the newly created list to the results list
+                        results.Add(currentList);
+                    }
+                }
+                else
+                {
+                    // Only add items and flyouts to the current list
+                    currentList.Add(item);
+                }
+            }
+            
+            // Remove empty lists. If we don't do this, the first list is empty when Items is empty.
+            return results.Where(x => x.Any()).ToList();
+        }
+
+        /// <summary>
+        /// Get a list of <see cref="TabItemData"/> for the given list of <see cref="ICommandManagerItem"/>. Only adds items and flyouts.
+        /// </summary>
+        /// <param name="items"></param>
+        /// <returns></returns>
+        private static List<TabItemData> GetTabItemData(List<ICommandManagerItem> items)
+        {
+            // Initiate new list of values
+            var tabItemData = new List<TabItemData>();
+
+            // Add each id and style to the list of tab data 
+            foreach (var commandManagerItem in items)
+            {
+                switch (commandManagerItem)
+                {
+                    case CommandManagerFlyout flyout:
+                    {
+                        // Add flyout data. We add a style enum to flyouts.
+                        tabItemData.Add(new TabItemData(flyout));
+                        break;
+                    }
+                    case CommandManagerItem item:
+                    {
+                        // Add item data.
+                        tabItemData.Add(new TabItemData(item));
+                        break;
+                    }
+                }
+            }
+
+            return tabItemData;
+        }
+
+        /// <summary>
+        /// Check <see cref="mTabs"/> for an existing tab with the given title and model type. If it doesn't exist, create a new command manager tab.
+        /// </summary>
+        /// <param name="modelType"></param>
+        /// <param name="manager"></param>
+        /// <param name="title"></param>
+        /// <returns></returns>
+        private CommandManagerTab GetNewOrExistingCommandManagerTab(ModelType modelType, CommandManager manager, string title)
+        {
+            // Get the tab if it already exists
+            var existingTab = mTabs.FirstOrDefault(f => f.Key.Title.Equals(title) && f.Key.ModelType == modelType).Value;
+            if (existingTab != null)
+            {
+                // Return the existing tab
+                return existingTab;
+            }
+
+            // Otherwise create it
+            var tab = manager.GetCommandTab(modelType, title);
+
+            // Keep track of this tab
+            mTabs.Add(new CommandManagerTabKey(title, modelType), tab);
+
+            // Return the new tab
+            return tab;
+        }
+
+        /// <summary>
+        /// Fired when a SolidWorks callback is fired
+        /// </summary>
+        /// <param name="name">The name of the callback that was fired</param>
+        private void PlugInIntegration_CallbackFired(string name)
+        {
+            // Find the item, if any
+            var item = Items.FirstOrDefault(f => f.CallbackId == name);
+
+            // Call the action
+            item?.OnClick?.Invoke();
+        }
+
+        /// <summary>
+        /// Get the command ID that solidworks generated from the command group and save it to the item.
+        /// </summary>
+        /// <param name="item"></param>
+        private void GetCommandId(ICommandManagerItem item)
+        {
+            //This is only necessary for CommandManagerItems, not for flyouts or separators.
+            if (item is CommandManagerItem commandManagerItem)
+                commandManagerItem.CommandId = BaseObject.CommandID[item.Position];
         }
 
         /// <summary>
@@ -323,193 +414,13 @@ namespace CADBooster.SolidDna
         }
 
         /// <summary>
-        /// Add all items and flyouts that are visible for the given model type to a tab.
-        /// </summary>
-        /// <param name="manager"></param>
-        /// <param name="modelType"></param>
-        /// <param name="addDropDown"></param>
-        private void AddItemsToTabForModelType(CommandManager manager, ModelType modelType, bool addDropDown)
-        {
-            // Get items for this model type
-            var items = GetItemsForModelType(Items, modelType);
-
-            // Get flyouts for this model type
-            var flyouts = GetFlyoutsForModelType(Flyouts, modelType);
-
-            // Add items to a tab
-            AddItemsToTab(modelType, manager, items, flyouts);
-
-            // Add dropdown box?
-            if (addDropDown)
-            {
-                var commandManagerItems = new List<CommandManagerItem>
-                {
-                    new CommandManagerItem
-                    {
-                        // Use this groups toolbar ID
-                        CommandId = BaseObject.ToolbarId,
-                        // Default style to text below for now
-                        TabView = CommandManagerItemTabView.IconWithTextBelow
-                    }
-                };
-
-                AddItemsToTab(modelType, manager, commandManagerItems, null);
-            }
-        }
-
-        /// <summary>
-        /// Get the command manager items for a model type.
-        /// </summary>
-        /// <param name="items"></param>
-        /// <param name="modelType"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentException"></exception>
-        private static List<CommandManagerItem> GetItemsForModelType(List<CommandManagerItem> items, ModelType modelType)
-        {
-            // Get the items that should be added to the tab
-            var itemsForAllModelTypes = items?.Where(f => f.AddToTab && f.TabView != CommandManagerItemTabView.None);
-
-            // Return the items for this model type
-            switch (modelType)
-            {
-                case ModelType.Part: return itemsForAllModelTypes?.Where(f => f.VisibleForParts).ToList();
-                case ModelType.Assembly: return itemsForAllModelTypes?.Where(f => f.VisibleForAssemblies).ToList();
-                case ModelType.Drawing: return itemsForAllModelTypes?.Where(f => f.VisibleForDrawings).ToList();
-                default: throw new ArgumentException("Invalid model type for command manager items");
-            }
-        }
-
-        /// <summary>
-        /// Get the command manager flyouts for a model type.
-        /// </summary>
-        /// <param name="flyouts"></param>
-        /// <param name="modelType"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentException"></exception>
-        private static List<CommandManagerFlyout> GetFlyoutsForModelType(List<CommandManagerFlyout> flyouts, ModelType modelType)
-        {
-            // Get the flyouts that should be added to the tab
-            var flyoutsForAllModelTypes = flyouts?.Where(f => f.TabView != CommandManagerItemTabView.None);
-
-            // Return the flyouts for this model type
-            switch (modelType)
-            {
-                case ModelType.Part: return flyoutsForAllModelTypes?.Where(f => f.VisibleForParts).ToList();
-                case ModelType.Assembly: return flyoutsForAllModelTypes?.Where(f => f.VisibleForAssemblies).ToList();
-                case ModelType.Drawing: return flyoutsForAllModelTypes?.Where(f => f.VisibleForDrawings).ToList();
-                default: throw new ArgumentException("Invalid model type for command manager flyouts");
-            }
-        }
-
-        /// <summary>
-        /// Adds all <see cref="Items"/> to the command tab of the given title and model type
-        /// </summary>
-        /// <param name="type">The tab for this type of model</param>
-        /// <param name="manager">The command manager</param>
-        /// <param name="items">Items to add</param>
-        /// <param name="flyouts">Flyout Items to add</param>
-        /// <param name="title">The title of the tab</param>
-        public void AddItemsToTab(ModelType type, CommandManager manager, List<CommandManagerItem> items, List<CommandManagerFlyout> flyouts, string title = "")
-        {
-            // Use default title if not specified
-            if (string.IsNullOrEmpty(title))
-                title = Title;
-
-            CommandManagerTab tab;
-
-            // Get the tab if it already exists
-            if (mTabs.Any(f => string.Equals(f.Key.Title, title) && f.Key.ModelType == type))
-                tab = mTabs.First(f => string.Equals(f.Key.Title, title) && f.Key.ModelType == type).Value;
-            // Otherwise create it
-            else
-            {
-                // Get the tab
-                tab = manager.GetCommandTab(type, title, createIfNotExist: true);
-
-                // Keep track of this tab
-                mTabs.Add(new CommandManagerTabKey { ModelType = type, Title = title }, tab);
-            }
-
-            // New list of values
-            var ids = new List<int>();
-            var styles = new List<int>();
-
-            // Add each items Id and style
-            items?.ForEach(item =>
-            {
-                // Add command Id
-                ids.Add(item.CommandId);
-
-                // Add style
-                styles.Add((int)item.TabView);
-            });
-
-            flyouts?.ForEach(item =>
-            {
-                // Add command Id
-                ids.Add(item.CommandId);
-
-                // Add style
-                styles.Add((int)item.TabView | (int)swCommandTabButtonFlyoutStyle_e.swCommandTabButton_ActionFlyout);
-            });
-
-            // If there are items to add...
-            if (ids?.Count > 0)
-            {
-                // Add all the items
-                tab.Box.UnsafeObject.AddCommands(ids.ToArray(), styles.ToArray());
-
-                // Add a separator before each item that wants one.
-                AddSeparators(items, tab);
-            }
-        }
-
-        /// <summary>
-        /// Add a separator before each <see cref="CommandManagerItem"/> that needs one.
-        /// </summary>
-        /// <param name="items"></param>
-        /// <param name="tab"></param>
-        private static void AddSeparators(List<CommandManagerItem> items, CommandManagerTab tab)
-        {
-            // Get the current tab box
-            var tabBox = (CommandTabBox) tab.Box.UnsafeObject;
-
-            // Add a separator before each item that wants one
-            var itemsThatNeedSeparator = items.Where(f => f.AddSeparatorBeforeThisItem).ToList();
-            foreach (var item in itemsThatNeedSeparator)
-            {
-                // Add the separator and split the current tab box in two.
-                // Returns the newly created tab box that contains the current items and all items on the right of it.
-                var newTabBox = tab.UnsafeObject.AddSeparator(tabBox, item.CommandId);
-
-                // Stop if the don't receive a new tab box. This can happen if not all items are visible in all model types.
-                if (newTabBox == null)
-                    break;
-                
-                // Use the new tab box to create the next separator.
-                tabBox = newTabBox;
-            }
-        }
-
-        #endregion
-
-        #region ToString
-
-        /// <summary>
         /// Returns a user-friendly string with group properties.
         /// </summary>
         /// <returns></returns>
-        public override string ToString()
-        {
-            return $"{Title}: {Items?.Count ?? 0} items, {Flyouts?.Count ?? 0} flyouts. Has menu: {HasMenu}. Has toolbar: {HasToolbar}";
-        }
-
-        #endregion
-
-        #region Dispose
+        public override string ToString() => $"Group with {Items.Count} items. Has menu: {HasMenu}. Has toolbar: {HasToolbar}";
 
         /// <summary>
-        /// Disposing
+        /// Unsubscribe from callbacks and safely dispose the current '<see cref="CommandManagerGroup"/>'-object
         /// </summary>
         public override void Dispose()
         {
@@ -522,7 +433,5 @@ namespace CADBooster.SolidDna
 
             base.Dispose();
         }
-
-        #endregion
     }
 }

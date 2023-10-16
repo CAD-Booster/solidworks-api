@@ -4,7 +4,7 @@ using SolidWorks.Interop.swconst;
 namespace CADBooster.SolidDna
 {
     /// <summary>
-    /// The type of command item in the <see cref="swCommandItemType_e"/> 
+    /// The type of command item in the <see cref="swCommandItemType_e"/>
     /// </summary>
     [Flags]
     public enum CommandItemType

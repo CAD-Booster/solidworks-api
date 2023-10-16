@@ -687,7 +687,7 @@ namespace CADBooster.SolidDna
                     var materials = new List<Material>();
 
                     // Iterate all classification nodes and inside are the materials
-                    xmlDoc.Root.Elements("classification")?.ToList()?.ForEach(f =>
+                    xmlDoc.Root.Elements("classification").ToList().ForEach(f =>
                     {
                         // Get classification name
                         var classification = f.Attribute("name")?.Value;
@@ -798,9 +798,9 @@ namespace CADBooster.SolidDna
         /// Attempts to create a task pane. Uses a single icon.
         /// </summary>
         /// <param name="iconPath">
-        ///     An absolute path to an icon to use for the taskpane.
-        ///     The bitmap should be 16 colors and 16 x 18 (width x height) pixels. 
-        ///     Any portions of the bitmap that are white (RGB 255,255,255) will be transparent.
+        /// An absolute path to an icon to use for the taskpane.
+        /// The bitmap should be 16 colors and 16 x 18 (width x height) pixels. 
+        /// Any portions of the bitmap that are white (RGB 255,255,255) will be transparent.
         /// </param>
         /// <param name="toolTip">The title text to show at the top of the taskpane</param>
         public async Task<Taskpane> CreateTaskpaneAsync(string iconPath, string toolTip)

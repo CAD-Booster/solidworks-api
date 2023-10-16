@@ -3,20 +3,15 @@
 namespace CADBooster.SolidDna
 {
     /// <summary>
-    /// A box for a command manager tab in SolidWorks
+    /// Can be seen as a group with commands, in which you can add, get or remove commands.
+    /// Each group of <see cref="CommandManagerItem"/>s needs its own tab box. We store the list of tab boxes in <see cref="CommandManagerTab"/>.
     /// </summary>
     public class CommandManagerTabBox : SolidDnaObject<ICommandTabBox>
     {
-        #region Constructor
-
         /// <summary>
-        /// Default constructor
+        /// Can be seen as a group, filled with commands, in which you can add, get or remove commands.
+        /// Each group of <see cref="CommandManagerItem"/>s needs its own tab box. We store the list of tab boxes in <see cref="CommandManagerTab"/>.
         /// </summary>
-        public CommandManagerTabBox(ICommandTabBox box) : base(box)
-        {
-
-        }
-
-        #endregion
+        public CommandManagerTabBox(ICommandTabBox box) : base(box) { }
     }
 }

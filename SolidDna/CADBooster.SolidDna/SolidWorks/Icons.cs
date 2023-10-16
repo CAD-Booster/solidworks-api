@@ -28,9 +28,9 @@ namespace CADBooster.SolidDna
         /// <summary>
         /// Get a dictionary with all icon paths based on a string format of the absolute path to the icon list images, replacing {0} with the size.
         /// For example C:\Folder\icons{0}.png would look for all sizes such as
-        /// C:\Folder\icons.png
-        /// C:\Folder\icons.png
-        /// C:\Folder\icons.png
+        /// C:\Folder\icons20.png
+        /// C:\Folder\icons32.png
+        /// C:\Folder\icons40.png
         /// ... and so on
         /// </summary>
         /// <param name="pathFormat">The absolute path, with {0} used to replace with the icon size</param>

@@ -354,6 +354,9 @@ namespace CADBooster.SolidDna
                 case "WeldTableAnchor":
                     return ModelFeatureType.TableAnchor;
 
+                case "WeldTableFeat":
+                    return ModelFeatureType.WeldTable;
+
                 #endregion
 
                 #region Folder

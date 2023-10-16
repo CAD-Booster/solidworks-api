@@ -340,7 +340,7 @@ namespace CADBooster.SolidDna
                 Directory.CreateDirectory(outputFolder);
 
                 // If folder is not empty
-                if (Directory.GetFiles(outputFolder)?.Length > 0)
+                if (Directory.GetFiles(outputFolder).Length > 0)
                     throw new ArgumentException("Output folder is not empty");
 
                 // Get pack and go object
@@ -755,6 +755,9 @@ namespace CADBooster.SolidDna
         {
             // Inform listeners
             ModelClosing();
+
+            // Remove file from list when file is closed/destroyed and stored within this list.
+            SolidWorksApplication.RemoveViewOnlyFilePath(FilePath);
 
             // This is a pre-notify but we are going to be dead
             // so dispose ourselves (our underlying COM objects)

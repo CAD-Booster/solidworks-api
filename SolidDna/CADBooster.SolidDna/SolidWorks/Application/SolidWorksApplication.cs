@@ -22,12 +22,6 @@ namespace CADBooster.SolidDna
         protected int mSwCookie;
 
         /// <summary>
-        /// The file path of the current file that is loading. 
-        /// Used to ignore active document changed events during opening of a file
-        /// </summary>
-        protected string mPathToFirstLoadingFile;
-
-        /// <summary>
         /// The currently active document
         /// </summary>
         protected Model mActiveModel;
@@ -35,6 +29,12 @@ namespace CADBooster.SolidDna
         #endregion
 
         #region Private Members
+
+        /// <summary>
+        /// SolidWorks does not fire <see cref="FileOpenPostNotify"/> for view-only ('Large Design Review' or 'Quick-view') models, so we fire the event ourselves.
+        /// Skip firing <see cref="FileOpenPostNotify"/> if the model path is already in this list. File path is removed when file is closed.
+        /// </summary>
+        private static readonly List<string> ViewOnlyFilePaths = new List<string>();
 
         /// <summary>
         /// Locking object for synchronizing the disposing of SolidWorks and reloading active model info.
@@ -127,7 +127,6 @@ namespace CADBooster.SolidDna
             // Hook into main events
             BaseObject.ActiveModelDocChangeNotify += ActiveModelChanged;
             BaseObject.DestroyNotify += OnSolidWorksClosing;
-            BaseObject.FileOpenPreNotify += FileOpenPreNotify;
             BaseObject.FileOpenPostNotify += FileOpenPostNotify;
             BaseObject.FileNewNotify2 += FileNewPostNotify;
             BaseObject.OnIdleNotify += OnIdleNotify;
@@ -264,49 +263,14 @@ namespace CADBooster.SolidDna
             // Wrap any error
             SolidDnaErrors.Wrap(() =>
             {
-                // If this is the file we were opening...
-                if (string.Equals(filePath, mPathToFirstLoadingFile, StringComparison.OrdinalIgnoreCase))
-                {
-                    // File has been loaded, so clear loading flag
-                    mPathToFirstLoadingFile = null;
+                // And update all properties and models
+                ReloadActiveModelInformation();
 
-                    // And update all properties and models
-                    ReloadActiveModelInformation();
-
-                    // Inform listeners
-                    FileOpened(filePath, mActiveModel);
-                }
-
+                // Inform listeners
+                FileOpened(filePath, mActiveModel);
             },
                 SolidDnaErrorTypeCode.SolidWorksApplication,
                 SolidDnaErrorCode.SolidWorksApplicationFilePostOpenError);
-
-            // NOTE: 0 is OK, anything else is an error
-            return 0;
-        }
-
-        /// <summary>
-        /// Called before a file has started opening
-        /// </summary>
-        /// <param name="filePath">The path to the file being opened</param>
-        /// <returns></returns>
-        private int FileOpenPreNotify(string filePath)
-        {
-            // Don't handle the ActiveModelDocChangeNotify event for file open events
-            // - wait until the file is open instead
-
-            // NOTE: We need to check if the variable already has a value because in the case of a drawing
-            // we get multiple pre-events - one for the drawing, and one for each model in it,
-            // we're only interested in the first
-
-            // Wrap any error
-            SolidDnaErrors.Wrap(() =>
-            {
-                if (mPathToFirstLoadingFile == null)
-                    mPathToFirstLoadingFile = filePath;
-            },
-                SolidDnaErrorTypeCode.SolidWorksApplication,
-                SolidDnaErrorCode.SolidWorksApplicationFilePreOpenError);
 
             // NOTE: 0 is OK, anything else is an error
             return 0;
@@ -325,22 +289,17 @@ namespace CADBooster.SolidDna
             // Wrap any error
             SolidDnaErrors.Wrap(() =>
             {
-                // If we are currently loading a file...
-                if (mPathToFirstLoadingFile != null)
+                // View Only mode (Large Assembly Review and Quick View) does not fire the FileOpenPostNotify event, so we catch these models here.
+                var activeDoc = BaseObject.IActiveDoc2;
+                if (activeDoc != null)
                 {
-                    // Check the active document
-                    using (var activeDoc = new Model(BaseObject.IActiveDoc2))
+                    var loadingInViewOnlyMode = activeDoc.IsOpenedViewOnly();
+                    var path = activeDoc.GetPathName().ToLower();
+                    if (loadingInViewOnlyMode && !ViewOnlyFilePaths.Contains(path))
                     {
-                        // View Only mode (Large Assembly Review and Quick View) does not fire the FileOpenPostNotify event, so we catch these models here.
-                        var loadingInViewOnlyMode = activeDoc.UnsafeObject.IsOpenedViewOnly();
-                        if (loadingInViewOnlyMode)
-                            FileOpenPostNotify(activeDoc.FilePath);
-                        else
-                        {
-                            // If this is the same file that is currently being loaded, ignore this event
-                            if (string.Equals(mPathToFirstLoadingFile, activeDoc.FilePath, StringComparison.OrdinalIgnoreCase))
-                                return;
-                        }
+                        FileOpenPostNotify(path);
+                        ViewOnlyFilePaths.Add(path);
+                        return;
                     }
                 }
 
@@ -359,6 +318,12 @@ namespace CADBooster.SolidDna
         #endregion
 
         #region Active Model
+
+        /// <summary>
+        /// Remove filepath from ViewOnlyFilePaths list after closing a 'View-only'-model.
+        /// </summary>
+        /// <param name="filePath"></param>
+        internal static void RemoveViewOnlyFilePath(string filePath) => ViewOnlyFilePaths.Remove(filePath?.ToLower());
 
         /// <summary>
         /// Reloads all of the variables, data and COM objects for the newly available SolidWorks model/state
@@ -722,7 +687,7 @@ namespace CADBooster.SolidDna
                     var materials = new List<Material>();
 
                     // Iterate all classification nodes and inside are the materials
-                    xmlDoc.Root.Elements("classification")?.ToList()?.ForEach(f =>
+                    xmlDoc.Root.Elements("classification").ToList().ForEach(f =>
                     {
                         // Get classification name
                         var classification = f.Attribute("name")?.Value;
@@ -833,9 +798,9 @@ namespace CADBooster.SolidDna
         /// Attempts to create a task pane. Uses a single icon.
         /// </summary>
         /// <param name="iconPath">
-        ///     An absolute path to an icon to use for the taskpane.
-        ///     The bitmap should be 16 colors and 16 x 18 (width x height) pixels. 
-        ///     Any portions of the bitmap that are white (RGB 255,255,255) will be transparent.
+        /// An absolute path to an icon to use for the taskpane.
+        /// The bitmap should be 16 colors and 16 x 18 (width x height) pixels. 
+        /// Any portions of the bitmap that are white (RGB 255,255,255) will be transparent.
         /// </param>
         /// <param name="toolTip">The title text to show at the top of the taskpane</param>
         public async Task<Taskpane> CreateTaskpaneAsync(string iconPath, string toolTip)

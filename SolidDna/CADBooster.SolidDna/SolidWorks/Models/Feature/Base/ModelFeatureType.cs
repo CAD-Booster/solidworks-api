@@ -937,6 +937,11 @@
         /// <summary>
         /// This feature does not have an interface
         /// </summary>
-        Weldment
+        Weldment,
+
+        /// <summary>
+        /// This feature does not have an interface
+        /// </summary>
+        WeldTable
     }
 }

@@ -213,6 +213,21 @@
         /// </summary>
         SolidWorksCommandFlyoutReActivateError = 12007,
 
+        /// <summary>
+        /// There was an error while trying to create a new tab box within a tab.
+        /// </summary>
+        SolidWorksCommandGroupCreateTabBoxError = 12008,
+
+        /// <summary>
+        /// There was an error while trying to add a flyout item. Can be caused by setting an incorrect image index.
+        /// </summary>
+        SolidWorksCommandFlyoutPositionError = 12009,
+
+        /// <summary>
+        /// There was an error while trying to add an command manager item.
+        /// </summary>
+        SolidWorksCommandItemPositionError = 12010,
+
         #endregion
 
         #region Export Data (13,000)

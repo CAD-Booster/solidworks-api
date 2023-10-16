@@ -1,47 +1,35 @@
 ﻿using SolidWorks.Interop.sldworks;
+using System.Collections.Generic;
 
 namespace CADBooster.SolidDna
 {
     /// <summary>
-    /// A command manager tab for the top command group in SolidWorks
+    /// Provides a way to manage and interact with command tabs. By default, it has a empty list of <see cref="CommandManagerTabBox"/>es.
+    /// Adds a tab box every time there is a separator in the list of <see cref="CommandManagerItem"/>s.
     /// </summary>
     public class CommandManagerTab : SolidDnaObject<ICommandTab>
     {
-        #region Public Properties
-
         /// <summary>
-        /// The command tab box for this tab
+        /// Public accessible list with command manager tab boxes. Can be used to add commands, get commands or remove commands.
+        /// Separated into multiple boxes so we don't have to add separators after creating a single tab box with all <see cref="CommandManagerItem"/>.
+        /// Now we create a tab box every time we find a separator and add only the items before the next separator.
         /// </summary>
-        public CommandManagerTabBox Box { get; }
-
-        #endregion
-
-        #region Constructor
+        public List<CommandManagerTabBox> TabBoxes { get; } = new List<CommandManagerTabBox>();
 
         /// <summary>
-        /// Default constructor
+        /// Wrap a <see cref="ICommandTab"/> and create an empty list of <see cref="CommandManagerTabBox"/>es.
         /// </summary>
-        public CommandManagerTab(ICommandTab tab) : base(tab)
-        {
-            // Adds the command tab box on creation
-            Box = new CommandManagerTabBox(BaseObject.AddCommandTabBox());
-        }
-
-        #endregion
-
-        #region Dispose
-
+        public CommandManagerTab(ICommandTab tab) : base(tab) { }
+        
         /// <summary>
-        /// Disposing
+        /// Dispose the <see cref="ICommandTab"/> and all <see cref="CommandManagerTabBox"/>es.
         /// </summary>
         public override void Dispose()
         {
-            // Dispose of box
-            Box?.Dispose();
-
+            foreach (var tabBox in TabBoxes)
+                tabBox?.Dispose();
+            
             base.Dispose();
         }
-
-        #endregion
     }
 }

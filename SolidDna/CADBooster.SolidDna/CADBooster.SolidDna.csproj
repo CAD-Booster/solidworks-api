@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>2.8.0.0</Version>
+    <Version>2.9.0.0</Version>
     <Authors>Luke Malpass, Peter Brinkhuis</Authors>
     <Company>CAD Booster B.V.</Company>
     <Description>The new SolidDNA SDK, making the SolidWorks API easier, well behaved and modern</Description>
@@ -10,19 +10,27 @@
     <PackageProjectUrl>https://github.com/CAD-Booster/solidworks-api</PackageProjectUrl>
     <RepositoryUrl>https://github.com/CAD-Booster/solidworks-api</RepositoryUrl>
     <PackageTags>soliddna solidworks cadbooster angelsix api</PackageTags>
-    <AssemblyVersion>2.8.0.0</AssemblyVersion>
+    <AssemblyVersion>2.9.0.0</AssemblyVersion>
     <Product>CADBooster.SolidDna</Product>
     <PackageId>CADBooster.SolidDna</PackageId>
     <AssemblyName>CADBooster.SolidDna</AssemblyName>
     <RootNamespace>CADBooster.SolidDna</RootNamespace>
     <PackageLicenseFile>license.txt</PackageLicenseFile>
-    <PackageReleaseNotes>Added a more reliable Close model method.
-Fixed recursing assembly components.
-Fixed including drawings when getting model dependencies.</PackageReleaseNotes>
+    <PackageReleaseNotes>Breaking: Redesigned CommandManager: 
+- Fixed flyouts.
+- Added separate methods for menus and toolbars.
+- Created a single list for menu items, flyouts and separators.
+- Removed AddDropdownForX parameters since flyouts work better.
+- Added choosing an ID for your command manager tabs and menus.
+
+Fixed unloading active model data when loading a model to insert as an assembly component.
+Upgraded all projects to SDK style.
+Added Weld Table feature type.
+Change default model types for new menus to include None.</PackageReleaseNotes>
     <SignAssembly>true</SignAssembly>
     <PackageIcon>icon.png</PackageIcon>
     <PackageIconUrl />
-    <FileVersion>2.8.0.0</FileVersion>
+    <FileVersion>2.9.0.0</FileVersion>
     <AssemblyOriginatorKeyFile>StrongNameKey.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

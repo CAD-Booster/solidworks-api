@@ -7,7 +7,7 @@
     {
         /// <summary>
         /// User-defined size of the balloons.
-        /// Valid only when  is set to swBalloonFit_e.swBF_UserDef
+        /// Valid only when <see cref="Size"/> is set to swBalloonFit_e.swBF_UserDef
         /// </summary>
         public double CustomSize { get; set; }
 

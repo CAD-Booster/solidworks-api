@@ -59,15 +59,15 @@ Change default model types for new menus to include None.</PackageReleaseNotes>
   <ItemGroup>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="SolidWorks.Interop.sldworks" HintPath="..\..\References\2023\SolidWorks.Interop.sldworks.dll" EmbedInteropTypes="false" />
-    <Reference Include="SolidWorks.Interop.sw3dprinter" HintPath="..\..\References\2023\SolidWorks.Interop.sw3dprinter.dll" EmbedInteropTypes="false" />
-    <Reference Include="SolidWorks.Interop.swcommands" HintPath="..\..\References\2023\SolidWorks.Interop.swcommands.dll" EmbedInteropTypes="false" />
-    <Reference Include="SolidWorks.Interop.swconst" HintPath="..\..\References\2023\SolidWorks.Interop.swconst.dll" EmbedInteropTypes="false" />
-    <Reference Include="SolidWorks.Interop.swdimxpert" HintPath="..\..\References\2023\SolidWorks.Interop.swdimxpert.dll" EmbedInteropTypes="false" />
-    <Reference Include="SolidWorks.Interop.swdocumentmgr" HintPath="..\..\References\2023\SolidWorks.Interop.swdocumentmgr.dll" EmbedInteropTypes="false" />
-    <Reference Include="SolidWorks.Interop.swmotionstudy" HintPath="..\..\References\2023\SolidWorks.Interop.swmotionstudy.dll" EmbedInteropTypes="false" />
-    <Reference Include="SolidWorks.Interop.swpublished" HintPath="..\..\References\2023\SolidWorks.Interop.swpublished.dll" EmbedInteropTypes="false" />
-    <Reference Include="SolidWorks.Interop.SWRoutingLib" HintPath="..\..\References\2023\SolidWorks.Interop.SWRoutingLib.dll" EmbedInteropTypes="false" />
+    <Reference Include="SolidWorks.Interop.sldworks" HintPath="..\..\References\2024\SolidWorks.Interop.sldworks.dll" EmbedInteropTypes="false" />
+    <Reference Include="SolidWorks.Interop.sw3dprinter" HintPath="..\..\References\2024\SolidWorks.Interop.sw3dprinter.dll" EmbedInteropTypes="false" />
+    <Reference Include="SolidWorks.Interop.swcommands" HintPath="..\..\References\2024\SolidWorks.Interop.swcommands.dll" EmbedInteropTypes="false" />
+    <Reference Include="SolidWorks.Interop.swconst" HintPath="..\..\References\2024\SolidWorks.Interop.swconst.dll" EmbedInteropTypes="false" />
+    <Reference Include="SolidWorks.Interop.swdimxpert" HintPath="..\..\References\2024\SolidWorks.Interop.swdimxpert.dll" EmbedInteropTypes="false" />
+    <Reference Include="SolidWorks.Interop.swdocumentmgr" HintPath="..\..\References\2024\SolidWorks.Interop.swdocumentmgr.dll" EmbedInteropTypes="false" />
+    <Reference Include="SolidWorks.Interop.swmotionstudy" HintPath="..\..\References\2024\SolidWorks.Interop.swmotionstudy.dll" EmbedInteropTypes="false" />
+    <Reference Include="SolidWorks.Interop.swpublished" HintPath="..\..\References\2024\SolidWorks.Interop.swpublished.dll" EmbedInteropTypes="false" />
+    <Reference Include="SolidWorks.Interop.SWRoutingLib" HintPath="..\..\References\2024\SolidWorks.Interop.SWRoutingLib.dll" EmbedInteropTypes="false" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="WindowsBase" />
     <Reference Include="WindowsFormsIntegration" />

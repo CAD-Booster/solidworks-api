@@ -7,42 +7,15 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="SolidWorks.Interop.sldworks">
-      <HintPath>..\..\..\References\2023\SolidWorks.Interop.sldworks.dll</HintPath>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
-    </Reference>
-    <Reference Include="SolidWorks.Interop.sw3dprinter">
-      <HintPath>..\..\..\References\2023\SolidWorks.Interop.sw3dprinter.dll</HintPath>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
-    </Reference>
-    <Reference Include="SolidWorks.Interop.swcommands">
-      <HintPath>..\..\..\References\2023\SolidWorks.Interop.swcommands.dll</HintPath>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
-    </Reference>
-    <Reference Include="SolidWorks.Interop.swconst">
-      <HintPath>..\..\..\References\2023\SolidWorks.Interop.swconst.dll</HintPath>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
-    </Reference>
-    <Reference Include="SolidWorks.Interop.swdimxpert">
-      <HintPath>..\..\..\References\2023\SolidWorks.Interop.swdimxpert.dll</HintPath>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
-    </Reference>
-    <Reference Include="SolidWorks.Interop.swdocumentmgr">
-      <HintPath>..\..\..\References\2023\SolidWorks.Interop.swdocumentmgr.dll</HintPath>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
-    </Reference>
-    <Reference Include="SolidWorks.Interop.swmotionstudy">
-      <HintPath>..\..\..\References\2023\SolidWorks.Interop.swmotionstudy.dll</HintPath>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
-    </Reference>
-    <Reference Include="SolidWorks.Interop.swpublished">
-      <HintPath>..\..\..\References\2023\SolidWorks.Interop.swpublished.dll</HintPath>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
-    </Reference>
-    <Reference Include="SolidWorks.Interop.SWRoutingLib">
-      <HintPath>..\..\..\References\2023\SolidWorks.Interop.SWRoutingLib.dll</HintPath>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
-    </Reference>
+    <Reference Include="SolidWorks.Interop.sldworks" HintPath="..\..\..\References\2024\SolidWorks.Interop.sldworks.dll" EmbedInteropTypes="False" />
+	<Reference Include="SolidWorks.Interop.sw3dprinter" HintPath="..\..\..\References\2024\SolidWorks.Interop.sw3dprinter.dll" EmbedInteropTypes="False" />
+	<Reference Include="SolidWorks.Interop.swcommands" HintPath="..\..\..\References\2024\SolidWorks.Interop.swcommands.dll" EmbedInteropTypes="False" />
+	<Reference Include="SolidWorks.Interop.swconst" HintPath="..\..\..\References\2024\SolidWorks.Interop.swconst.dll" EmbedInteropTypes="False" />
+	<Reference Include="SolidWorks.Interop.swdimxpert" HintPath="..\..\..\References\2024\SolidWorks.Interop.swdimxpert.dll" EmbedInteropTypes="False" />
+	<Reference Include="SolidWorks.Interop.swdocumentmgr" HintPath="..\..\..\References\2024\SolidWorks.Interop.swdocumentmgr.dll" EmbedInteropTypes="False" />
+	<Reference Include="SolidWorks.Interop.swmotionstudy" HintPath="..\..\..\References\2024\SolidWorks.Interop.swmotionstudy.dll" EmbedInteropTypes="False" />
+	<Reference Include="SolidWorks.Interop.swpublished" HintPath="..\..\..\References\2024\SolidWorks.Interop.swpublished.dll" EmbedInteropTypes="False" />
+	<Reference Include="SolidWorks.Interop.SWRoutingLib" HintPath="..\..\..\References\2024\SolidWorks.Interop.SWRoutingLib.dll" EmbedInteropTypes="False" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="TaskpaneUserControlHost.cs">

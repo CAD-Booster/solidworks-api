@@ -13,41 +13,14 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="SolidWorks.Interop.sldworks">
-      <HintPath>..\References\SolidWorks.Interop.sldworks.dll</HintPath>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
-    </Reference>
-    <Reference Include="SolidWorks.Interop.sw3dprinter">
-      <HintPath>..\References\SolidWorks.Interop.sw3dprinter.dll</HintPath>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
-    </Reference>
-    <Reference Include="SolidWorks.Interop.swcommands">
-      <HintPath>..\References\SolidWorks.Interop.swcommands.dll</HintPath>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
-    </Reference>
-    <Reference Include="SolidWorks.Interop.swconst">
-      <HintPath>..\References\SolidWorks.Interop.swconst.dll</HintPath>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
-    </Reference>
-    <Reference Include="SolidWorks.Interop.swdimxpert">
-      <HintPath>..\References\SolidWorks.Interop.swdimxpert.dll</HintPath>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
-    </Reference>
-    <Reference Include="SolidWorks.Interop.swdocumentmgr">
-      <HintPath>..\References\SolidWorks.Interop.swdocumentmgr.dll</HintPath>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
-    </Reference>
-    <Reference Include="SolidWorks.Interop.swmotionstudy">
-      <HintPath>..\References\SolidWorks.Interop.swmotionstudy.dll</HintPath>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
-    </Reference>
-    <Reference Include="SolidWorks.Interop.swpublished">
-      <HintPath>..\References\SolidWorks.Interop.swpublished.dll</HintPath>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
-    </Reference>
-    <Reference Include="SolidWorks.Interop.SWRoutingLib">
-      <HintPath>..\References\SolidWorks.Interop.SWRoutingLib.dll</HintPath>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
-    </Reference>
+    <Reference Include="SolidWorks.Interop.sldworks" HintPath="..\References\SolidWorks.Interop.sldworks.dll" EmbedInteropTypes="False" />
+	<Reference Include="SolidWorks.Interop.sw3dprinter" HintPath="..\References\SolidWorks.Interop.sw3dprinter.dll" EmbedInteropTypes="False" />
+	<Reference Include="SolidWorks.Interop.swcommands" HintPath="..\References\SolidWorks.Interop.swcommands.dll" EmbedInteropTypes="False" />
+	<Reference Include="SolidWorks.Interop.swconst" HintPath="..\References\SolidWorks.Interop.swconst.dll" EmbedInteropTypes="False" />
+	<Reference Include="SolidWorks.Interop.swdimxpert" HintPath="..\References\SolidWorks.Interop.swdimxpert.dll" EmbedInteropTypes="False" />
+	<Reference Include="SolidWorks.Interop.swdocumentmgr" HintPath="..\References\SolidWorks.Interop.swdocumentmgr.dll" EmbedInteropTypes="False" />
+	<Reference Include="SolidWorks.Interop.swmotionstudy" HintPath="..\References\SolidWorks.Interop.swmotionstudy.dll" EmbedInteropTypes="False" />
+	<Reference Include="SolidWorks.Interop.swpublished" HintPath="..\References\SolidWorks.Interop.swpublished.dll" EmbedInteropTypes="False" />
+	<Reference Include="SolidWorks.Interop.SWRoutingLib" HintPath="..\References\SolidWorks.Interop.SWRoutingLib.dll" EmbedInteropTypes="False" />
   </ItemGroup>
 </Project>

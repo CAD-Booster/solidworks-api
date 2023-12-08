@@ -20,7 +20,7 @@
     <SignAssembly>true</SignAssembly>
     <PackageIcon>icon.png</PackageIcon>
     <PackageIconUrl />
-    <FileVersion>2.9.0.0</FileVersion>
+    <FileVersion>3.0.0.0</FileVersion>
     <AssemblyOriginatorKeyFile>StrongNameKey.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

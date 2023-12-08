@@ -2,35 +2,25 @@
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>2.9.0.0</Version>
+    <Version>3.0.0.0</Version>
     <Authors>Luke Malpass, Peter Brinkhuis</Authors>
     <Company>CAD Booster B.V.</Company>
     <Description>The new SolidDNA SDK, making the SolidWorks API easier, well behaved and modern</Description>
-    <Copyright>Copyright © 2016-2023</Copyright>
+    <Copyright>Copyright © 2016-2024</Copyright>
     <PackageProjectUrl>https://github.com/CAD-Booster/solidworks-api</PackageProjectUrl>
     <RepositoryUrl>https://github.com/CAD-Booster/solidworks-api</RepositoryUrl>
     <PackageTags>soliddna solidworks cadbooster angelsix api</PackageTags>
-    <AssemblyVersion>2.9.0.0</AssemblyVersion>
+    <AssemblyVersion>3.0.0.0</AssemblyVersion>
     <Product>CADBooster.SolidDna</Product>
     <PackageId>CADBooster.SolidDna</PackageId>
     <AssemblyName>CADBooster.SolidDna</AssemblyName>
     <RootNamespace>CADBooster.SolidDna</RootNamespace>
     <PackageLicenseFile>license.txt</PackageLicenseFile>
-    <PackageReleaseNotes>Breaking: Redesigned CommandManager: 
-- Fixed flyouts.
-- Added separate methods for menus and toolbars.
-- Created a single list for menu items, flyouts and separators.
-- Removed AddDropdownForX parameters since flyouts work better.
-- Added choosing an ID for your command manager tabs and menus.
-
-Fixed unloading active model data when loading a model to insert as an assembly component.
-Upgraded all projects to SDK style.
-Added Weld Table feature type.
-Change default model types for new menus to include None.</PackageReleaseNotes>
+    <PackageReleaseNotes>Added support for SOLIDWORKS 2024.</PackageReleaseNotes>
     <SignAssembly>true</SignAssembly>
     <PackageIcon>icon.png</PackageIcon>
     <PackageIconUrl />
-    <FileVersion>2.9.0.0</FileVersion>
+    <FileVersion>3.0.0.0</FileVersion>
     <AssemblyOriginatorKeyFile>StrongNameKey.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -59,15 +49,15 @@ Change default model types for new menus to include None.</PackageReleaseNotes>
   <ItemGroup>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="SolidWorks.Interop.sldworks" HintPath="..\..\References\2023\SolidWorks.Interop.sldworks.dll" EmbedInteropTypes="false" />
-    <Reference Include="SolidWorks.Interop.sw3dprinter" HintPath="..\..\References\2023\SolidWorks.Interop.sw3dprinter.dll" EmbedInteropTypes="false" />
-    <Reference Include="SolidWorks.Interop.swcommands" HintPath="..\..\References\2023\SolidWorks.Interop.swcommands.dll" EmbedInteropTypes="false" />
-    <Reference Include="SolidWorks.Interop.swconst" HintPath="..\..\References\2023\SolidWorks.Interop.swconst.dll" EmbedInteropTypes="false" />
-    <Reference Include="SolidWorks.Interop.swdimxpert" HintPath="..\..\References\2023\SolidWorks.Interop.swdimxpert.dll" EmbedInteropTypes="false" />
-    <Reference Include="SolidWorks.Interop.swdocumentmgr" HintPath="..\..\References\2023\SolidWorks.Interop.swdocumentmgr.dll" EmbedInteropTypes="false" />
-    <Reference Include="SolidWorks.Interop.swmotionstudy" HintPath="..\..\References\2023\SolidWorks.Interop.swmotionstudy.dll" EmbedInteropTypes="false" />
-    <Reference Include="SolidWorks.Interop.swpublished" HintPath="..\..\References\2023\SolidWorks.Interop.swpublished.dll" EmbedInteropTypes="false" />
-    <Reference Include="SolidWorks.Interop.SWRoutingLib" HintPath="..\..\References\2023\SolidWorks.Interop.SWRoutingLib.dll" EmbedInteropTypes="false" />
+    <Reference Include="SolidWorks.Interop.sldworks" HintPath="..\..\References\2024\SolidWorks.Interop.sldworks.dll" EmbedInteropTypes="false" />
+    <Reference Include="SolidWorks.Interop.sw3dprinter" HintPath="..\..\References\2024\SolidWorks.Interop.sw3dprinter.dll" EmbedInteropTypes="false" />
+    <Reference Include="SolidWorks.Interop.swcommands" HintPath="..\..\References\2024\SolidWorks.Interop.swcommands.dll" EmbedInteropTypes="false" />
+    <Reference Include="SolidWorks.Interop.swconst" HintPath="..\..\References\2024\SolidWorks.Interop.swconst.dll" EmbedInteropTypes="false" />
+    <Reference Include="SolidWorks.Interop.swdimxpert" HintPath="..\..\References\2024\SolidWorks.Interop.swdimxpert.dll" EmbedInteropTypes="false" />
+    <Reference Include="SolidWorks.Interop.swdocumentmgr" HintPath="..\..\References\2024\SolidWorks.Interop.swdocumentmgr.dll" EmbedInteropTypes="false" />
+    <Reference Include="SolidWorks.Interop.swmotionstudy" HintPath="..\..\References\2024\SolidWorks.Interop.swmotionstudy.dll" EmbedInteropTypes="false" />
+    <Reference Include="SolidWorks.Interop.swpublished" HintPath="..\..\References\2024\SolidWorks.Interop.swpublished.dll" EmbedInteropTypes="false" />
+    <Reference Include="SolidWorks.Interop.SWRoutingLib" HintPath="..\..\References\2024\SolidWorks.Interop.SWRoutingLib.dll" EmbedInteropTypes="false" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="WindowsBase" />
     <Reference Include="WindowsFormsIntegration" />

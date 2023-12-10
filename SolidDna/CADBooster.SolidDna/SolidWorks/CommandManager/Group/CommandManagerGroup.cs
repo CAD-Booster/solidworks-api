@@ -208,7 +208,12 @@ namespace CADBooster.SolidDna
             // Split the items into a list of lists, split at the separator
             var itemsPerTabBox = GetSplitListsAtSeparator(items);
 
-            // Get the tab
+            // Do not create a tab if there are no items to add because this creates an empty tab in the Windows Registry.
+            // Registry location: HKEY_CURRENT_USER\SOFTWARE\SolidWorks\SOLIDWORKS 20xx\User Interface\CommandManager\ (AssyContext\DrwContext\PartContext)
+            if (itemsPerTabBox.Count == 0)
+                return;
+
+            // Get or create a tab
             var tab = GetNewOrExistingCommandManagerTab(modelType, manager, title);
 
             // Add each list to its own tab box

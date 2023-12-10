@@ -25,6 +25,6 @@
     <Content Include="icons96.png" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\SolidDna\CADBooster.SolidDna\CADBooster.SolidDna.csproj" />
+    <PackageReference Include="CADBooster.SolidDna" Version="3.0.0" />
   </ItemGroup>
 </Project>

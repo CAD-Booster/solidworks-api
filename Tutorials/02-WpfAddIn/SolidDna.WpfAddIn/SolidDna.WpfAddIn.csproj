@@ -18,16 +18,12 @@
     <Reference Include="SolidWorks.Interop.SWRoutingLib" HintPath="..\..\..\References\2024\SolidWorks.Interop.SWRoutingLib.dll" EmbedInteropTypes="False" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="MyTaskpaneUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="MyTaskpaneUI.cs" SubType="UserControl" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="logo-small.bmp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <Content Include="logo-small.bmp" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\SolidDna\CADBooster.SolidDna\CADBooster.SolidDna.csproj" />
+    <PackageReference Include="CADBooster.SolidDna" Version="3.1.0" />
   </ItemGroup>
 </Project>

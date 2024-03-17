@@ -51,7 +51,7 @@ namespace CADBooster.SolidDna
         public ModelFeature GetFeatureByName(string featureName)
         {
             // Wrap any error
-            return SolidDnaErrors.Wrap(() => new ModelFeature((Feature)mBaseObject.FeatureByName(featureName)),
+            return SolidDnaErrors.Wrap(() => GetModelFeatureByNameOrNull(featureName),
                 SolidDnaErrorTypeCode.SolidWorksModel,
                 SolidDnaErrorCode.SolidWorksModelAssemblyGetFeatureByNameError);
         }
@@ -68,7 +68,7 @@ namespace CADBooster.SolidDna
             return SolidDnaErrors.Wrap(() =>
             {
                 // Create feature
-                using (var modelFeature = new ModelFeature((Feature)mBaseObject.FeatureByName(featureName)))
+                using (var modelFeature = GetModelFeatureByNameOrNull(featureName))
                 {
                     // Run function
                     return (T)function.Invoke(modelFeature);
@@ -90,7 +90,7 @@ namespace CADBooster.SolidDna
             SolidDnaErrors.Wrap(() =>
             {
                 // Create feature
-                using (var modelFeature = new ModelFeature((Feature)mBaseObject.FeatureByName(featureName)))
+                using (var modelFeature = GetModelFeatureByNameOrNull(featureName))
                 {
                     // Run action
                     action(modelFeature);
@@ -98,6 +98,18 @@ namespace CADBooster.SolidDna
             },
                 SolidDnaErrorTypeCode.SolidWorksModel,
                 SolidDnaErrorCode.SolidWorksModelAssemblyGetFeatureByNameError);
+        }
+
+        /// <summary>
+        /// Get the <see cref="ModelFeature"/> of the item in the feature tree based on its name.
+        /// Returns the actual model feature or null when not found.
+        /// </summary>
+        /// <param name="featureName"></param>
+        /// <returns></returns>
+        private ModelFeature GetModelFeatureByNameOrNull(string featureName)
+        {
+            var feature = (Feature)mBaseObject.FeatureByName(featureName);
+            return feature == null ? null : new ModelFeature(feature);
         }
 
         #endregion

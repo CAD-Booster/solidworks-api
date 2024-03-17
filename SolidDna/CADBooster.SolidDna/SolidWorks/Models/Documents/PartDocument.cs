@@ -40,8 +40,9 @@ namespace CADBooster.SolidDna
         #endregion
 
         #region Feature Methods
+
         /// <summary>
-        /// Gets the <see cref="ModelFeature"/> of the item in the feature tree based on its name.
+        /// Get the <see cref="ModelFeature"/> of the item in the feature tree based on its name.
         /// Returns the actual model feature or null when not found.
         /// </summary>
         /// <param name="featureName">Name of the feature</param>
@@ -55,7 +56,7 @@ namespace CADBooster.SolidDna
         }
 
         /// <summary>
-        /// Gets the <see cref="ModelFeature"/> of the item in the feature tree based on its name and perform a function on it.
+        /// Get the <see cref="ModelFeature"/> of the item in the feature tree based on its name and perform a function on it.
         /// </summary>
         /// <param name="featureName">Name of the feature</param>
         /// <param name="function">The function to perform on this feature</param>
@@ -77,7 +78,7 @@ namespace CADBooster.SolidDna
         }
 
         /// <summary>
-        /// Gets the <see cref="ModelFeature"/> of the item in the feature tree based on its name and perform an action on it.
+        /// Get the <see cref="ModelFeature"/> of the item in the feature tree based on its name and perform an action on it.
         /// </summary>
         /// <param name="featureName">Name of the feature</param>
         /// <param name="action">The action to perform on this feature</param>
@@ -109,7 +110,6 @@ namespace CADBooster.SolidDna
             var feature = (Feature)mBaseObject.FeatureByName(featureName);
             return feature == null ? null : new ModelFeature(feature);
         }
-
 
         #endregion
     }

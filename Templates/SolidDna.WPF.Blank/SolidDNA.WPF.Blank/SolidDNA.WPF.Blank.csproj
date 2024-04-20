@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net48-windows</TargetFramework>
     <OutputType>Library</OutputType>
@@ -29,6 +29,6 @@
     <Content Include="Resources\SolidWorksAddinInstaller.exe" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="CADBooster.SolidDna" Version="3.1.0" />
+    <PackageReference Include="CADBooster.SolidDna" Version="3.2.0" />
   </ItemGroup>
 </Project>

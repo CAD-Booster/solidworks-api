@@ -9,6 +9,13 @@ namespace CADBooster.SolidDna
     public enum PartnerAddInKeyStatus
     {
         /// <summary>
+        /// Not an official value in <see cref="swPartnerEntitlementStatus_e"/>.
+        /// The length of <see cref="SolidAddIn.SolidWorksAddInPartnerLicenseKey"/> should be exactly 128 characters long (or an empty string when you are not a partner).
+        /// SolidWorks throws an exception when this happens and your add-in will not load.
+        /// </summary>
+        IncorrectPartnerLicenseKeyLength = -1,
+
+        /// <summary>
         /// Succeeded 
         /// </summary>
         Success = 0,

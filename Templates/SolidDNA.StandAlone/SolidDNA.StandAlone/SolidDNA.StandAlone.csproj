@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net48-windows</TargetFramework>
     <OutputType>Exe</OutputType>
@@ -16,7 +16,7 @@
     <Reference Include="SolidWorks.Interop.SWRoutingLib" HintPath="..\..\..\References\2024\SolidWorks.Interop.SWRoutingLib.dll" EmbedInteropTypes="False" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="CADBooster.SolidDna" Version="3.1.0" />
+    <PackageReference Include="CADBooster.SolidDna" Version="3.2.0" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

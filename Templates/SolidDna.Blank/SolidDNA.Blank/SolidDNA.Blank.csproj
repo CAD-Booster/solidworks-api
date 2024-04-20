@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
     <OutputType>Library</OutputType>
@@ -16,7 +16,7 @@
     <None Update="appsettings.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="CADBooster.SolidDna" Version="3.1.0" />
+    <PackageReference Include="CADBooster.SolidDna" Version="3.2.0" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

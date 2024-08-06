@@ -17,7 +17,7 @@ namespace CADBooster.SolidDna
         #region Protected Members
 
         /// <summary>
-        /// The cookie to the current instance of SolidWorks we are running inside of
+        /// The cookie to the current instance of SolidWorks we are running in.
         /// </summary>
         protected int mSwCookie;
 
@@ -121,7 +121,7 @@ namespace CADBooster.SolidDna
             // Set preferences
             Preferences = new SolidWorksPreferences();
 
-            // Store cookie Id
+            // Store cookie ID
             mSwCookie = cookie;
 
             // Hook into main events
@@ -326,7 +326,7 @@ namespace CADBooster.SolidDna
         internal static void RemoveViewOnlyFilePath(string filePath) => ViewOnlyFilePaths.Remove(filePath?.ToLower());
 
         /// <summary>
-        /// Reloads all of the variables, data and COM objects for the newly available SolidWorks model/state
+        /// Reloads all the variables, data and COM objects for the newly available SolidWorks model/state
         /// </summary>
         private void ReloadActiveModelInformation()
         {
@@ -595,7 +595,7 @@ namespace CADBooster.SolidDna
         {
             // NOTE: No point making our own enumerator for the export file type
             //       as right now and for many years it's only ever been
-            //       1 for PDF. I do not see this ever changing
+            //       1 for PDF. I do not see this ever changing.
             return BaseObject.GetExportFileData((int)swExportDataFileType_e.swExportPdfData) as IExportPdfData;
         }
 

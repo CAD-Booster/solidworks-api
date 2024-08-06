@@ -96,7 +96,7 @@ namespace CADBooster.SolidDna
         /// </summary>
         /// <typeparam name="TState">The type of the details of the message</typeparam>
         /// <param name="logLevel">The log level</param>
-        /// <param name="eventId">The Id</param>
+        /// <param name="eventId">The ID</param>
         /// <param name="state">The details of the message</param>
         /// <param name="exception">Any exception to log</param>
         /// <param name="formatter">The formatter for converting the state and exception to a message string</param>

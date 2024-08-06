@@ -135,7 +135,7 @@ namespace CADBooster.SolidDna
         /// </summary>
         public static void TearDown()
         {
-            // If we have an reference...
+            // If we have a reference...
             if (SolidWorks != null)
             {
                 // Log it

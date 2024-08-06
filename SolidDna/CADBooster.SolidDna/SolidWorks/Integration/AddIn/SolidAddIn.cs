@@ -148,7 +148,7 @@ namespace CADBooster.SolidDna
         /// Called when SolidWorks has loaded our add-in and wants us to do our connection logic
         /// </summary>
         /// <param name="thisSw">The current SolidWorks instance</param>
-        /// <param name="cookie">The current SolidWorks cookie Id</param>
+        /// <param name="cookie">The current SolidWorks cookie ID</param>
         /// <returns></returns>
         public bool ConnectToSW(object thisSw, int cookie)
         {
@@ -170,7 +170,7 @@ namespace CADBooster.SolidDna
                 Logger.LogDebugSource($"{SolidWorksAddInTitle} Connected to SolidWorks...");
 
                 //
-                //   NOTE: Do not need to create it here, as we now create it inside PlugInIntegration.Setup in it's own AppDomain
+                //   NOTE: Do not need to create it here, as we now create it inside PlugInIntegration.Setup in its own AppDomain
                 //         If we change back to loading directly (not in an app domain) then uncomment this 
                 //
                 // Store a reference to the current SolidWorks instance
@@ -183,7 +183,7 @@ namespace CADBooster.SolidDna
                 // Log it
                 Logger.LogDebugSource($"Storing the SOLIDWORKS instance...");
 
-                // Setup the current SolidWorks instance as a SolidDNA class.
+                // Set up the current SolidWorks instance as a SolidDNA class.
                 AddInIntegration.ConnectToActiveSolidWorks(((SldWorks)thisSw).RevisionNumber(), cookie);
 
                 // Log it

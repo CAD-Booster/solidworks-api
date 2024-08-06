@@ -20,12 +20,12 @@ namespace CADBooster.SolidDna
         private readonly List<CommandManagerFlyout> mCommandFlyouts = new List<CommandManagerFlyout>();
 
         /// <summary>
-        /// Unique Id for flyouts (just increment every time we add one)
+        /// Unique ID for flyouts (just increment every time we add one)
         /// </summary>
         private int mFlyoutIdCount = 1000;
 
         /// <summary>
-        /// Creates a command manager which let us create and access custom toolbars/tabs/ribbons) and menus.
+        /// Creates a command manager which let us create and access custom toolbars/tabs/ribbons and menus.
         /// There is only one command manager per SolidWorks instance.
         /// </summary>
         public CommandManager(ICommandManager commandManager) : base(commandManager) { }

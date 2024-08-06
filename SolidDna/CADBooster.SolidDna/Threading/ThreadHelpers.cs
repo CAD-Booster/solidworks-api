@@ -19,7 +19,7 @@ namespace CADBooster.SolidDna
         #endregion
 
         /// <summary>
-        /// Should be called from the UI thread to setup an Invoker (a user control)
+        /// Should be called from the UI thread to set up an Invoker (a user control)
         /// used to invoke any require tasks on the UI thread
         /// </summary>
         public static void Enable(Control uiControl)

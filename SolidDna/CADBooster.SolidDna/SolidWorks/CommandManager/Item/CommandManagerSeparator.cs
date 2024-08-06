@@ -28,7 +28,7 @@ namespace CADBooster.SolidDna
         public string CallbackId { get; }
 
         /// <summary>
-        /// The command Id for this flyout item. Not used for separators.
+        /// The command ID for this flyout item. Not used for separators.
         /// </summary>
         public int CommandId { get; }
 

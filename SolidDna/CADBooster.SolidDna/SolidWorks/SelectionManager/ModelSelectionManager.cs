@@ -25,7 +25,7 @@ namespace CADBooster.SolidDna
         #region Selected Entities
 
         /// <summary>
-        /// Gets all of the selected objects in the model
+        /// Gets all the selected objects in the model
         /// </summary>
         /// <param name="action">The selected objects list to be worked on inside the action.
         ///     NOTE: Do not store references to them outside of this action</param>

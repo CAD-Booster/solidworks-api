@@ -30,7 +30,7 @@ namespace CADBooster.SolidDna
         /// Gets a string resource
         /// </summary>
         /// <param name="name">The name of the string resource to retrieve</param>
-        /// <param name="culture">The culture to use if different than the default</param>
+        /// <param name="culture">The culture to use if different from the default</param>
         /// <returns>Returns the value of the string if found, and null if not found</returns>
         public static async Task<string> GetStringAsync(string name, string culture = null)
         {
@@ -43,7 +43,7 @@ namespace CADBooster.SolidDna
         /// Gets a string resource
         /// </summary>
         /// <param name="name">The name of the string resource to retrieve</param>
-        /// <param name="culture">The culture to use if different than the default</param>
+        /// <param name="culture">The culture to use if different from the default</param>
         /// <returns>Returns the value of the string if found, and null if not found</returns>
         public static string GetString(string name, string culture = null)
         {

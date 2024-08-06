@@ -91,7 +91,7 @@ namespace CADBooster.SolidDna
         public event Action DeletingSelection = () => { };
 
         /// <summary>
-        /// Called after the a drawing sheet was added
+        /// Called after a drawing sheet was added
         /// </summary>
         public event Action<string> DrawingSheetAdded = (sheetName) => { };
 
@@ -106,7 +106,7 @@ namespace CADBooster.SolidDna
         public event Action<string> DrawingActiveSheetChanging = (sheetName) => { };
 
         /// <summary>
-        /// Called after the a drawing sheet was deleted
+        /// Called after a drawing sheet was deleted
         /// </summary>
         public event Action<string> DrawingSheetDeleted = (sheetName) => { };
 
@@ -635,7 +635,7 @@ namespace CADBooster.SolidDna
         }
 
         /// <summary>
-        /// Called when a file is about to dropped into the current part/assembly.
+        /// Called when a file is about to be dropped into the current part/assembly.
         /// Not available for drawings.
         /// </summary>
         /// <param name="filename"></param>
@@ -947,7 +947,7 @@ namespace CADBooster.SolidDna
         #region Custom Properties
 
         /// <summary>
-        /// Gets all of the custom properties in this model including any configuration specific properties
+        /// Gets all the custom properties in this model including any configuration specific properties
         /// </summary>
         /// <returns>Custom property and the configuration name it belongs to (or null if none)</returns>
         public IEnumerable<(string configuration, CustomProperty property)> AllCustomProperties()
@@ -982,7 +982,7 @@ namespace CADBooster.SolidDna
         }
 
         /// <summary>
-        /// Gets all of the custom properties in this model.
+        /// Gets all the custom properties in this model.
         /// Simply set the Value of the custom property to edit it
         /// </summary>
         /// <param name="action">The custom properties list to be worked on inside the action. NOTE: Do not store references to them outside of this action</param>
@@ -1078,14 +1078,14 @@ namespace CADBooster.SolidDna
             // Wrap any error
             return SolidDnaErrors.Wrap(() =>
             {
-                // Get the Id's
+                // Get the ID's
                 var idString = BaseObject.MaterialIdName;
 
                 // Make sure we have some data
                 if (idString == null || !idString.Contains("|"))
                     return null;
 
-                // The Id string is split by pipes |
+                // The ID string is split by pipes |
                 var ids = idString.Split('|');
 
                 // We need at least the first and second 
@@ -1152,7 +1152,7 @@ namespace CADBooster.SolidDna
         #region Selected Entities
 
         /// <summary>
-        /// Gets all of the selected objects in the model
+        /// Gets all selected objects in the model
         /// </summary>
         /// <param name="action">The selected objects list to be worked on inside the action. NOTE: Do not store references to them outside of this action</param>
         /// <returns></returns>
@@ -1166,7 +1166,7 @@ namespace CADBooster.SolidDna
         #region Features
 
         /// <summary>
-        /// Recurses the model for all of it's features and sub-features
+        /// Recurses the model for all of its features and sub-features
         /// </summary>
         /// <param name="featureAction">The callback action that is called for each feature in the model</param>
         public void Features(Action<ModelFeature, int> featureAction)
@@ -1211,7 +1211,7 @@ namespace CADBooster.SolidDna
                     // Get its next sub-feature
                     var nextSubFeature = subFeature.GetNextSubFeature() as Feature;
 
-                    // Recurse all of the sub-features
+                    // Recurse all the sub-features
                     RecurseFeatures(featureAction, subFeature, featureDepth + 1);
 
                     // And once back up out of the recursive dive
@@ -1243,7 +1243,7 @@ namespace CADBooster.SolidDna
         #region Components
 
         /// <summary>
-        /// Recurses the model for all of it's components and sub-components
+        /// Recurses the model for all of its components and subcomponents
         /// </summary>
         public IEnumerable<(Component component, int depth)> Components()
         {
@@ -1270,10 +1270,10 @@ namespace CADBooster.SolidDna
         }
 
         /// <summary>
-        /// Recurses components and sub-components and provides a callback action to process and work with each components
+        /// Recurses components and subcomponents and provides a callback action to process and work with each component.
         /// </summary>
         /// <param name="startComponent">The components to start at</param>
-        /// <param name="componentDepth">The current depth of the sub-components based on the original calling components</param>
+        /// <param name="componentDepth">The current depth of the subcomponents based on the original calling components</param>
         private static IEnumerable<(Component, int)> RecurseComponents(Component startComponent = null, int componentDepth = 0)
         {
             // While that component is not null...
@@ -1355,7 +1355,7 @@ namespace CADBooster.SolidDna
             // Start with a successful result
             var results = new ModelSaveResult();
 
-            // Set errors and warnings to none to start with
+            // Set errors and warnings to None to start with
             var errors = 0;
             var warnings = 0;
 
@@ -1404,7 +1404,7 @@ namespace CADBooster.SolidDna
             // Start with a successful result
             var results = new ModelSaveResult();
 
-            // Set errors and warnings to none to start with
+            // Set errors and warnings to None to start with
             var errors = 0;
             var warnings = 0;
 

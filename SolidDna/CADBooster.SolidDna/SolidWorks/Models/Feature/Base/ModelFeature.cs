@@ -35,7 +35,7 @@ namespace CADBooster.SolidDna
     /// <summary>
     /// Represents a SolidWorks feature of any type.
     /// NOTE: This is a SharedSolidDnaObject so the passed 
-    /// in COM object should be final disposed by the <see cref="SelectedObject"/> parent
+    /// in COM object should be disposed by the <see cref="SelectedObject"/> parent
     /// 
     /// TODO: See if we can add support for non-interface types
     ///        
@@ -1037,7 +1037,7 @@ namespace CADBooster.SolidDna
         }
 
         /// <summary>
-        /// Gets all of the custom properties in this feature.
+        /// Gets all the custom properties in this feature.
         /// Only works for Cut List Folders and the Weldment feature.
         /// </summary>
         /// <param name="action">The custom properties list to be worked on inside the action. NOTE: Do not store references to them outside of this action</param>

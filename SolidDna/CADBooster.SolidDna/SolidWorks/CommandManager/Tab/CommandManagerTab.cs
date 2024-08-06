@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace CADBooster.SolidDna
 {
     /// <summary>
-    /// Provides a way to manage and interact with command tabs. By default, it has a empty list of <see cref="CommandManagerTabBox"/>es.
+    /// Provides a way to manage and interact with command tabs. By default, it has an empty list of <see cref="CommandManagerTabBox"/>es.
     /// Adds a tab box every time there is a separator in the list of <see cref="CommandManagerItem"/>s.
     /// </summary>
     public class CommandManagerTab : SolidDnaObject<ICommandTab>

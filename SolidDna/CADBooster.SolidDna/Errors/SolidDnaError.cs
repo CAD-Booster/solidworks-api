@@ -55,7 +55,7 @@ namespace CADBooster.SolidDna
         public int CallerLineNumber { get; set; }
 
         /// <summary>
-        /// Any relevant data to the error message in human readable form;
+        /// Any relevant data to the error message in human-readable form;
         /// such as a file path or URI
         /// </summary>
         public string PertinentData { get; set; }

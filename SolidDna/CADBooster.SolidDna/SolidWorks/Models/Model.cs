@@ -1247,13 +1247,13 @@ namespace CADBooster.SolidDna
         /// </summary>
         public IEnumerable<(Component component, int depth)> Components()
         {
-            // Component to be set
-            Component component;
-
             try
             {
                 // Try and create component object from active configuration
-                component = new Component(ActiveConfiguration.UnsafeObject?.GetRootComponent3(true));
+                var component = new Component(ActiveConfiguration.UnsafeObject?.GetRootComponent3(true));
+
+                // Go through all components and subcomponents
+                return RecurseComponents(component);
             }
             // If COM failure...
             catch (InvalidComObjectException)
@@ -1262,11 +1262,11 @@ namespace CADBooster.SolidDna
                 ActiveConfiguration = new ModelConfiguration(BaseObject.IGetActiveConfiguration());
 
                 // Try once more
-                component = new Component(ActiveConfiguration.UnsafeObject?.GetRootComponent3(true));
-            }
+                var component = new Component(ActiveConfiguration.UnsafeObject?.GetRootComponent3(true));
 
-            // Return components
-            return RecurseComponents(component);
+                // Go through all components and subcomponents
+                return RecurseComponents(component);
+            }
         }
 
         /// <summary>

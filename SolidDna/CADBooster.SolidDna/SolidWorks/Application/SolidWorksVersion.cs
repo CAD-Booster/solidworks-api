@@ -72,9 +72,8 @@
 
             var revisionParts = revisionNumber.Split('.');
 
-            // So far from all previous versions it is safe to assume that
-            // the year (SolidWorks 20XX) of the product is the revision number
-            // - 8 + 2000 so revision 23 is 2015
+            // So far from all previous versions it is safe to assume that the year (SolidWorks 20XX) of the product is:
+            // revision number - 8 + 2000 so revision 32 is 2024
             Version = int.TryParse(revisionParts[0], out var version) ? version - 8 + 2000 : versionUnknown;
 
             // Extract the first part of the revision number for the service pack

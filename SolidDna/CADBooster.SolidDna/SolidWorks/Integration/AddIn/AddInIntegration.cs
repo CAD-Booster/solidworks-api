@@ -72,13 +72,11 @@ namespace CADBooster.SolidDna
 
             try
             {
-                // Get the version number (such as 25 for 2016)
-                var postFix = "";
-                if (version != null && version.Contains("."))
-                    postFix = "." + version.Substring(0, version.IndexOf('.'));
-
+                // Get the ProgId, the name of the application including the version number
+                var progId = GetProgId(version);
+                
                 // Initialize SolidWorks (SolidDNA class)
-                SolidWorks = new SolidWorksApplication((SldWorks)Activator.CreateInstance(Type.GetTypeFromProgID("SldWorks.Application" + postFix)), cookie);
+                SolidWorks = new SolidWorksApplication((SldWorks)Activator.CreateInstance(Type.GetTypeFromProgID(progId)), cookie);
 
                 // Log it
                 Logger.LogDebugSource($"SolidWorks Instance Created? {SolidWorks != null}");
@@ -87,6 +85,24 @@ namespace CADBooster.SolidDna
             {
                 Logger.LogDebugSource("Failed to get active instance of SolidWorks in add-in mode", exception: e);
             }
+        }
+
+        /// <summary>
+        /// Get the ProgId for the SolidWorks application based on the version number.
+        /// </summary>
+        /// <param name="version"></param>
+        /// <returns></returns>
+        private static string GetProgId(string version)
+        {
+            if (version != null && version.Contains("."))
+            {
+                // Get the version number (such as 32 for 2024)
+                var versionNumber = version.Substring(0, version.IndexOf('.'));
+                return "SldWorks.Application." + versionNumber;
+            }
+
+            // Should not happen 
+            return "SldWorks.Application";
         }
 
         #endregion

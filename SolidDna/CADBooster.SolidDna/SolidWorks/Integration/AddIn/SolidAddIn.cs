@@ -1,4 +1,4 @@
-using SolidWorks.Interop.sldworks;
+﻿using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swpublished;
 using System;
 using System.Collections.Generic;
@@ -55,17 +55,11 @@ namespace CADBooster.SolidDna
         /// Let it be an empty string if your add-in is not a registered partner product.
         /// If the key is valid, the add-in appears under the group 'Partner Gold Add-ins' or 'Partner Solution Add-ins'.
         /// If the key is empty or not valid, the add-in appears under the group 'Other Add-ins'.
-        /// If the key length is not 128 characters, SolidWorks throws an exception and your add-in will not load. So we catch that exception and set the status to <see cref="PartnerAddInKeyStatus.IncorrectPartnerLicenseKeyLength"/>.
+        /// If the key length is not 128 characters, SolidWorks throws an exception and your add-in will not load.
+        /// So we catch that exception and set the status to <see cref="PartnerAddInKeyStatus.IncorrectPartnerLicenseKeyLength"/>.
         /// More info: <see href="https://help.solidworks.com/2024/english/api/sldworksapiprogguide/GettingStarted/SolidWorks_Partner_Program_2.htm" />
         /// </summary>
         public string SolidWorksAddInPartnerLicenseKey { get; set; } = "";
-
-        /// <summary>
-        /// The resulting partner add-in status. If <see cref="SolidWorksAddInPartnerLicenseKey"/> is an empty string, the status will be PartnerAddInKeyStatus.Fail.
-        /// This is not a problem, but your add-in will appear under the group 'Other Add-ins'. 
-        /// See <see cref="SolidWorksAddInPartnerLicenseKey"/> for more info.
-        /// </summary>
-        public PartnerAddInKeyStatus SolidWorksAddInPartnerKeyStatus { get; private set; }
 
         #endregion
 
@@ -112,6 +106,14 @@ namespace CADBooster.SolidDna
         /// </summary>
         /// <returns></returns>
         public abstract void ApplicationStartup();
+
+        /// <summary>
+        /// Called after SolidWorks has determined if this add-in has a valid Partner Program product key.
+        /// Check this status is your add-in is not starting up.
+        /// Runs directly after the <see cref="SolidAddIn"/> constructor and even before <see cref="ConnectToSW"/>.
+        /// See <see cref="SolidWorksAddInPartnerLicenseKey"/> for more info.
+        /// </summary>
+        public abstract void PartnerKeyStatusSet(PartnerAddInKeyStatus status);
 
         /// <summary>
         /// Run immediately when <see cref="ConnectToSW(object, int)"/> is called to do any pre-setup.
@@ -284,11 +286,12 @@ namespace CADBooster.SolidDna
         {
             if (!(classFactory is ISwPEClassFactory factory)) return;
 
+            PartnerAddInKeyStatus status;
             if (SolidWorksAddInPartnerLicenseKey.IsNullOrEmpty())
             {
                 // The partner license key should be an empty string when your add-in is not a SolidWorks partner product.
                 // If we pass an empty string, the status will be PartnerAddInKeyStatus.Fail and the add-in will load correctly. This is not a problem.
-                SolidWorksAddInPartnerKeyStatus = IdentifyAddinToSolidWorks(factory, "");
+                status = IdentifyAddinToSolidWorks(factory, "");
             }
             else if (SolidWorksAddInPartnerLicenseKey.Length != 128)
             {
@@ -296,13 +299,16 @@ namespace CADBooster.SolidDna
                 // SolidWorks throws an exception when you pass a string of the incorrect length and your add-in will not load.
                 // But we have to call ISwPEClassFactory.SetPartnerKey or the add-in will not load either, so we pass an empty string and ignore the return value.
                 IdentifyAddinToSolidWorks(factory, "");
-                SolidWorksAddInPartnerKeyStatus = PartnerAddInKeyStatus.IncorrectPartnerLicenseKeyLength;
+                status = PartnerAddInKeyStatus.IncorrectPartnerLicenseKeyLength;
             }
             else
             {
                 // Register our add-in as a partner product.
-                SolidWorksAddInPartnerKeyStatus = IdentifyAddinToSolidWorks(factory, SolidWorksAddInPartnerLicenseKey);
+                status = IdentifyAddinToSolidWorks(factory, SolidWorksAddInPartnerLicenseKey);
             }
+
+            // Inform listeners
+            PartnerKeyStatusSet(status);
         }
 
         /// <summary>

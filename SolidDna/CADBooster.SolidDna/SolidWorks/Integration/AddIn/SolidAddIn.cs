@@ -1,4 +1,4 @@
-﻿using SolidWorks.Interop.sldworks;
+using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swpublished;
 using System;
 using System.Collections.Generic;
@@ -105,7 +105,8 @@ namespace CADBooster.SolidDna
 
         /// <summary>
         /// Specific application startup code when SolidWorks is connected 
-        /// and before any plug-ins or listeners are informed
+        /// and before any plug-ins or listeners are informed.
+        /// Runs after <see cref="PreConnectToSolidWorks"/> and after <see cref="PreLoadPlugIns"/>.
         /// 
         /// NOTE: This call will not be in the same AppDomain as the SolidDna plug-ins
         /// </summary>
@@ -115,12 +116,14 @@ namespace CADBooster.SolidDna
         /// <summary>
         /// Run immediately when <see cref="ConnectToSW(object, int)"/> is called to do any pre-setup.
         /// For example, call <see cref="Logger.AddFileLogger{TAddIn}"/> to add a file logger for SolidDna messages.
+        /// Runs before <see cref="PreLoadPlugIns"/> and before <see cref="ApplicationStartup"/>.
         /// </summary>
         public abstract void PreConnectToSolidWorks();
 
         /// <summary>
         /// Run before loading plug-ins.
-        /// This call should be used to add plug-ins to be loaded, via <see cref="PlugInIntegration.AddPlugIn{T}"/>
+        /// This call should be used to add plug-ins to be loaded, via <see cref="PlugInIntegration.AddPlugIn{T}"/>.
+        /// Runs after <see cref="PreConnectToSolidWorks"/> and before <see cref="ApplicationStartup"/>.
         /// </summary>
         /// <returns></returns>
         public abstract void PreLoadPlugIns();

@@ -8,7 +8,7 @@
         #region Public properties
 
         /// <summary>
-        /// The version, such as 2017.
+        /// The version, such as 2025.
         /// If unknown will return -1
         /// </summary>
         public int Version { get; }
@@ -26,17 +26,17 @@
         public int ServicePackMinor { get; }
 
         /// <summary>
-        /// The raw revision, for example where SolidWorks 2015 SP2.0 is 23.2.0
+        /// The raw revision, for example where SolidWorks 2025 SP2.0 is 33.2.0
         /// </summary>
         public string RevisionNumber { get; }
 
         /// <summary>
-        /// The raw revision, for example where SolidWorks 2015 SP2.0 is 23.2.0
+        /// The raw revision, for example where SolidWorks 2025 SP2.0 is 33.2.0
         /// </summary>
         public string Revision { get; }
 
         /// <summary>
-        /// The raw build number, for example where SolidWorks 2015 SP2.0 it is d150130.002
+        /// The raw build number, for example where SolidWorks 2024 SP2.4 it is d240722.003
         /// </summary>
         public string BuildNumber { get; }
 

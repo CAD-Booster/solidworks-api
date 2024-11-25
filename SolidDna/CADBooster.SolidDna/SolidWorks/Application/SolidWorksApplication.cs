@@ -53,17 +53,17 @@ namespace CADBooster.SolidDna
         /// <summary>
         /// The type of SolidWorks application that is currently running.
         /// </summary>
-        public SolidWorksApplicationType ApplicationType => GetApplicationType();
+        public SolidWorksApplicationType ApplicationType { get; }
 
         /// <summary>
         /// Various preferences for SolidWorks
         /// </summary>
-        public SolidWorksPreferences Preferences { get; protected set; }
+        public SolidWorksPreferences Preferences { get; }
 
         /// <summary>
         /// Gets the current SolidWorks version information
         /// </summary>
-        public SolidWorksVersion SolidWorksVersion => GetSolidWorksVersion();
+        public SolidWorksVersion SolidWorksVersion { get; }
 
         /// <summary>
         /// The SolidWorks instance cookie
@@ -123,8 +123,10 @@ namespace CADBooster.SolidDna
         /// </summary>
         public SolidWorksApplication(SldWorks solidWorks, int cookie) : base(solidWorks)
         {
-            // Set preferences
+            // Set properties that never change
+            ApplicationType = GetApplicationType();
             Preferences = new SolidWorksPreferences();
+            SolidWorksVersion = GetSolidWorksVersion();
 
             // Store cookie ID
             mSwCookie = cookie;
@@ -159,7 +161,7 @@ namespace CADBooster.SolidDna
 
         #endregion
 
-        #region Version
+        #region Application properties
 
         /// <summary>
         /// Get the type of SolidWorks application we are running in.

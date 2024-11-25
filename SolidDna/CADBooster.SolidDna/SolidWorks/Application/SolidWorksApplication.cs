@@ -51,6 +51,11 @@ namespace CADBooster.SolidDna
         public Model ActiveModel => mActiveModel;
 
         /// <summary>
+        /// The type of SolidWorks application that is currently running.
+        /// </summary>
+        public SolidWorksApplicationType ApplicationType => GetApplicationType();
+
+        /// <summary>
         /// Various preferences for SolidWorks
         /// </summary>
         public SolidWorksPreferences Preferences { get; protected set; }
@@ -155,6 +160,18 @@ namespace CADBooster.SolidDna
         #endregion
 
         #region Version
+
+        /// <summary>
+        /// Get the type of SolidWorks application we are running in.
+        /// Options: Desktop, 3DEXPERIENCE SolidWorks (= SolidWorks Connected) or Desktop with the 3DEXPERIENCE connector add-in.
+        /// API was added in SolidWorks 2020, so we always return Desktop for older versions.
+        /// </summary>
+        /// <returns></returns>
+        private SolidWorksApplicationType GetApplicationType()
+        {
+            // If we are running in a version older than 2020, we are always running in the desktop application.
+            return SolidWorksVersion.Version < 2020 ? SolidWorksApplicationType.Desktop : (SolidWorksApplicationType)BaseObject.ApplicationType;
+        }
 
         /// <summary>
         /// Gets the current SolidWorks version information

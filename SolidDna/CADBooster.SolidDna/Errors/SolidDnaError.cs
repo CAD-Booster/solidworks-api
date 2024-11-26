@@ -99,7 +99,7 @@ namespace CADBooster.SolidDna
         /// <returns></returns>
         public override string ToString()
         {
-            return $"{ErrorDetails} ({ErrorMessage}) [T{ErrorTypeCode} E{ErrorCode}]";
+            return $"Error details: {ErrorDetails ?? "None"}. Message: {ErrorMessage ?? "None"}. Type code: {ErrorTypeCodeValue}. Code: {ErrorCodeValue}.";
         }
     }
 }

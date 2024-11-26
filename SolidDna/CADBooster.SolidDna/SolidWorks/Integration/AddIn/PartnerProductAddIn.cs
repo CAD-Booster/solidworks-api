@@ -14,7 +14,7 @@ namespace CADBooster.SolidDna
     /// IMPORTANT: The class that overrides <see cref="ISwAddin"/> MUST be the same class that 
     /// contains the ComRegister and ComUnregister functions due to how SolidWorks loads add-ins
     /// </summary>
-    internal abstract class PartnerProductAddIn : SolidAddIn, ISwPEManager
+    public abstract class PartnerProductAddIn : SolidAddIn, ISwPEManager
     {
         #region Public Properties
 

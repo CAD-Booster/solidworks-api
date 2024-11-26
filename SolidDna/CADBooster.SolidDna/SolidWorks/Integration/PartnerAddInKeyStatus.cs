@@ -3,14 +3,14 @@
 namespace CADBooster.SolidDna
 {
     /// <summary>
-    /// The return value for the <see cref="SolidAddIn.IdentifyToSW"/> call to SolidWorks to verify our add-in partner status.
-    /// From <see cref="swPartnerEntitlementStatus_e"/>.
+    /// The return value for the <see cref="PartnerProductAddIn.IdentifyToSW"/> call to SolidWorks to verify our add-in partner status.
+    /// Same values as <see cref="swPartnerEntitlementStatus_e"/>, but with an additional value for incorrect license key length.
     /// </summary>
     public enum PartnerAddInKeyStatus
     {
         /// <summary>
         /// Not an official value in <see cref="swPartnerEntitlementStatus_e"/>.
-        /// The length of <see cref="SolidAddIn.SolidWorksAddInPartnerLicenseKey"/> should be exactly 128 characters long (or an empty string when you are not a partner).
+        /// The length of <see cref="PartnerProductAddIn.SolidWorksAddInPartnerLicenseKey"/> should be exactly 128 characters long.
         /// SolidWorks throws an exception when this happens and your add-in will not load.
         /// </summary>
         IncorrectPartnerLicenseKeyLength = -1,
@@ -28,12 +28,12 @@ namespace CADBooster.SolidDna
         /// <summary>
         /// Failed because the add-in name does not match the add-in key request form.
         /// </summary>
-        AddinNameMismatch = 2,
+        AddInNameMismatch = 2,
 
         /// <summary>
         /// Failed because the add-in GUID does not match the add-in key request form.
         /// </summary>
-        AddinGuidMismatch = 4,
+        AddInGuidMismatch = 4,
 
         /// <summary>
         /// Failed because the SolidWorks version does not match the add-in key request form.

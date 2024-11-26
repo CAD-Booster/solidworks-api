@@ -24,11 +24,6 @@
 
         }
 
-        public override void PartnerKeyStatusSet(PartnerAddInKeyStatus status)
-        {
-
-        }
-
         public override void PreConnectToSolidWorks()
         {
 

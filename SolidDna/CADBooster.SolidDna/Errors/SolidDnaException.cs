@@ -34,6 +34,11 @@ namespace CADBooster.SolidDna
 
         #endregion
 
+        public override string ToString()
+        {
+            return $"SolidDnaException ({SolidDnaError}){(InnerException == null ? "" : $" Inner exception: {InnerException.ToString()}")}";
+        }
+
         /// <summary>
         /// Combines the SolidDnaError and InnerException, adding the InnerException message to the SolidDnaError.ErrorDescription
         /// </summary>

@@ -124,9 +124,9 @@ namespace CADBooster.SolidDna
         public SolidWorksApplication(SldWorks solidWorks, int cookie) : base(solidWorks)
         {
             // Set properties that never change
-            ApplicationType = GetApplicationType();
             Preferences = new SolidWorksPreferences();
             SolidWorksVersion = GetSolidWorksVersion();
+            ApplicationType = GetApplicationType(); // do this after setting the SolidWorks version.
 
             // Store cookie ID
             mSwCookie = cookie;

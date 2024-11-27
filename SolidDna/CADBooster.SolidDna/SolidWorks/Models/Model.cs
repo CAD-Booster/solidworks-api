@@ -72,6 +72,11 @@ namespace CADBooster.SolidDna
         public ModelType ModelType { get; protected set; }
 
         /// <summary>
+        /// The source program for this model. Can be SolidWorks Desktop, 3DExperience, xCAD or PartSupply.
+        /// </summary>
+        public ModelType3DExperience ModelType3DExperience { get; protected set; }
+
+        /// <summary>
         /// Indicates if this file needs saving (has file changes).
         /// </summary>
         public bool NeedsSaving => BaseObject.GetSaveFlag();
@@ -377,6 +382,11 @@ namespace CADBooster.SolidDna
 
             // Get the models type
             ModelType = (ModelType)BaseObject.GetType();
+
+            // Get the source program for this model. Was introduced in SolidWorks 2021.
+            ModelType3DExperience = SolidWorksEnvironment.Application.SolidWorksVersion.Version < 2021
+                ? ModelType3DExperience.Standard
+                : (ModelType3DExperience)Extension.UnsafeObject.Get3DExperienceModelType();
 
             // Get the extension
             Extension = new ModelExtension(BaseObject.Extension, this);

@@ -1,4 +1,4 @@
-﻿using SolidWorks.Interop.sldworks;
+using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swconst;
 using System;
 using System.Collections.Generic;
@@ -16,6 +16,21 @@ namespace CADBooster.SolidDna
         #region Public Properties
 
         /// <summary>
+        /// Contains the current active configuration information
+        /// </summary>
+        public ModelConfiguration ActiveConfiguration { get; protected set; }
+
+        /// <summary>
+        /// Get the number of configurations
+        /// </summary>
+        public int ConfigurationCount => BaseObject.GetConfigurationCount();
+
+        /// <summary>
+        /// Gets the configuration names
+        /// </summary>
+        public List<string> ConfigurationNames => new List<string>((string[])BaseObject.GetConfigurationNames());
+
+        /// <summary>
         /// The absolute file path of this model if it has been saved
         /// </summary>
         public string FilePath { get; protected set; }
@@ -25,16 +40,6 @@ namespace CADBooster.SolidDna
         /// If not, it's a new model currently only in-memory and will not have a file path.
         /// </summary>
         public bool HasBeenSaved => !string.IsNullOrEmpty(FilePath);
-
-        /// <summary>
-        /// Indicates if this file needs saving (has file changes).
-        /// </summary>
-        public bool NeedsSaving => BaseObject.GetSaveFlag();
-
-        /// <summary>
-        /// The type of document such as a part, assembly or drawing
-        /// </summary>
-        public ModelType ModelType { get; protected set; }
 
         /// <summary>
         /// True if this model is a part
@@ -57,43 +62,33 @@ namespace CADBooster.SolidDna
         public ModelExtension Extension { get; protected set; }
 
         /// <summary>
-        /// Contains the current active configuration information
+        /// The mass properties of the part
         /// </summary>
-        public ModelConfiguration ActiveConfiguration { get; protected set; }
+        public MassProperties MassProperties => Extension.GetMassProperties();
+
+        /// <summary>
+        /// The type of document such as a part, assembly or drawing
+        /// </summary>
+        public ModelType ModelType { get; protected set; }
+
+        /// <summary>
+        /// Indicates if this file needs saving (has file changes).
+        /// </summary>
+        public bool NeedsSaving => BaseObject.GetSaveFlag();
 
         /// <summary>
         /// The selection manager for this model
         /// </summary>
         public SelectionManager SelectionManager { get; protected set; }
 
-        /// <summary>
-        /// Get the number of configurations
-        /// </summary>
-        public int ConfigurationCount => BaseObject.GetConfigurationCount();
-
-        /// <summary>
-        /// Gets the configuration names
-        /// </summary>
-        public List<string> ConfigurationNames => new List<string>((string[])BaseObject.GetConfigurationNames());
-
-        /// <summary>
-        /// The mass properties of the part
-        /// </summary>
-        public MassProperties MassProperties => Extension.GetMassProperties();
-
         #endregion
 
         #region Public Events
 
         /// <summary>
-        /// Called when selected objects are about to be deleted.
+        /// Called when the active configuration has changed
         /// </summary>
-        public event Action DeletingSelection = () => { };
-
-        /// <summary>
-        /// Called after a drawing sheet was added
-        /// </summary>
-        public event Action<string> DrawingSheetAdded = (sheetName) => { };
+        public event Action ActiveConfigurationChanged = () => { };
 
         /// <summary>
         /// Called after the active drawing sheet has changed
@@ -106,9 +101,19 @@ namespace CADBooster.SolidDna
         public event Action<string> DrawingActiveSheetChanging = (sheetName) => { };
 
         /// <summary>
+        /// Called after a drawing sheet was added
+        /// </summary>
+        public event Action<string> DrawingSheetAdded = (sheetName) => { };
+
+        /// <summary>
         /// Called after a drawing sheet was deleted
         /// </summary>
         public event Action<string> DrawingSheetDeleted = (sheetName) => { };
+
+        /// <summary>
+        /// Called when selected objects are about to be deleted.
+        /// </summary>
+        public event Action DeletingSelection = () => { };
 
         /// <summary>
         /// Called after a file is dropped into the current part/assembly.
@@ -139,6 +144,11 @@ namespace CADBooster.SolidDna
         /// Called as the model is about to be closed
         /// </summary>
         public event Action ModelClosing = () => { };
+
+        /// <summary>
+        /// Called when any of the model properties changes
+        /// </summary>
+        public event Action ModelInformationChanged = () => { };
 
         /// <summary>
         /// Called when the model is first modified since it was last saved.
@@ -176,16 +186,6 @@ namespace CADBooster.SolidDna
         public event Action<string> ModelSavingAs = (fileName) => { };
 
         /// <summary>
-        /// Called when any of the model properties changes
-        /// </summary>
-        public event Action ModelInformationChanged = () => { };
-
-        /// <summary>
-        /// Called when the active configuration has changed
-        /// </summary>
-        public event Action ActiveConfigurationChanged = () => { };
-
-        /// <summary>
         /// Called when the selected objects in the model have changed
         /// </summary>
         public event Action SelectionChanged = () => { };
@@ -206,6 +206,159 @@ namespace CADBooster.SolidDna
         #endregion
 
         #region Model Data
+
+        /// <summary>
+        /// Packs up the current model into a flattened structure to a new location
+        /// </summary>
+        /// <param name="outputFolder">The output folder. If left blank will go to Local App Data folder under a unique name</param>
+        /// <param name="filenamePrefix">A prefix to add to all files once packed</param>
+        /// <returns></returns>
+        public string PackAndGo(string outputFolder = null, string filenamePrefix = "")
+        {
+            // Wrap any error
+            return SolidDnaErrors.Wrap(() =>
+                {
+                    // If no output path specified...
+                    if (string.IsNullOrEmpty(outputFolder))
+                        // Set it to app data folder
+                        outputFolder = Path.Combine(
+                            System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData),
+                            "SolidDna",
+                            "PackAndGo",
+                            // Unique folder name of current time
+                            DateTime.UtcNow.ToString("MM-dd-yyyy-HH-mm-ss"));
+
+                    // Create output folder
+                    Directory.CreateDirectory(outputFolder);
+
+                    // If folder is not empty
+                    if (Directory.GetFiles(outputFolder).Length > 0)
+                        throw new ArgumentException("Output folder is not empty");
+
+                    // Get pack and go object
+                    var packAndGo = BaseObject.Extension.GetPackAndGo();
+
+                    // Include any drawings, SOLIDWORKS Simulation results, and SOLIDWORKS Toolbox components
+                    packAndGo.IncludeDrawings = true;
+
+                    // NOTE: We could include more files...
+                    // packAndGo.IncludeSimulationResults = true;
+                    // packAndGo.IncludeToolboxComponents = true;
+
+                    // Add prefix to all files
+                    packAndGo.AddPrefix = filenamePrefix;
+
+                    // Get current paths and file names of the assembly's documents
+                    if (!packAndGo.GetDocumentNames(out var filesArray))
+                        // Throw error
+                        throw new ArgumentException("Failed to get document names");
+
+                    // Cast file names
+                    var fileNames = (string[])filesArray;
+
+                    // If fails to set folder where to save the files
+                    if (!packAndGo.SetSaveToName(true, outputFolder))
+                        // Throw error
+                        throw new ArgumentException("Failed to set save to folder");
+
+                    // Flatten the Pack and Go folder so all files are in single folder
+                    packAndGo.FlattenToSingleFolder = true;
+
+                    // Save all files
+                    var results = (PackAndGoSaveStatus[])BaseObject.Extension.SavePackAndGo(packAndGo);
+
+                    // There is a result per file, so all must be successful
+                    if (!results.All(f => f == PackAndGoSaveStatus.Success))
+                        // Throw error
+                        throw new ArgumentException("Failed to save pack and go");
+
+                    // Return the output folder
+                    return outputFolder;
+                },
+                SolidDnaErrorTypeCode.SolidWorksModel,
+                SolidDnaErrorCode.SolidWorksModelPackAndGoError);
+
+        }
+
+        /// <summary>
+        /// Unhooks model-specific events when model becomes inactive.
+        /// Model becomes inactive when it is closed or when another model becomes the active model.
+        /// </summary>
+        protected void ClearModelEventHandlers()
+        {
+            switch (ModelType)
+            {
+                case ModelType.Part when AsPart() == null:
+                case ModelType.Assembly when AsAssembly() == null:
+                case ModelType.Drawing when AsDrawing() == null:
+                {
+                    // Happens in multiple cases:
+                    // 1: When SolidWorks is being closed
+                    // 1: When the non-last model is being closed
+                    // 2: When the first model is opened after all models were closed.
+                    return;
+                }
+            }
+
+            // Based on the type of model this is...
+            switch (ModelType)
+            {
+                // Hook into the save and destroy events to keep data fresh
+                case ModelType.Assembly:
+                    AsAssembly().ActiveConfigChangePostNotify -= ActiveConfigChangePostNotify;
+                    AsAssembly().AddItemNotify -= AddItemNotify;
+                    AsAssembly().DeleteItemNotify -= DeleteItemPostNotify;
+                    AsAssembly().DeleteItemPreNotify -= DeleteItemPreNotify;
+                    AsAssembly().DeleteSelectionPreNotify -= DeletingSelectionPreNotify;
+                    AsAssembly().DestroyNotify -= FileDestroyedNotify;
+                    AsAssembly().FileDropNotify -= FileDroppedPostNotify;
+                    AsAssembly().FileDropPreNotify -= FileDroppedPreNotify;
+                    AsAssembly().FileSaveAsNotify2 -= FileSaveAsPreNotify;
+                    AsAssembly().FileSaveNotify -= FileSavePreNotify;
+                    AsAssembly().FileSavePostCancelNotify -= FileSaveCanceled;
+                    AsAssembly().FileSavePostNotify -= FileSavePostNotify;
+                    AsAssembly().ModifyNotify -= FileModified;
+                    AsAssembly().RegenPostNotify2 -= AssemblyOrPartRebuilt;
+                    AsAssembly().UserSelectionPostNotify -= UserSelectionPostNotify;
+                    AsAssembly().ClearSelectionsNotify -= UserSelectionPostNotify;
+                    break;
+                case ModelType.Part:
+                    AsPart().ActiveConfigChangePostNotify -= ActiveConfigChangePostNotify;
+                    AsPart().AddItemNotify -= AddItemNotify;
+                    AsPart().DeleteItemNotify -= DeleteItemPostNotify;
+                    AsPart().DeleteItemPreNotify -= DeleteItemPreNotify;
+                    AsPart().DeleteSelectionPreNotify -= DeletingSelectionPreNotify;
+                    AsPart().DestroyNotify -= FileDestroyedNotify;
+                    AsPart().FileDropPostNotify -= FileDroppedPostNotify;
+                    AsPart().FileDropPreNotify -= FileDroppedPreNotify;
+                    AsPart().FileSaveAsNotify2 -= FileSaveAsPreNotify;
+                    AsPart().FileSaveNotify -= FileSavePreNotify;
+                    AsPart().FileSavePostCancelNotify -= FileSaveCanceled;
+                    AsPart().FileSavePostNotify -= FileSavePostNotify;
+                    AsPart().ModifyNotify -= FileModified;
+                    AsPart().RegenPostNotify2 -= AssemblyOrPartRebuilt;
+                    AsPart().UserSelectionPostNotify -= UserSelectionPostNotify;
+                    AsPart().ClearSelectionsNotify -= UserSelectionPostNotify;
+                    break;
+                case ModelType.Drawing:
+                    AsDrawing().ActivateSheetPostNotify -= SheetActivatePostNotify;
+                    AsDrawing().ActivateSheetPreNotify -= SheetActivatePreNotify;
+                    AsDrawing().AddItemNotify -= DrawingItemAddNotify;
+                    AsDrawing().DeleteItemPreNotify -= DeleteItemPreNotify;
+                    AsDrawing().DeleteItemNotify -= DeleteDrawingItemPostNotify;
+                    AsDrawing().DeleteSelectionPreNotify -= DeletingSelectionPreNotify;
+                    AsDrawing().DestroyNotify -= FileDestroyedNotify;
+                    AsDrawing().FileSaveAsNotify2 -= FileSaveAsPreNotify;
+                    AsDrawing().FileSaveNotify -= FileSavePreNotify;
+                    AsDrawing().FileSavePostCancelNotify -= FileSaveCanceled;
+                    AsDrawing().FileSavePostNotify -= FileSavePostNotify;
+                    AsDrawing().ModifyNotify -= FileModified;
+                    AsDrawing().RegenPostNotify -= DrawingRebuilt;
+                    AsDrawing().UserSelectionPostNotify -= UserSelectionPostNotify;
+                    AsDrawing().ClearSelectionsNotify -= UserSelectionPostNotify;
+                    break;
+            }
+        }
 
         /// <summary>
         /// Reloads all variables and data about this model
@@ -311,159 +464,6 @@ namespace CADBooster.SolidDna
                     AsDrawing().RegenPostNotify += DrawingRebuilt;
                     AsDrawing().UserSelectionPostNotify += UserSelectionPostNotify;
                     AsDrawing().ClearSelectionsNotify += UserSelectionPostNotify;
-                    break;
-            }
-        }
-
-        /// <summary>
-        /// Packs up the current model into a flattened structure to a new location
-        /// </summary>
-        /// <param name="outputFolder">The output folder. If left blank will go to Local App Data folder under a unique name</param>
-        /// <param name="filenamePrefix">A prefix to add to all files once packed</param>
-        /// <returns></returns>
-        public string PackAndGo(string outputFolder = null, string filenamePrefix = "")
-        {
-            // Wrap any error
-            return SolidDnaErrors.Wrap(() =>
-            {
-                // If no output path specified...
-                if (string.IsNullOrEmpty(outputFolder))
-                    // Set it to app data folder
-                    outputFolder = Path.Combine(
-                        System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData),
-                        "SolidDna",
-                        "PackAndGo",
-                        // Unique folder name of current time
-                        DateTime.UtcNow.ToString("MM-dd-yyyy-HH-mm-ss"));
-
-                // Create output folder
-                Directory.CreateDirectory(outputFolder);
-
-                // If folder is not empty
-                if (Directory.GetFiles(outputFolder).Length > 0)
-                    throw new ArgumentException("Output folder is not empty");
-
-                // Get pack and go object
-                var packAndGo = BaseObject.Extension.GetPackAndGo();
-
-                // Include any drawings, SOLIDWORKS Simulation results, and SOLIDWORKS Toolbox components
-                packAndGo.IncludeDrawings = true;
-
-                // NOTE: We could include more files...
-                // packAndGo.IncludeSimulationResults = true;
-                // packAndGo.IncludeToolboxComponents = true;
-
-                // Add prefix to all files
-                packAndGo.AddPrefix = filenamePrefix;
-
-                // Get current paths and file names of the assembly's documents
-                if (!packAndGo.GetDocumentNames(out var filesArray))
-                    // Throw error
-                    throw new ArgumentException("Failed to get document names");
-
-                // Cast file names
-                var fileNames = (string[])filesArray;
-
-                // If fails to set folder where to save the files
-                if (!packAndGo.SetSaveToName(true, outputFolder))
-                    // Throw error
-                    throw new ArgumentException("Failed to set save to folder");
-
-                // Flatten the Pack and Go folder so all files are in single folder
-                packAndGo.FlattenToSingleFolder = true;
-
-                // Save all files
-                var results = (PackAndGoSaveStatus[])BaseObject.Extension.SavePackAndGo(packAndGo);
-
-                // There is a result per file, so all must be successful
-                if (!results.All(f => f == PackAndGoSaveStatus.Success))
-                    // Throw error
-                    throw new ArgumentException("Failed to save pack and go");
-
-                // Return the output folder
-                return outputFolder;
-            },
-                SolidDnaErrorTypeCode.SolidWorksModel,
-                SolidDnaErrorCode.SolidWorksModelPackAndGoError);
-
-        }
-
-        /// <summary>
-        /// Unhooks model-specific events when model becomes inactive.
-        /// Model becomes inactive when it is closed or when another model becomes the active model.
-        /// </summary>
-        protected void ClearModelEventHandlers()
-        {
-            switch (ModelType)
-            {
-                case ModelType.Part when AsPart() == null:
-                case ModelType.Assembly when AsAssembly() == null:
-                case ModelType.Drawing when AsDrawing() == null:
-                {
-                    // Happens in multiple cases:
-                    // 1: When SolidWorks is being closed
-                    // 1: When the non-last model is being closed
-                    // 2: When the first model is opened after all models were closed.
-                    return;
-                }
-            }
-
-            // Based on the type of model this is...
-            switch (ModelType)
-            {
-                // Hook into the save and destroy events to keep data fresh
-                case ModelType.Assembly:
-                    AsAssembly().ActiveConfigChangePostNotify -= ActiveConfigChangePostNotify;
-                    AsAssembly().AddItemNotify -= AddItemNotify;
-                    AsAssembly().DeleteItemNotify -= DeleteItemPostNotify;
-                    AsAssembly().DeleteItemPreNotify -= DeleteItemPreNotify;
-                    AsAssembly().DeleteSelectionPreNotify -= DeletingSelectionPreNotify;
-                    AsAssembly().DestroyNotify -= FileDestroyedNotify;
-                    AsAssembly().FileDropNotify -= FileDroppedPostNotify;
-                    AsAssembly().FileDropPreNotify -= FileDroppedPreNotify;
-                    AsAssembly().FileSaveAsNotify2 -= FileSaveAsPreNotify;
-                    AsAssembly().FileSaveNotify -= FileSavePreNotify;
-                    AsAssembly().FileSavePostCancelNotify -= FileSaveCanceled;
-                    AsAssembly().FileSavePostNotify -= FileSavePostNotify;
-                    AsAssembly().ModifyNotify -= FileModified;
-                    AsAssembly().RegenPostNotify2 -= AssemblyOrPartRebuilt;
-                    AsAssembly().UserSelectionPostNotify -= UserSelectionPostNotify;
-                    AsAssembly().ClearSelectionsNotify -= UserSelectionPostNotify;
-                    break;
-                case ModelType.Part:
-                    AsPart().ActiveConfigChangePostNotify -= ActiveConfigChangePostNotify;
-                    AsPart().AddItemNotify -= AddItemNotify;
-                    AsPart().DeleteItemNotify -= DeleteItemPostNotify;
-                    AsPart().DeleteItemPreNotify -= DeleteItemPreNotify;
-                    AsPart().DeleteSelectionPreNotify -= DeletingSelectionPreNotify;
-                    AsPart().DestroyNotify -= FileDestroyedNotify;
-                    AsPart().FileDropPostNotify -= FileDroppedPostNotify;
-                    AsPart().FileDropPreNotify -= FileDroppedPreNotify;
-                    AsPart().FileSaveAsNotify2 -= FileSaveAsPreNotify;
-                    AsPart().FileSaveNotify -= FileSavePreNotify;
-                    AsPart().FileSavePostCancelNotify -= FileSaveCanceled;
-                    AsPart().FileSavePostNotify -= FileSavePostNotify;
-                    AsPart().ModifyNotify -= FileModified;
-                    AsPart().RegenPostNotify2 -= AssemblyOrPartRebuilt;
-                    AsPart().UserSelectionPostNotify -= UserSelectionPostNotify;
-                    AsPart().ClearSelectionsNotify -= UserSelectionPostNotify;
-                    break;
-                case ModelType.Drawing:
-                    AsDrawing().ActivateSheetPostNotify -= SheetActivatePostNotify;
-                    AsDrawing().ActivateSheetPreNotify -= SheetActivatePreNotify;
-                    AsDrawing().AddItemNotify -= DrawingItemAddNotify;
-                    AsDrawing().DeleteItemPreNotify -= DeleteItemPreNotify;
-                    AsDrawing().DeleteItemNotify -= DeleteDrawingItemPostNotify;
-                    AsDrawing().DeleteSelectionPreNotify -= DeletingSelectionPreNotify;
-                    AsDrawing().DestroyNotify -= FileDestroyedNotify;
-                    AsDrawing().FileSaveAsNotify2 -= FileSaveAsPreNotify;
-                    AsDrawing().FileSaveNotify -= FileSavePreNotify;
-                    AsDrawing().FileSavePostCancelNotify -= FileSaveCanceled;
-                    AsDrawing().FileSavePostNotify -= FileSavePostNotify;
-                    AsDrawing().ModifyNotify -= FileModified;
-                    AsDrawing().RegenPostNotify -= DrawingRebuilt;
-                    AsDrawing().UserSelectionPostNotify -= UserSelectionPostNotify;
-                    AsDrawing().ClearSelectionsNotify -= UserSelectionPostNotify;
                     break;
             }
         }

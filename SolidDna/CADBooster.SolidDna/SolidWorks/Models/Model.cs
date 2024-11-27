@@ -1,4 +1,4 @@
-using SolidWorks.Interop.sldworks;
+﻿using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swconst;
 using System;
 using System.Collections.Generic;
@@ -1442,6 +1442,70 @@ namespace CADBooster.SolidDna
             },
                 SolidDnaErrorTypeCode.SolidWorksModel,
                 SolidDnaErrorCode.SolidWorksModelSaveAsError);
+        }
+
+        /// <summary>
+        /// Save a new file to 3DExperience. Similar to a Save As.
+        /// </summary>
+        /// <param name="filename">The preferred filename, not a complete path</param>
+        /// <param name="revisionComment">An optional comment about this revision</param>
+        /// <returns></returns>
+        public ModelSaveResult SaveTo3DExperience(string filename, string revisionComment = null)
+        {
+            // Wrap any error
+            return SolidDnaErrors.Wrap(() =>
+            {
+                // Check if we can save to 3DExperience
+                if (SolidWorksEnvironment.Application.ApplicationType == SolidWorksApplicationType.Desktop)
+                {
+                    // Pick the closest error there is
+                    return new ModelSaveResult
+                    {
+                        Errors = SaveAsErrors.FileSaveFormatNotAvailable
+                    };
+                }
+
+                // Start with a successful result
+                var results = new ModelSaveResult();
+
+                // Geta new options object 
+                var options = (ISaveTo3DExperienceOptions)SolidWorksEnvironment.Application.UnsafeObject.GetSaveTo3DExperienceOptions();
+
+                // Add relevant data
+                options.FileName = filename;
+                if (!revisionComment.IsNullOrWhiteSpace())
+                    options.SetRevisionComments(revisionComment);
+
+                // Set errors and warnings to None to start with
+                var errors = 0;
+                var warnings = 0;
+
+                // Save to 3DExperience
+                BaseObject.Extension.SaveTo3DExperience(options, ref errors, ref warnings);
+
+                // Add any warnings
+                results.Warnings = (SaveAsWarnings)warnings;
+
+                // Add any errors
+                results.Errors = (SaveAsErrors)errors;
+
+                // If successful, and this is not a new file 
+                // (otherwise the RCW changes and SolidWorksApplication has to reload ActiveModel)...
+                if (results.Successful && HasBeenSaved)
+                    // Reload model data
+                    ReloadModelData();
+
+                // If we have not been saved, SolidWorks never fires any FileSave events at all
+                // so we request a refresh of the ActiveModel. That is the best we can do
+                // as this RCW is now invalid. If this model is not active when saved then 
+                // it will simply reload the active models information
+                if (!HasBeenSaved)
+                    SolidWorksEnvironment.Application.RequestActiveModelChanged();
+
+                return results;
+            },
+            SolidDnaErrorTypeCode.SolidWorksModel,
+            SolidDnaErrorCode.SolidWorksModelSaveAsError);
         }
 
         #endregion

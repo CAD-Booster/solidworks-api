@@ -1,4 +1,4 @@
-﻿using SolidWorks.Interop.sldworks;
+using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swconst;
 using System;
 using System.Collections.Generic;
@@ -1352,16 +1352,16 @@ namespace CADBooster.SolidDna
         /// <returns></returns>
         public ModelSaveResult Save(SaveAsOptions options = SaveAsOptions.None)
         {
-            // Start with a successful result
-            var results = new ModelSaveResult();
-
-            // Set errors and warnings to None to start with
-            var errors = 0;
-            var warnings = 0;
-
             // Wrap any error
             return SolidDnaErrors.Wrap(() =>
             {
+                // Start with a successful result
+                var results = new ModelSaveResult();
+
+                // Set errors and warnings to None to start with
+                var errors = 0;
+                var warnings = 0;
+
                 // Try and save the model using the Save3 method
                 BaseObject.Save3((int)options, ref errors, ref warnings);
 
@@ -1378,7 +1378,7 @@ namespace CADBooster.SolidDna
                     ReloadModelData();
 
                 // If we have not been saved, SolidWorks never fires any FileSave events at all
-                // so request a refresh of the ActiveModel. That is the best we can do
+                // so we request a refresh of the ActiveModel. That is the best we can do
                 // as this RCW is now invalid. If this model is not active when saved then 
                 // it will simply reload the active models information
                 if (!HasBeenSaved)
@@ -1401,16 +1401,16 @@ namespace CADBooster.SolidDna
         /// <returns></returns>
         public ModelSaveResult SaveAs(string savePath, SaveAsVersion version = SaveAsVersion.CurrentVersion, SaveAsOptions options = SaveAsOptions.None, PdfExportData pdfExportData = null)
         {
-            // Start with a successful result
-            var results = new ModelSaveResult();
-
-            // Set errors and warnings to None to start with
-            var errors = 0;
-            var warnings = 0;
-
             // Wrap any error
             return SolidDnaErrors.Wrap(() =>
             {
+                // Start with a successful result
+                var results = new ModelSaveResult();
+
+                // Set errors and warnings to None to start with
+                var errors = 0;
+                var warnings = 0;
+
                 // Try and save the model using the SaveAs method
                 BaseObject.Extension.SaveAs(savePath, (int)version, (int)options, pdfExportData?.ExportData, ref errors, ref warnings);
 
@@ -1431,7 +1431,7 @@ namespace CADBooster.SolidDna
                     ReloadModelData();
 
                 // If we have not been saved, SolidWorks never fires any FileSave events at all
-                // so request a refresh of the ActiveModel. That is the best we can do
+                // so we request a refresh of the ActiveModel. That is the best we can do
                 // as this RCW is now invalid. If this model is not active when saved then 
                 // it will simply reload the active models information
                 if (!HasBeenSaved)

@@ -6,12 +6,13 @@ namespace CADBooster.SolidDna
     /// Whether a model was created in the desktop version of SolidWorks, in 
     /// Same values as <see cref="sw3DExperienceModelType_e"/>.
     /// </summary>
-    public enum ModelType3DExperience
+    public enum ModelSourceProgram
     {
         /// <summary>
         /// This is a standard model that was created in SolidWorks Desktop.
+        /// It may still be saved in or loaded from 3DExperience.
         /// </summary>
-        Standard = 0,
+        SolidWorksDesktop = 0,
 
         /// <summary>
         /// This model comes from PartSupply. 

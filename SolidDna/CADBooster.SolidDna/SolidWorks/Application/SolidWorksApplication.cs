@@ -558,10 +558,10 @@ namespace CADBooster.SolidDna
         }
 
         /// <summary>
-        /// Opens a file
+        /// Open a part, assembly or drawing by its file path.
         /// </summary>
         /// <param name="filePath">The path to the file</param>
-        /// <param name="options">The options to use when opening the file (flags, so | multiple options together)</param>
+        /// <param name="options">The options to use when opening the file (flags, so use pipes | to combine options)</param>
         /// <param name="configuration">The name of the configuration you want to open. If you skip this parameter, SolidWorks will open the configuration is which the model was last saved.</param>
         public Model OpenFile(string filePath, OpenDocumentOptions options = OpenDocumentOptions.None, string configuration = null)
         {
@@ -579,15 +579,50 @@ namespace CADBooster.SolidDna
                 var warnings = 0;
 
                 // Attempt to open the document
-                var modelCom = BaseObject.OpenDoc6(filePath, (int)fileType, (int)options, configuration, ref errors, ref warnings);
+                var swModel = BaseObject.OpenDoc6(filePath, (int)fileType, (int)options, configuration, ref errors, ref warnings);
 
                 // TODO: Read errors into enums for better reporting
                 // For now just check if model is not null
-                if (modelCom == null)
-                    throw new ArgumentException($"Failed to open file. Errors {errors}, Warnings {warnings}");
+                if (swModel == null)
+                    throw new Exception($"Failed to open file. Errors {errors}, Warnings {warnings}");
 
                 // Return new model
-                return new Model(modelCom);
+                return new Model(swModel);
+            },
+                SolidDnaErrorTypeCode.SolidWorksApplication,
+                SolidDnaErrorCode.SolidWorksModelOpenFileError);
+        }
+
+        /// <summary>
+        /// Open a part, assembly or drawing by its PLM ID, its unique 3DExperience ID.
+        /// 3DExperience treats configurations as unique models, so you cannot specify a configuration when opening a model by its PLM ID.
+        /// </summary>
+        /// <param name="plmId">The unique ID of this model. Consists of numbers and letters, seems to be 32 characters long.</param>
+        /// <returns></returns>
+        public Model OpenFileFrom3DExperience(string plmId)
+        {
+            // Wrap any error
+            return SolidDnaErrors.Wrap(() =>
+            {
+                // Get a new object specification
+                var swDocSpecification = (IDocumentSpecification)BaseObject.GetOpenDocSpec("");
+
+                // Get a detailed 3DX object specification
+                var plmObjectSpecification = (IPLMObjectSpecification)swDocSpecification.PLMObjectSpecification;
+
+                // Set the PLM ID
+                plmObjectSpecification.PLMID = plmId;
+
+                // Attempt to open the document
+                var swModel = BaseObject.OpenDoc7(swDocSpecification);
+
+                // TODO: Read errors into enums for better reporting
+                // For now just check if model is not null
+                if (swModel == null)
+                    throw new Exception($"Failed to open file. Errors {swDocSpecification.Error}, Warnings {swDocSpecification.Warning}");
+
+                // Return new model
+                return new Model(swModel);
             },
                 SolidDnaErrorTypeCode.SolidWorksApplication,
                 SolidDnaErrorCode.SolidWorksModelOpenFileError);

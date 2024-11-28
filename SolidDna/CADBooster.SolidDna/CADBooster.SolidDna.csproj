@@ -2,9 +2,9 @@
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>3.2.0.0</Version>
-    <AssemblyVersion>3.2.0.0</AssemblyVersion>
-    <FileVersion>3.2.0.0</FileVersion>
+    <Version>3.3.0.0</Version>
+    <AssemblyVersion>3.3.0.0</AssemblyVersion>
+    <FileVersion>3.3.0.0</FileVersion>
     <Authors>Luke Malpass, Peter Brinkhuis</Authors>
     <Company>CAD Booster B.V.</Company>
     <Description>The new SolidDNA SDK, making the SolidWorks API easier, well behaved and modern</Description>
@@ -17,9 +17,11 @@
     <AssemblyName>CADBooster.SolidDna</AssemblyName>
     <RootNamespace>CADBooster.SolidDna</RootNamespace>
     <PackageLicenseFile>license.txt</PackageLicenseFile>
-    <PackageReleaseNotes>Added support for SOLIDWORKS 2024 SP1 that adds the AssemblyDoc Clearance Check API.
-Fixed tripping over a partner product key that is not exactly 128 characters long.
-Changed GetFeatureByName so it returns null instead of a ModelFeature with the unsafeObject being null.</PackageReleaseNotes>
+    <PackageReleaseNotes>Added support for SOLIDWORKS 2025.
+Split SolidAddIn object and added PartnerProductAddIn so add-ins that are not partner products are not blocked in SW Connected. 
+Added basic support for opening from and saving to 3DExperience.
+Added getting a feature by its name from a Component.
+Added inner exception info to SolidDnaException ToString.</PackageReleaseNotes>
     <SignAssembly>true</SignAssembly>
     <PackageIcon>icon.png</PackageIcon>
     <PackageIconUrl />

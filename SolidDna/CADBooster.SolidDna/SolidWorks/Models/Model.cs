@@ -73,8 +73,12 @@ namespace CADBooster.SolidDna
 
         /// <summary>
         /// The source program for this model. Can be SolidWorks Desktop, 3DExperience, xCAD or PartSupply.
+        /// Was introduced in SolidWorks 2021.
+        /// Not set in the constructor because when you have a model open during startup, the SolidWorks version object is not set yet.
         /// </summary>
-        public ModelSourceProgram ModelSourceProgram { get; protected set; }
+        public ModelSourceProgram ModelSourceProgram => SolidWorksEnvironment.Application.SolidWorksVersion.Version < 2021
+            ? ModelSourceProgram.SolidWorksDesktop
+            : (ModelSourceProgram)Extension.UnsafeObject.Get3DExperienceModelType();
 
         /// <summary>
         /// Indicates if this file needs saving (has file changes).
@@ -390,11 +394,6 @@ namespace CADBooster.SolidDna
 
             // Get the models type
             ModelType = (ModelType)BaseObject.GetType();
-
-            // Get the source program for this model. Was introduced in SolidWorks 2021.
-            ModelSourceProgram = SolidWorksEnvironment.Application.SolidWorksVersion.Version < 2021
-                ? ModelSourceProgram.SolidWorksDesktop
-                : (ModelSourceProgram)Extension.UnsafeObject.Get3DExperienceModelType();
 
             // Get the active configuration
             ActiveConfiguration = new ModelConfiguration(BaseObject.IGetActiveConfiguration());

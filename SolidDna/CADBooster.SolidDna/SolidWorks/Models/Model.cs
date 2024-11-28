@@ -1366,7 +1366,7 @@ namespace CADBooster.SolidDna
             return SolidDnaErrors.Wrap(() =>
             {
                 // Start with a successful result
-                var results = new ModelSaveResult();
+                var result = new ModelSaveResult();
 
                 // Set errors and warnings to None to start with
                 var errors = 0;
@@ -1375,15 +1375,12 @@ namespace CADBooster.SolidDna
                 // Try and save the model using the Save3 method
                 BaseObject.Save3((int)options, ref errors, ref warnings);
 
-                // Add any warnings
-                results.Warnings = (SaveAsWarnings)warnings;
-
-                // Add any errors
-                results.Errors = (SaveAsErrors)errors;
+                // Add any errors and warnings
+                result.AddErrorsAndWarnings(errors, warnings);
 
                 // If successful, and this is not a new file 
                 // (otherwise the RCW changes and SolidWorksApplication has to reload ActiveModel)...
-                if (results.Successful && HasBeenSaved)
+                if (result.Successful && HasBeenSaved)
                     // Reload model data
                     ReloadModelData();
 
@@ -1395,7 +1392,7 @@ namespace CADBooster.SolidDna
                     SolidWorksEnvironment.Application.RequestActiveModelChanged();
 
                 // Return result
-                return results;
+                return result;
             },
                 SolidDnaErrorTypeCode.SolidWorksModel,
                 SolidDnaErrorCode.SolidWorksModelSaveError);
@@ -1415,7 +1412,7 @@ namespace CADBooster.SolidDna
             return SolidDnaErrors.Wrap(() =>
             {
                 // Start with a successful result
-                var results = new ModelSaveResult();
+                var result = new ModelSaveResult();
 
                 // Set errors and warnings to None to start with
                 var errors = 0;
@@ -1428,15 +1425,12 @@ namespace CADBooster.SolidDna
                 if (errors != 0)
                     BaseObject.SaveAs4(savePath, (int)version, (int)options, ref errors, ref warnings);
 
-                // Add any warnings
-                results.Warnings = (SaveAsWarnings)warnings;
-
-                // Add any errors
-                results.Errors = (SaveAsErrors)errors;
+                // Add any errors and warnings
+                result.AddErrorsAndWarnings(errors, warnings);
 
                 // If successful, and this is not a new file 
                 // (otherwise the RCW changes and SolidWorksApplication has to reload ActiveModel)...
-                if (results.Successful && HasBeenSaved)
+                if (result.Successful && HasBeenSaved)
                     // Reload model data
                     ReloadModelData();
 
@@ -1448,7 +1442,7 @@ namespace CADBooster.SolidDna
                     SolidWorksEnvironment.Application.RequestActiveModelChanged();
 
                 // Return result
-                return results;
+                return result;
             },
                 SolidDnaErrorTypeCode.SolidWorksModel,
                 SolidDnaErrorCode.SolidWorksModelSaveAsError);
@@ -1481,7 +1475,7 @@ namespace CADBooster.SolidDna
                 }
 
                 // Start with a successful result
-                var results = new ModelSaveResult();
+                var result = new ModelSaveResult();
 
                 // Set errors and warnings to None to start with
                 var errors = 0;
@@ -1492,11 +1486,8 @@ namespace CADBooster.SolidDna
                     // Save without an options object. 3DExperience will give this file a name.
                     BaseObject.Extension.SaveTo3DExperience(null, ref errors, ref warnings);
 
-                    // Add any warnings
-                    results.Warnings = (SaveAsWarnings)warnings;
-
-                    // Add any errors
-                    results.Errors = (SaveAsErrors)errors;
+                    // Add any errors and warnings
+                    result.AddErrorsAndWarnings(errors, warnings);
                 }
                 else
                 {
@@ -1512,17 +1503,13 @@ namespace CADBooster.SolidDna
                     // Save to 3DExperience
                     BaseObject.Extension.SaveTo3DExperience(options, ref errors, ref warnings);
 
-                    // Add any warnings
-                    results.Warnings = (SaveAsWarnings)warnings;
-
-                    // Add any errors
-                    results.Errors = (SaveAsErrors)errors;
+                    // Add any errors and warnings
+                    result.AddErrorsAndWarnings(errors, warnings);
                 }
-
 
                 // If successful, and this is not a new file 
                 // (otherwise the RCW changes and SolidWorksApplication has to reload ActiveModel)...
-                if (results.Successful && HasBeenSaved)
+                if (result.Successful && HasBeenSaved)
                     // Reload model data
                     ReloadModelData();
 
@@ -1533,7 +1520,7 @@ namespace CADBooster.SolidDna
                 if (!HasBeenSaved)
                     SolidWorksEnvironment.Application.RequestActiveModelChanged();
 
-                return results;
+                return result;
             },
             SolidDnaErrorTypeCode.SolidWorksModel,
             SolidDnaErrorCode.SolidWorksModelSaveAsError);

@@ -224,7 +224,7 @@
         SolidWorksCommandFlyoutPositionError = 12009,
 
         /// <summary>
-        /// There was an error while trying to add an command manager item.
+        /// There was an error while trying to add a command manager item.
         /// </summary>
         SolidWorksCommandItemPositionError = 12010,
 

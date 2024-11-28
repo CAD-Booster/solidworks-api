@@ -17,7 +17,7 @@ namespace CADBooster.SolidDna
         #region Protected Members
 
         /// <summary>
-        /// The cookie to the current instance of SolidWorks we are running inside of
+        /// The cookie to the current instance of SolidWorks we are running in.
         /// </summary>
         protected int mSwCookie;
 
@@ -51,19 +51,9 @@ namespace CADBooster.SolidDna
         public Model ActiveModel => mActiveModel;
 
         /// <summary>
-        /// Various preferences for SolidWorks
+        /// The type of SolidWorks application that is currently running.
         /// </summary>
-        public SolidWorksPreferences Preferences { get; protected set; }
-
-        /// <summary>
-        /// Gets the current SolidWorks version information
-        /// </summary>
-        public SolidWorksVersion SolidWorksVersion => GetSolidWorksVersion();
-
-        /// <summary>
-        /// The SolidWorks instance cookie
-        /// </summary>
-        public int SolidWorksCookie => mSwCookie;
+        public SolidWorksApplicationType ApplicationType { get; }
 
         /// <summary>
         /// The command manager
@@ -71,13 +61,40 @@ namespace CADBooster.SolidDna
         public CommandManager CommandManager { get; }
 
         /// <summary>
+        /// Whether we are currently connected to 3DExperience. Was added in SolidWorks 2022, so we always return None for older versions.
+        /// </summary>
+        public ConnectionStatus3DExperience ConnectionStatus3DExperience => SolidWorksVersion.Version < 2022 
+                ? ConnectionStatus3DExperience.None 
+                : (ConnectionStatus3DExperience)BaseObject.Get3DExperienceState();
+
+        /// <summary>
         /// True if the application is disposing
         /// </summary>
         public bool Disposing { get; private set; }
 
+        /// <summary>
+        /// Various preferences for SolidWorks
+        /// </summary>
+        public SolidWorksPreferences Preferences { get; }
+
+        /// <summary>
+        /// Gets the current SolidWorks version information
+        /// </summary>
+        public SolidWorksVersion SolidWorksVersion { get; }
+
+        /// <summary>
+        /// The SolidWorks instance cookie
+        /// </summary>
+        public int SolidWorksCookie => mSwCookie;
+
         #endregion
 
         #region Public Events
+
+        /// <summary>
+        /// Called when the currently active file has been saved
+        /// </summary>
+        public event Action<string, Model> ActiveFileSaved = (path, model) => { };
 
         /// <summary>
         /// Called when any information about the currently active model has changed
@@ -93,11 +110,6 @@ namespace CADBooster.SolidDna
         /// Called when a file has been opened
         /// </summary>
         public event Action<string, Model> FileOpened = (path, model) => { };
-
-        /// <summary>
-        /// Called when the currently active file has been saved
-        /// </summary>
-        public event Action<string, Model> ActiveFileSaved = (path, model) => { };
 
         /// <summary>
         /// Called when SolidWorks is idle
@@ -118,10 +130,12 @@ namespace CADBooster.SolidDna
         /// </summary>
         public SolidWorksApplication(SldWorks solidWorks, int cookie) : base(solidWorks)
         {
-            // Set preferences
+            // Set properties that never change
             Preferences = new SolidWorksPreferences();
+            SolidWorksVersion = GetSolidWorksVersion();
+            ApplicationType = GetApplicationType(); // do this after setting the SolidWorks version.
 
-            // Store cookie Id
+            // Store cookie ID
             mSwCookie = cookie;
 
             // Hook into main events
@@ -154,7 +168,19 @@ namespace CADBooster.SolidDna
 
         #endregion
 
-        #region Version
+        #region Application properties
+
+        /// <summary>
+        /// Get the type of SolidWorks application we are running in.
+        /// Options: Desktop, 3DEXPERIENCE SolidWorks (= SolidWorks Connected) or Desktop with the 3DEXPERIENCE connector add-in.
+        /// API was added in SolidWorks 2020, so we always return Desktop for older versions.
+        /// </summary>
+        /// <returns></returns>
+        private SolidWorksApplicationType GetApplicationType()
+        {
+            // If we are running in a version older than 2020, we are always running in the desktop application.
+            return SolidWorksVersion.Version < 2020 ? SolidWorksApplicationType.Desktop : (SolidWorksApplicationType)BaseObject.ApplicationType;
+        }
 
         /// <summary>
         /// Gets the current SolidWorks version information
@@ -165,12 +191,12 @@ namespace CADBooster.SolidDna
             // Wrap any error
             return SolidDnaErrors.Wrap(() =>
             {
-                // Get version string (such as 23.2.0 for 2015 SP2.0)
+                // Get version string (such as 32.2.0 for 2024 SP2.0)
                 var revisionNumber = BaseObject.RevisionNumber();
 
-                // Get revision string (such as sw2015_SP20)
-                // Get build number (such as d150130.002)
-                // Get the hot fix string
+                // Get revision string (such as sw2024_SP20)
+                // Get build number (such as d240722.003) 
+                // Get the hot fix string (often empty)
                 BaseObject.GetBuildNumbers2(out var revisionString, out var buildNumber, out var hotfixString);
 
                 return new SolidWorksVersion(revisionNumber, revisionString, buildNumber, hotfixString);
@@ -326,7 +352,7 @@ namespace CADBooster.SolidDna
         internal static void RemoveViewOnlyFilePath(string filePath) => ViewOnlyFilePaths.Remove(filePath?.ToLower());
 
         /// <summary>
-        /// Reloads all of the variables, data and COM objects for the newly available SolidWorks model/state
+        /// Reloads all the variables, data and COM objects for the newly available SolidWorks model/state
         /// </summary>
         private void ReloadActiveModelInformation()
         {
@@ -532,39 +558,91 @@ namespace CADBooster.SolidDna
         }
 
         /// <summary>
-        /// Opens a file
+        /// Open a part, assembly or drawing by its file path.
+        /// Use <see cref="OpenFile(IDocumentSpecification)"/> to open a model with extra options.
         /// </summary>
         /// <param name="filePath">The path to the file</param>
-        /// <param name="options">The options to use when opening the file (flags, so | multiple options together)</param>
+        /// <param name="options">The options to use when opening the file (flags, so use pipes | to combine options)</param>
         /// <param name="configuration">The name of the configuration you want to open. If you skip this parameter, SolidWorks will open the configuration is which the model was last saved.</param>
         public Model OpenFile(string filePath, OpenDocumentOptions options = OpenDocumentOptions.None, string configuration = null)
         {
             // Wrap any error
             return SolidDnaErrors.Wrap(() =>
             {
-                // Get file type
+                // Get file type. Throws when the string is not long enough, but that gets caught by the SolidDnaErrors.Wrap method anyway.
+                var fileExtension = filePath.Substring(filePath.Length - 7);
                 var fileType =
-                    filePath.ToLower().EndsWith(".sldprt") ? DocumentType.Part :
-                    filePath.ToLower().EndsWith(".sldasm") ? DocumentType.Assembly :
-                    filePath.ToLower().EndsWith(".slddrw") ? DocumentType.Drawing : throw new ArgumentException("Unknown file type");
+                    fileExtension.Equals(".sldprt", StringComparison.OrdinalIgnoreCase) ? DocumentType.Part :
+                    fileExtension.Equals(".sldasm", StringComparison.OrdinalIgnoreCase) ? DocumentType.Assembly :
+                    fileExtension.Equals(".slddrw", StringComparison.OrdinalIgnoreCase) ? DocumentType.Drawing : throw new ArgumentException("Unknown file type");
 
                 // Set errors and warnings
                 var errors = 0;
                 var warnings = 0;
 
                 // Attempt to open the document
-                var modelCom = BaseObject.OpenDoc6(filePath, (int)fileType, (int)options, configuration, ref errors, ref warnings);
+                var swModel = BaseObject.OpenDoc6(filePath, (int)fileType, (int)options, configuration, ref errors, ref warnings);
 
                 // TODO: Read errors into enums for better reporting
                 // For now just check if model is not null
-                if (modelCom == null)
-                    throw new ArgumentException($"Failed to open file. Errors {errors}, Warnings {warnings}");
+                if (swModel == null)
+                    throw new Exception($"Failed to open file. Errors {errors}, Warnings {warnings}");
 
                 // Return new model
-                return new Model(modelCom);
+                return new Model(swModel);
             },
                 SolidDnaErrorTypeCode.SolidWorksApplication,
                 SolidDnaErrorCode.SolidWorksModelOpenFileError);
+        }
+
+        /// <summary>
+        /// Open a part, assembly or drawing and fully control how the file is opened.
+        /// Can be used to open local files and files from 3DExperience.
+        /// </summary>
+        /// <param name="documentSpecification">File properties and instructions on how to open the file.
+        /// Properties that are not valid when opening a file from 3DExperience: FileName, ConfigurationName,
+        /// DocumentType, DisplayState, InteractiveAdvancedOpen, InteractiveComponentSelection, LoadExternalReferencesInMemory.</param>
+        /// <returns></returns>
+        public Model OpenFile(IDocumentSpecification documentSpecification)
+        {
+            // Wrap any error
+            return SolidDnaErrors.Wrap(() =>
+                {
+                    // Attempt to open the document
+                    var swModel = BaseObject.OpenDoc7(documentSpecification);
+
+                    // TODO: Read errors into enums for better reporting
+                    // For now just check if model is not null
+                    if (swModel == null)
+                        throw new Exception($"Failed to open file. Errors {documentSpecification.Error}, Warnings {documentSpecification.Warning}");
+
+                    // Return new model
+                    return new Model(swModel);
+                },
+                SolidDnaErrorTypeCode.SolidWorksApplication,
+                SolidDnaErrorCode.SolidWorksModelOpenFileError);
+        }
+
+        /// <summary>
+        /// Open a part, assembly or drawing by its PLM ID (its unique 3DExperience ID).
+        /// 3DExperience treats configurations as unique models, so you cannot specify a configuration when opening a model by its PLM ID.
+        /// Use <see cref="OpenFile(IDocumentSpecification)"/> to open a model with extra options.
+        /// </summary>
+        /// <param name="plmId">The unique ID of this model. Consists of numbers and letters, seems to be 32 characters long.</param>
+        /// <returns></returns>
+        public Model OpenFileFrom3DExperience(string plmId)
+        {
+            // Get a new object specification
+            var swDocSpecification = (IDocumentSpecification)BaseObject.GetOpenDocSpec("");
+
+            // Get a detailed 3DX object specification
+            var plmObjectSpecification = (IPLMObjectSpecification)swDocSpecification.PLMObjectSpecification;
+
+            // Set the PLM ID
+            plmObjectSpecification.PLMID = plmId;
+
+            // Call the Open method that takes a document specification parameter
+            return OpenFile(swDocSpecification);
         }
 
         /// <summary>
@@ -595,7 +673,7 @@ namespace CADBooster.SolidDna
         {
             // NOTE: No point making our own enumerator for the export file type
             //       as right now and for many years it's only ever been
-            //       1 for PDF. I do not see this ever changing
+            //       1 for PDF. I do not see this ever changing.
             return BaseObject.GetExportFileData((int)swExportDataFileType_e.swExportPdfData) as IExportPdfData;
         }
 

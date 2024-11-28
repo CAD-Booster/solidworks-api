@@ -13,12 +13,12 @@ namespace CADBooster.SolidDna
         public bool AddToTab { get; set; } = true;
 
         /// <summary>
-        /// The command Id of this item (set by the parent)
+        /// The command ID of this item (set by the parent)
         /// </summary>
         public int CommandId { get; set; }
 
         /// <summary>
-        /// The unique Id used for identifying a callback that should be associated with this item
+        /// The unique ID used for identifying a callback that should be associated with this item
         /// </summary>
         public string CallbackId { get; } = Guid.NewGuid().ToString("N");
 

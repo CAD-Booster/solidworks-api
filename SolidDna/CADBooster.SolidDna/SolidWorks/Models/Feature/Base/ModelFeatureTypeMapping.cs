@@ -391,7 +391,7 @@ namespace CADBooster.SolidDna
                 case "SubWeldFolder":
                 case "SurfaceBodyFolder":
 
-                    // As SubAtomFolder states "IBodyFolder if a body" we double check here
+                    // As SubAtomFolder states "IBodyFolder if a body" we double-check here
                     if (feature.SpecificFeature as IBodyFolder != null)
                         return ModelFeatureType.BodyFolder;
                     else

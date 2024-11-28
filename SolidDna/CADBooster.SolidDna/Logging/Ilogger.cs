@@ -41,7 +41,7 @@ namespace CADBooster.SolidDna
         //     Entry will be written on this level.
         //
         //   eventId:
-        //     Id of the event.
+        //     ID of the event.
         //
         //   state:
         //     The entry to be written. Can be also an object.

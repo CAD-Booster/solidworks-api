@@ -37,7 +37,7 @@
         public string ExplicitFormat { get; set; }
 
         /// <summary>
-        /// The location of the resource, either an URL, an embedded path or file system path
+        /// The location of the resource, either a URL, an embedded path or file system path
         /// </summary>
         public string Location { get; set; }
 

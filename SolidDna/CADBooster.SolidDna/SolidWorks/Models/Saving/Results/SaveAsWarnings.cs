@@ -1,10 +1,12 @@
-﻿using System;
+﻿using SolidWorks.Interop.swconst;
+using System;
 
 namespace CADBooster.SolidDna
 {
     /// <summary>
     /// Any warnings of a model save operation. 
     /// Warnings mean the save was successful, but it had some warnings.
+    /// Same values as <see cref="swFileSaveWarning_e"/>.
     /// </summary>
     /// <remarks>
     /// <para>
@@ -51,7 +53,7 @@ namespace CADBooster.SolidDna
         /// <summary>
         /// The eDrawing file has a bad selection
         /// </summary>
-        EdrwingsBadSelection = 32,
+        EDrawingsBadSelection = 32,
 
         /// <summary>
         /// The animator lights has edits
@@ -76,6 +78,11 @@ namespace CADBooster.SolidDna
         /// <summary>
         /// The file is using the opened view only
         /// </summary>
-        OpenedViewOnly = 1024
+        OpenedViewOnly = 1024,
+
+        /// <summary>
+        /// Unknown problem. What uses XML files?
+        /// </summary>
+        XmlInvalid = 2048,
     }
 }

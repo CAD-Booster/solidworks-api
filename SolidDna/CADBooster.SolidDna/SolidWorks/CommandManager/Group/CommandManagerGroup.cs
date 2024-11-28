@@ -60,7 +60,7 @@ namespace CADBooster.SolidDna
         public string Tooltip { get; }
 
         /// <summary>
-        /// The Id used when this command group was created
+        /// The ID used when this command group was created
         /// </summary>
         public int UserId { get; }
 
@@ -69,7 +69,7 @@ namespace CADBooster.SolidDna
         /// </summary>
         /// <param name="commandGroup">The SolidWorks command group</param>
         /// <param name="items">The command items to add</param>
-        /// <param name="userId">The unique Id this group was assigned with when created</param>
+        /// <param name="userId">The unique ID this group was assigned with when created</param>
         /// <param name="tooltip">The tool tip</param>
         /// <param name="hasMenu">Whether the CommandGroup should appear in the Tools dropdown menu.</param>
         /// <param name="hasToolbar">Whether the CommandGroup should appear in the Command Manager and as a separate toolbar.</param>
@@ -79,7 +79,7 @@ namespace CADBooster.SolidDna
         public CommandManagerGroup(ICommandGroup commandGroup, List<ICommandManagerItem> items, int userId, string tooltip, bool hasMenu, bool hasToolbar,
                                    ModelTemplateType documentTypes, string iconListsPathFormat, string mainIconPathFormat) : base(commandGroup)
         {
-            // Store user Id, used to remove the command group
+            // Store user ID, used to remove the command group
             UserId = userId;
 
             // Set items
@@ -413,7 +413,7 @@ namespace CADBooster.SolidDna
                 // The list of icons
                 BaseObject.MainIconList = icons;
 
-                // Use largest icon still (otherwise command groups are always small icons)
+                // Use the largest icon still (otherwise command groups are always small icons)
                 BaseObject.SmallIconList = icons.Last();
             }
         }

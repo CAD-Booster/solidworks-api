@@ -3,7 +3,7 @@
 namespace CADBooster.SolidDna
 {
     /// <summary>
-    /// Represents a SolidWorks Library Feature feature data
+    /// Represents a SolidWorks Library Feature data
     /// </summary>
     public class FeatureLibraryFeatureData : SolidDnaObject<ILibraryFeatureData>
     {

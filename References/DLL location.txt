@@ -1,1 +1,5 @@
-C:\Program Files\SOLIDWORKS Corp\SOLIDWORKS\api\redist
+For most DLLs:
+	C:\Program Files\SOLIDWORKS Corp\SOLIDWORKS\api\redist
+	
+Get the Routing DLL from the main folder:
+	C:\Program Files\SOLIDWORKS Corp\SOLIDWORKS

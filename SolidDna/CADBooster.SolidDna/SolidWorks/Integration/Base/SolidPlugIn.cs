@@ -1,7 +1,7 @@
 ﻿namespace CADBooster.SolidDna
 {
     /// <summary>
-    /// An base class to implement to become a SolidDna plug-in. 
+    /// A base class to implement to become a SolidDna plug-in. 
     /// The compiled dll of SolidDna must be in the same location as 
     /// the plug-in dll to be discovered
     /// </summary>
@@ -46,7 +46,7 @@
     }
 
     /// <summary>
-    /// An base class to implement to become a SolidDna plug-in. 
+    /// A base class to implement to become a SolidDna plug-in. 
     /// The compiled dll of SolidDna must be in the same location as 
     /// the plug-in dll to be discovered
     /// </summary>

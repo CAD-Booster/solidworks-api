@@ -55,7 +55,7 @@ namespace CADBooster.SolidDna
         public int CallerLineNumber { get; set; }
 
         /// <summary>
-        /// Any relevant data to the error message in human readable form;
+        /// Any relevant data to the error message in human-readable form;
         /// such as a file path or URI
         /// </summary>
         public string PertinentData { get; set; }
@@ -99,7 +99,7 @@ namespace CADBooster.SolidDna
         /// <returns></returns>
         public override string ToString()
         {
-            return $"{ErrorDetails} ({ErrorMessage}) [T{ErrorTypeCode} E{ErrorCode}]";
+            return $"Error details: {ErrorDetails ?? "None"}. Message: {ErrorMessage ?? "None"}. Type code: {ErrorTypeCodeValue}. Code: {ErrorCodeValue}.";
         }
     }
 }

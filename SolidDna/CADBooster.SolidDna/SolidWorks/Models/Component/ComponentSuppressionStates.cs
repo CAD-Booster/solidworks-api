@@ -34,7 +34,7 @@ namespace CADBooster.SolidDna
         LightweightWithChildren = 4,
         
         /// <summary>
-        /// The ID of the component does not match the the ID the component had when the assembly was last saved.
+        /// The ID of the component does not match the ID the component had when the assembly was last saved.
         /// </summary>
         InternalIdMismatch = 5
     }

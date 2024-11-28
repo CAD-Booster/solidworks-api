@@ -24,7 +24,7 @@ namespace CADBooster.SolidDna
         public bool AddToTab { get; set; } = true;
 
         /// <summary>
-        /// The Id used when this command flyout was created
+        /// The ID used when this command flyout was created
         /// </summary>
         public int UserId { get; }
 
@@ -54,7 +54,7 @@ namespace CADBooster.SolidDna
         public List<CommandManagerItem> Items { get; set; }
 
         /// <summary>
-        /// The command Id for this flyout item
+        /// The command ID for this flyout item
         /// </summary>
         public int CommandId => BaseObject.CmdID;
 
@@ -111,10 +111,10 @@ namespace CADBooster.SolidDna
         public CommandManagerFlyout(IFlyoutGroup flyoutGroup, int userId, string callbackId, List<CommandManagerItem> items, string title, string hint, string tooltip, 
                                     CommandManagerItemTabView tabView, CommandManagerFlyoutType type) : base(flyoutGroup)
         {
-            // Set user Id
+            // Set user ID
             UserId = userId;
 
-            // Callback Id
+            // Callback ID
             CallbackId = callbackId;
 
             // Set items

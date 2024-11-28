@@ -15,7 +15,7 @@ namespace CADBooster.SolidDna
         string CallbackId { get; }
 
         /// <summary>
-        /// The command Id for this flyout item
+        /// The command ID for this flyout item
         /// </summary>
         int CommandId { get; }
 

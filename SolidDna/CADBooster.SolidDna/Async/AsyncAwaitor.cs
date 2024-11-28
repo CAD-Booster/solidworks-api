@@ -31,7 +31,7 @@ namespace CADBooster.SolidDna
         /// Awaits for any outstanding tasks to complete that are accessing the same key
         /// </summary>
         /// <param name="key">The key to await</param>
-        /// <param name="task">The task to perform inside of the semaphore lock</param>
+        /// <param name="task">The task to perform inside the semaphore lock</param>
         /// <param name="maxAccessCount">If this is the first call, sets the maximum number of tasks that can access this task before it waiting</param>
         /// <returns></returns>
         public static async Task AwaitAsync(string key, Func<Task> task, int maxAccessCount = 1)
@@ -91,7 +91,7 @@ namespace CADBooster.SolidDna
         /// Awaits for any outstanding tasks to complete that are accessing the same key
         /// </summary>
         /// <param name="key">The key to await</param>
-        /// <param name="task">The task to perform inside of the semaphore lock</param>
+        /// <param name="task">The task to perform inside the semaphore lock</param>
         /// <param name="maxAccessCount">If this is the first call, sets the maximum number of tasks that can access this task before it waiting</param>
         /// <returns></returns>
         public static async Task<T> AwaitAsync<T>(string key, Func<Task<T>> task, int maxAccessCount = 1)

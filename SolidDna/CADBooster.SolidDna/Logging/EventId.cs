@@ -1,7 +1,7 @@
 ﻿namespace CADBooster.SolidDna
 {
     /// <summary>
-    /// Identifies a logging event. The primary identifier is the "Id" property, with the "Name" property providing a short description of this type of event.
+    /// Identifies a logging event. The primary identifier is the <see cref="Id"/> property, with the <see cref="Name"/> property providing a short description of this type of event.
     /// Copied from Microsoft.Extensions.Logging
     /// </summary>
     public readonly struct EventId
@@ -16,7 +16,7 @@
         }
 
         /// <summary>
-        /// Checks if two specified <see cref="EventId"/> instances have the same value. They are equal if they have the same Id.
+        /// Checks if two specified <see cref="EventId"/> instances have the same value. They are equal if they have the same ID.
         /// </summary>
         /// <param name="left">The first <see cref="EventId"/>.</param>
         /// <param name="right">The second <see cref="EventId"/>.</param>

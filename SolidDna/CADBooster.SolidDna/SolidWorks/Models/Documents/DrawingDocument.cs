@@ -221,7 +221,7 @@ namespace CADBooster.SolidDna
         /// <remarks>
         ///     This method automatically inserts BOM balloons for bill of materials 
         ///     items in selected drawing views. If a drawing sheet is selected, BOM 
-        ///     balloons are automatically inserted for all of the drawing views on that 
+        ///     balloons are automatically inserted for all the drawing views on that 
         ///     drawing sheet. 
         ///     
         ///     To automatically insert BOM balloons, select one or more views or sheets

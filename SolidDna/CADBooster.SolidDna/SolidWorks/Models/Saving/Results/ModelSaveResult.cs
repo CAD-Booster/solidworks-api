@@ -28,5 +28,16 @@
         {
             return Successful ? "Success" : $"Failed. Errors ({Errors}). Warnings ({Warnings})";
         }
+
+        /// <summary>
+        /// Convert the integers that SolidWorks returns while saving a file to enum values and set them.
+        /// </summary>
+        /// <param name="errors"></param>
+        /// <param name="warnings"></param>
+        public void AddErrorsAndWarnings(int errors, int warnings)
+        {
+            Errors = (SaveAsErrors)errors;
+            Warnings = (SaveAsWarnings)warnings;
+        }
     }
 }

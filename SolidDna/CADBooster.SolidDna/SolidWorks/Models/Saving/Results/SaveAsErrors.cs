@@ -1,9 +1,11 @@
-﻿using System;
+﻿using SolidWorks.Interop.swconst;
+using System;
 
 namespace CADBooster.SolidDna
 {
     /// <summary>
-    /// Any errors of a model save operation. 
+    /// Any errors of a model save operation.
+    /// Same values as <see cref="swFileSaveError_e"/>.   
     /// </summary>
     /// <remarks>
     /// <para>
@@ -93,6 +95,11 @@ namespace CADBooster.SolidDna
         /// <summary>
         /// Saving an assembly with renamed components requires saving the references
         /// </summary>
-        FileSaveRequiresSavingReferences = 8192
+        FileSaveRequiresSavingReferences = 8192,
+
+        /// <summary>
+        /// Detached drawings are not supported
+        /// </summary>
+        FileSaveAsDetachedDrawingsNotSupported = 16384
     }
 }

@@ -56,6 +56,16 @@ namespace CADBooster.SolidDna
         public SolidWorksApplicationType ApplicationType { get; }
 
         /// <summary>
+        /// The command manager
+        /// </summary>
+        public CommandManager CommandManager { get; }
+
+        /// <summary>
+        /// True if the application is disposing
+        /// </summary>
+        public bool Disposing { get; private set; }
+
+        /// <summary>
         /// Various preferences for SolidWorks
         /// </summary>
         public SolidWorksPreferences Preferences { get; }
@@ -70,19 +80,14 @@ namespace CADBooster.SolidDna
         /// </summary>
         public int SolidWorksCookie => mSwCookie;
 
-        /// <summary>
-        /// The command manager
-        /// </summary>
-        public CommandManager CommandManager { get; }
-
-        /// <summary>
-        /// True if the application is disposing
-        /// </summary>
-        public bool Disposing { get; private set; }
-
         #endregion
 
         #region Public Events
+
+        /// <summary>
+        /// Called when the currently active file has been saved
+        /// </summary>
+        public event Action<string, Model> ActiveFileSaved = (path, model) => { };
 
         /// <summary>
         /// Called when any information about the currently active model has changed
@@ -98,11 +103,6 @@ namespace CADBooster.SolidDna
         /// Called when a file has been opened
         /// </summary>
         public event Action<string, Model> FileOpened = (path, model) => { };
-
-        /// <summary>
-        /// Called when the currently active file has been saved
-        /// </summary>
-        public event Action<string, Model> ActiveFileSaved = (path, model) => { };
 
         /// <summary>
         /// Called when SolidWorks is idle

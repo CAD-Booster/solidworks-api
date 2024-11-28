@@ -5,7 +5,7 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="CADBooster.SolidDna" Version="3.2.0" />
+    <PackageReference Include="CADBooster.SolidDna" Version="3.3.0" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

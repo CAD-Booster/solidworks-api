@@ -25,6 +25,6 @@
     <Content Include="icons96.png" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="CADBooster.SolidDna" Version="3.2.0" />
+    <PackageReference Include="CADBooster.SolidDna" Version="3.3.0" />
   </ItemGroup>
 </Project>

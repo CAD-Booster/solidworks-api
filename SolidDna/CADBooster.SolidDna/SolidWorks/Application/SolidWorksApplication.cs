@@ -61,6 +61,13 @@ namespace CADBooster.SolidDna
         public CommandManager CommandManager { get; }
 
         /// <summary>
+        /// Whether we are currently connected to 3DExperience. Was added in SolidWorks 2022, so we always return None for older versions.
+        /// </summary>
+        public ConnectionStatus3DExperience ConnectionStatus3DExperience => SolidWorksVersion.Version < 2022 
+                ? ConnectionStatus3DExperience.None 
+                : (ConnectionStatus3DExperience)BaseObject.Get3DExperienceState();
+
+        /// <summary>
         /// True if the application is disposing
         /// </summary>
         public bool Disposing { get; private set; }

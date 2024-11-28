@@ -1456,7 +1456,7 @@ namespace CADBooster.SolidDna
         /// If the filename you specify already exists, 3DExperience will add a number to the end of the filename (or even increment your number suffix) to make it unique.
         /// A popup appears for new files. If the user does not confirm this popup, the file will be saved locally but not be uploaded to 3DExperience.
         /// </summary>
-        /// <param name="filename">The preferred filename, not a complete path</param>
+        /// <param name="filename">The preferred filename, not a complete path. May contain a file extension.</param>
         /// <param name="revisionComment">An optional comment about this revision</param>
         /// <returns></returns>
         public ModelSaveResult SaveTo3DExperience(string filename = null, string revisionComment = null)

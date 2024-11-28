@@ -82,6 +82,11 @@ namespace CADBooster.SolidDna
         public bool NeedsSaving => BaseObject.GetSaveFlag();
 
         /// <summary>
+        /// Get the unique 32-character alphanumeric identifier for this model.
+        /// </summary>
+        public string PlmId => Extension.UnsafeObject.GetPLMID();
+
+        /// <summary>
         /// The selection manager for this model
         /// </summary>
         public SelectionManager SelectionManager { get; protected set; }

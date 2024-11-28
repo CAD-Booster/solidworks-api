@@ -559,6 +559,7 @@ namespace CADBooster.SolidDna
 
         /// <summary>
         /// Open a part, assembly or drawing by its file path.
+        /// Use <see cref="OpenFile(IDocumentSpecification)"/> to open a model with extra options.
         /// </summary>
         /// <param name="filePath">The path to the file</param>
         /// <param name="options">The options to use when opening the file (flags, so use pipes | to combine options)</param>
@@ -568,11 +569,12 @@ namespace CADBooster.SolidDna
             // Wrap any error
             return SolidDnaErrors.Wrap(() =>
             {
-                // Get file type
+                // Get file type. Throws when the string is not long enough, but that gets caught by the SolidDnaErrors.Wrap method anyway.
+                var fileExtension = filePath.Substring(filePath.Length - 7);
                 var fileType =
-                    filePath.ToLower().EndsWith(".sldprt") ? DocumentType.Part :
-                    filePath.ToLower().EndsWith(".sldasm") ? DocumentType.Assembly :
-                    filePath.ToLower().EndsWith(".slddrw") ? DocumentType.Drawing : throw new ArgumentException("Unknown file type");
+                    fileExtension.Equals(".sldprt", StringComparison.OrdinalIgnoreCase) ? DocumentType.Part :
+                    fileExtension.Equals(".sldasm", StringComparison.OrdinalIgnoreCase) ? DocumentType.Assembly :
+                    fileExtension.Equals(".slddrw", StringComparison.OrdinalIgnoreCase) ? DocumentType.Drawing : throw new ArgumentException("Unknown file type");
 
                 // Set errors and warnings
                 var errors = 0;
@@ -624,6 +626,7 @@ namespace CADBooster.SolidDna
         /// <summary>
         /// Open a part, assembly or drawing by its PLM ID (its unique 3DExperience ID).
         /// 3DExperience treats configurations as unique models, so you cannot specify a configuration when opening a model by its PLM ID.
+        /// Use <see cref="OpenFile(IDocumentSpecification)"/> to open a model with extra options.
         /// </summary>
         /// <param name="plmId">The unique ID of this model. Consists of numbers and letters, seems to be 32 characters long.</param>
         /// <returns></returns>

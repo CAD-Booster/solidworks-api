@@ -1,4 +1,4 @@
-using SolidWorks.Interop.sldworks;
+﻿using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swconst;
 using System;
 using System.Collections.Generic;
@@ -1455,12 +1455,17 @@ namespace CADBooster.SolidDna
         }
 
         /// <summary>
-        /// Save a new file to 3DExperience. Similar to a Save As.
+        /// Save a new file to 3DExperience or save a modified file.
+        /// Can be used as Save and Save As. Is supposed to also support Save As New (Save As copy) but this doesn't seem to work.
+        /// If you don't provide a filename or a revision comment for a new file, 3DExperience will assign a filename based on company settings.
+        /// If you do provide a filename, it will use that filename unless that name is already in use. Every file on 3DExperience must have a unique filename.
+        /// If the filename you specify already exists, 3DExperience will add a number to the end of the filename (or even increment your number suffix) to make it unique.
+        /// A popup appears for new files. If the user does not confirm this popup, the file will be saved locally but not be uploaded to 3DExperience.
         /// </summary>
         /// <param name="filename">The preferred filename, not a complete path</param>
         /// <param name="revisionComment">An optional comment about this revision</param>
         /// <returns></returns>
-        public ModelSaveResult SaveTo3DExperience(string filename, string revisionComment = null)
+        public ModelSaveResult SaveTo3DExperience(string filename = null, string revisionComment = null)
         {
             // Wrap any error
             return SolidDnaErrors.Wrap(() =>
@@ -1478,26 +1483,42 @@ namespace CADBooster.SolidDna
                 // Start with a successful result
                 var results = new ModelSaveResult();
 
-                // Geta new options object 
-                var options = (ISaveTo3DExperienceOptions)SolidWorksEnvironment.Application.UnsafeObject.GetSaveTo3DExperienceOptions();
-
-                // Add relevant data
-                options.FileName = filename;
-                if (!revisionComment.IsNullOrWhiteSpace())
-                    options.SetRevisionComments(revisionComment);
-
                 // Set errors and warnings to None to start with
                 var errors = 0;
                 var warnings = 0;
 
-                // Save to 3DExperience
-                BaseObject.Extension.SaveTo3DExperience(options, ref errors, ref warnings);
+                if (filename == null && revisionComment == null)
+                {
+                    // Save without an options object. 3DExperience will give this file a name.
+                    BaseObject.Extension.SaveTo3DExperience(null, ref errors, ref warnings);
 
-                // Add any warnings
-                results.Warnings = (SaveAsWarnings)warnings;
+                    // Add any warnings
+                    results.Warnings = (SaveAsWarnings)warnings;
 
-                // Add any errors
-                results.Errors = (SaveAsErrors)errors;
+                    // Add any errors
+                    results.Errors = (SaveAsErrors)errors;
+                }
+                else
+                {
+                    // Get a new options object 
+                    var options = (ISaveTo3DExperienceOptions)SolidWorksEnvironment.Application.UnsafeObject.GetSaveTo3DExperienceOptions();
+
+                    // Add relevant data
+                    options.FileName = filename;
+
+                    if (!revisionComment.IsNullOrWhiteSpace())
+                        options.SetRevisionComments(revisionComment);
+
+                    // Save to 3DExperience
+                    BaseObject.Extension.SaveTo3DExperience(options, ref errors, ref warnings);
+
+                    // Add any warnings
+                    results.Warnings = (SaveAsWarnings)warnings;
+
+                    // Add any errors
+                    results.Errors = (SaveAsErrors)errors;
+                }
+
 
                 // If successful, and this is not a new file 
                 // (otherwise the RCW changes and SolidWorksApplication has to reload ActiveModel)...

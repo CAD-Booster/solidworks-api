@@ -239,7 +239,7 @@ public class DrawingDocument : IDrawingDocument
         nativeOptions.CustomSize = options.CustomSize;
         nativeOptions.EditBalloonOption = (int) options.EditBalloonOptions;
         nativeOptions.EditBalloons = options.EditBalloons;
-        nativeOptions.FirstItem = options.FirstItem;
+        nativeOptions.FirstItem = options.FirstItem?.UnsafeObject;
         nativeOptions.IgnoreMultiple = options.IgnoreMultiple;
         nativeOptions.InsertMagneticLine = options.InsertMagneticLine;
         nativeOptions.ItemNumberIncrement = options.ItemNumberIncrement;

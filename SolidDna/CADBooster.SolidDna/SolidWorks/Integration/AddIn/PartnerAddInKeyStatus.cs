@@ -1,4 +1,5 @@
 ﻿using SolidWorks.Interop.swconst;
+using System;
 
 namespace CADBooster.SolidDna;
 
@@ -6,6 +7,7 @@ namespace CADBooster.SolidDna;
 /// The return value for the <see cref="PartnerProductAddIn.IdentifyToSW"/> call to SolidWorks to verify our add-in partner status.
 /// Same values as <see cref="swPartnerEntitlementStatus_e"/>, but with an additional value for incorrect license key length.
 /// </summary>
+[Flags]
 public enum PartnerAddInKeyStatus
 {
     /// <summary>

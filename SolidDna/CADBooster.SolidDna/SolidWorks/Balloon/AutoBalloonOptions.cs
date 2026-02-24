@@ -5,6 +5,8 @@
 /// </summary>
 public class AutoBalloonOptions
 {
+    #region Public properties
+
     /// <summary>
     /// User-defined size of the balloons.
     /// Valid only when <see cref="Size"/> is set to swBalloonFit_e.swBF_UserDef
@@ -124,4 +126,48 @@ public class AutoBalloonOptions
     /// Style of the upper text
     /// </summary>
     public BalloonTextContent UpperTextContent { get; set; }
+
+    #endregion
+
+    #region Public methods
+
+    /// <summary>
+    /// Get the AutoBalloon options from the current drawing settings.
+    /// Throws when the active model is not a drawing.
+    /// </summary>
+    /// <returns></returns>
+    public static AutoBalloonOptions GetFromCurrentDrawing()
+    {
+        // Make sure the active model is a drawing
+        var activeModel = SolidWorksEnvironment.IApplication.ActiveModel;
+        if (!activeModel.IsDrawing)
+            throw new SolidDnaException(SolidDnaErrors.CreateError(SolidDnaErrorTypeCode.SolidWorksModel, SolidDnaErrorCode.SolidWorksModelTypeIncorrect, "The active model is not a drawing."));
+
+        // Get the options object from SOLIDWORKS. This already contains all the options with the current settings from the drawing.
+        var options = activeModel.AsDrawing().CreateAutoBalloonOptions();
+
+        // Wrap the options in our own object
+        return new AutoBalloonOptions
+        {
+            EditBalloons = options.EditBalloons,
+            FirstItem = null, // is never set initially
+            IgnoreMultiple = options.IgnoreMultiple,
+            InsertMagneticLine = options.InsertMagneticLine,
+            ItemNumberIncrement = options.ItemNumberIncrement,
+            ItemNumberStart = options.ItemNumberStart,
+            ItemOrder = (BalloonItemNumberOrder) options.ItemOrder,
+            LayerName = options.Layername,
+            Layout = (BalloonLayoutType) options.Layout,
+            LeaderAttachmentToFaces = options.LeaderAttachmentToFaces,
+            LowerText = options.LowerText,
+            LowerTextContent = (BalloonTextContent) options.LowerTextContent,
+            ReverseDirection = options.ReverseDirection,
+            Size = (BalloonFitSize) options.Size,
+            Style = (BalloonStyle) options.Style,
+            UpperText = options.UpperText,
+            UpperTextContent = (BalloonTextContent) options.UpperTextContent,
+        };
+    }
+
+    #endregion
 }

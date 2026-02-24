@@ -185,6 +185,12 @@ public enum SolidDnaErrorCode
     /// </summary>
     SolidWorksModelObjectNotSelectedError = 11015,
 
+    /// <summary>
+    /// The type of the SolidWorks model is incorrect for the requested operation.
+    /// For example, creating AutoBalloonOptions is only valid when a drawing is active.
+    /// </summary>
+    SolidWorksModelTypeIncorrect = 11016,
+
     #endregion
 
     #region SolidWorks Command Manager (12,000)

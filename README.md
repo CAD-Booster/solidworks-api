@@ -72,6 +72,11 @@ Here are some videos by AngelSix on how to get started with developing your own 
 - Playlist: https://www.youtube.com/playlist?list=PLrW43fNmjaQVMN1-lsB29ECnHRlA4ebYn
 
 ## How to create an add-in 
+
+<details>
+
+<summary>Expand/collapse example</summary>
+
 If you are completely new to software development, you first need to download an IDE (a development environment like [Visual Studio Community](https://visualstudio.microsoft.com/downloads/)) and a git client (for version control) like [Gitkraken](https://www.gitkraken.com/git-client) or [Github Desktop](https://desktop.github.com/download/). All have free versions.
 
 Once you have Visual Studio open:
@@ -224,3 +229,4 @@ public class MyPlugin : SolidPlugIn
 ![image](https://raw.githubusercontent.com/CAD-Booster/SolidDNA/master/Images/first-plugin-debugging.png)
 
 You now have the absolute basics in place for a SOLIDWORKS add-in! 
+</details>

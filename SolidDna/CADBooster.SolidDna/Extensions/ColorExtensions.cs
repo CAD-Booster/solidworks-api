@@ -1,4 +1,6 @@
-﻿namespace CADBooster.SolidDna;
+﻿using System.Diagnostics.Contracts;
+
+namespace CADBooster.SolidDna;
 
 /// <summary>
 /// Convert colors to COLORREF / Windows Color integer values.
@@ -11,6 +13,7 @@ public static class ColorExtensions
     /// </summary>
     /// <param name="color">The color to convert.</param>
     /// <returns>An integer COLORREF value</returns>
+    [Pure]
     public static int ToColorRef(this System.Windows.Media.Color color) => color.R | (color.G << 8) | (color.B << 16);
 
     /// <summary>
@@ -18,5 +21,6 @@ public static class ColorExtensions
     /// </summary>
     /// <param name="color">The color to convert.</param>
     /// <returns>An integer COLORREF value.</returns>
+    [Pure]
     public static int ToColorRef(this System.Drawing.Color color) => System.Drawing.ColorTranslator.ToWin32(color);
 }

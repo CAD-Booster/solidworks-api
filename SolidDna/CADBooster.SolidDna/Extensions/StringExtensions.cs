@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 
 namespace CADBooster.SolidDna;
@@ -14,6 +15,7 @@ public static class StringExtensions
     /// </summary>
     /// <param name="content">The string</param>
     /// <returns></returns>
+    [Pure]
     public static bool IsNullOrEmpty(this string content) => string.IsNullOrEmpty(content);
 
     /// <summary>
@@ -21,6 +23,7 @@ public static class StringExtensions
     /// </summary>
     /// <param name="content">The string</param>
     /// <returns></returns>
+    [Pure]
     public static bool IsNullOrWhiteSpace(this string content) => string.IsNullOrWhiteSpace(content);
 
     /// <summary>
@@ -29,5 +32,6 @@ public static class StringExtensions
     /// <param name="hayStack"></param>
     /// <param name="needle"></param>
     /// <returns></returns>
+    [Pure]
     public static bool ContainsIgnoreCase(this List<string> hayStack, string needle) => hayStack.Any(x => x.Equals(needle, StringComparison.InvariantCultureIgnoreCase));
 }
